@@ -15,3 +15,5 @@ yarn-error.log
 /.vscode
 /.user.ini
 /.well-know*
+404.html
+index.html
