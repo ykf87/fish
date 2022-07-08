@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,5 +25,13 @@ Route::group([
     // 'middleware'    => [],
     'as'            => 'api.'
 ], function(){
-	// Route::get();
+	Route::group([
+		'prefix'        => 'tiktok/',
+	    'namespace'     => 'App\Http\Controllers\Api\Tiktok',
+	], function(){
+		Route::get('callback', function(Request $request){
+			// file_put_contents(__DIR__ . '/tk.txt', json_encode($request->all()));
+			Storage::put('tk.txt', json_encode($request->all()));
+		});
+	});
 });
