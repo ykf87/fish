@@ -27,11 +27,9 @@ Route::group([
 ], function(){
 	Route::group([
 		'prefix'        => 'tiktok/',
-	    'namespace'     => 'App\Http\Controllers\Api\Tiktok',
+	    'namespace'     => 'Tiktok',
+	    'as'			=> 'tiktok.'
 	], function(){
-		Route::get('callback', function(Request $request){
-			// file_put_contents(__DIR__ . '/tk.txt', json_encode($request->all()));
-			Storage::put('tk.txt', json_encode($request->all()));
-		});
+		Route::get('callback', 'CallbackController@index')->name('callback');
 	});
 });
