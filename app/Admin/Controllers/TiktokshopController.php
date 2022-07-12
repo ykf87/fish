@@ -8,6 +8,8 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use Encore\Admin\Facades\Admin;
+use Illuminate\Http\Request;
+use App\Tiktok\Shop;
 
 use App\Admin\Extensions\Addtiktokshop;
 
@@ -88,5 +90,33 @@ class TiktokshopController extends AdminController
         // $form->switch('status', __('Status'))->default(1);
 
         // return $form;
+    }
+
+    public function addnew(Request $request){
+        $code   = $request->get('code');
+        $admin  = $request->get('id');
+        $err    = $request->get('err');
+
+        if(!$code){
+            $errmsg         = $err;
+            if(!$errmsg){
+                $errmsg     = '未知错误!';
+            }
+            exit('<script>window.parent.layer.closeAll();window.parent.layer.msg("获取店铺信息失败!");</script>');
+        }
+
+        $shop   = new Shop;
+        $ress   = $shop->accesstoken($code);
+        $res    = json_decode($ress, true);
+        if(!isset($res['code']) || !isset($res['data'])){
+            dd($ress, $res);
+            exit('<script>window.parent.layer.closeAll();window.parent.layer.msg("获取店铺信息失败!");</script>');
+        }
+        dd($res);
+
+        $data                       = $res['data'];
+        $shopid                     = $data['openid'] ?? '';
+        $accesstoken                = $data['access_token'] ?? '';
+        $access_token_expire_in     = $data['access_token_expire_in'] ?? '';
     }
 }

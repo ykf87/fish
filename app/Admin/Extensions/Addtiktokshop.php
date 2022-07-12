@@ -14,13 +14,20 @@ class Addtiktokshop extends AbstractTool{
         // $url = Request::fullUrlWithQuery(['gender' => '_gender_']);
         $shop   = new Shop();
         $url    = $shop->authurl(uadmin::user()->id);
+        // $url    = 'https://fish.mini.zhishukongjian.com/api/tiktok/callback?code=onkizAAAAADTYf4kTd_6t3ZnOzeeXrxM1n3dTtjcZ7HAhpJmC_0nRjDo7rdU84Rnbt4pwURvyrzBVl0nKSmBKYcoyNgZHmGZR7b5iqe1vyXV40miXZePnUA_TRJn5OVZFjsbly9fYofQkMKVo2YMUfB9ECHrfVb_&state=YytjeGVLSXVtQ3RFRTJ4UlVNUlZaWWdRbHE2b0JLSzNEQkZNYkRUcEJlWT0';
 
         return <<<EOT
 
 $('.addshopbtn').click(function () {
-    window.open('$url');
+    // window.open('$url');
+    layer.open({
+        type: 2,
+        area: ['60%', '90%'],
+        content: '$url'
+    });
     return false;
 });
+
 
 EOT;
     }
