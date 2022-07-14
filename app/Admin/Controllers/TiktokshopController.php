@@ -2,16 +2,20 @@
 
 namespace App\Admin\Controllers;
 
-use App\Models\TiktokShop;
+use App\Models\TiktokAccount;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Encore\Admin\Layout\Content;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Http\Request;
 use App\Tiktok\Shop;
+use Encore\Admin\Admin as SAdmin;
 
-use App\Admin\Extensions\Addtiktokshop;
+use App\Admin\Extensions\AuthTiktok;
+use App\Admin\Actions\Tiktok\Getshop;
+use App\Admin\Actions\Tiktok\Getproduct;
 
 class TiktokshopController extends AdminController
 {
@@ -29,24 +33,69 @@ class TiktokshopController extends AdminController
      */
     protected function grid()
     {
-        $grid = new Grid(new TiktokShop());
-        $grid->model()->where('aid', Admin::user()->id);
+        // $shop   = new Shop;
+        // print_r($shop->ActiveShops('ROW_fMKaBwAAAADXLEz_KeZemMx3gcCIoaPTk5xGimWCw3EUdZE_z9cC1ikyIBR6buCF1a1irhiiZ_rQFwZ2lgJDnz9duR8x9fWC-sHD54GPYlcS4cH1uUw5SvXjEQn-JPMpUdE4_pTgCSOhhaFhkhfBU-LMzmRwKoib'));
+        $request    = request();
+        $code   = $request->get('code');
+        $admin  = $request->get('aid');
+        $err    = $request->get('err');
+        $loginId    = Admin::user()->id;
+        $script     = '';
+        if($code){
+            if($loginId != $admin){
+                $script = 'layer.closeAll();layer.msg("不正确!");';
+            }else{
+                $shop   = new Shop;
+                $ress   = $shop->accesstoken($code);
+                $res    = json_decode($ress, true);
+                if(!isset($res['code']) || !isset($res['data'])){
+                    $script = 'layer.closeAll();layer.msg("获取店铺信息失败!");';
+                }else{
+                    $ta     = new TiktokAccount;
+                    $res    = $ta->au($res['data'], $loginId);
+                    $script = 'layer.closeAll();layer.msg("'.$res.'");setTimeout(function(){history.go(-1);}, 3000);';
+                }
+            }
+        }
+
+        $grid = new Grid(new TiktokAccount());
+        $grid->model()->where('aid', $loginId);
 
         $grid->column('id', __('编号'));
-        $grid->column('region', __('店铺地区'));
-        $grid->column('shop_id', __('商店id'));
-        $grid->column('shop_name', __('店铺名称'));
-        $grid->column('type', __('类型'));
+        $grid->column('region', __('账号地区'));
+        $grid->column('open_id', __('ID'));
+        $grid->column('seller_name', __('店铺名称'));
+        $grid->column('shop_num', __('店铺数量'));
+        $grid->column('product_num', __('商品数量'));
         $grid->column('status', __('状态'));
-        $grid->column('created_at', __('创建日期'));
+        $grid->column('created_at', __('创建日期'))->display(function($val){
+            return date('Y-m-d H:i:s', strtotime($val));
+        });
+        $grid->column('refresh_token_expire_in', __('授权到期日期'))->display(function($val){
+            return date('Y-m-d H:i:s', $val);
+        });
 
         $grid->disableCreateButton();
         $grid->disableExport();
 
 
         $grid->tools(function ($tools) {
-            $tools->append(new AddTiktokShop());
+            $tools->append(new AuthTiktok());
         });
+        $grid->actions(function ($actions) {
+            // 去掉删除
+            $actions->disableDelete();
+            // 去掉编辑
+            $actions->disableEdit();
+            // 去掉查看
+            $actions->disableView();
+            // dd($actions->getAttribute('id'));
+            $actions->add(new Getshop);
+            $actions->add(new Getproduct);
+        });
+        if($script){
+            SAdmin::script($script);
+        }
         return $grid;
     }
 
@@ -90,33 +139,5 @@ class TiktokshopController extends AdminController
         // $form->switch('status', __('Status'))->default(1);
 
         // return $form;
-    }
-
-    public function addnew(Request $request){
-        $code   = $request->get('code');
-        $admin  = $request->get('id');
-        $err    = $request->get('err');
-
-        if(!$code){
-            $errmsg         = $err;
-            if(!$errmsg){
-                $errmsg     = '未知错误!';
-            }
-            exit('<script>window.parent.layer.closeAll();window.parent.layer.msg("获取店铺信息失败!");</script>');
-        }
-
-        $shop   = new Shop;
-        $ress   = $shop->accesstoken($code);
-        $res    = json_decode($ress, true);
-        if(!isset($res['code']) || !isset($res['data'])){
-            dd($ress, $res);
-            exit('<script>window.parent.layer.closeAll();window.parent.layer.msg("获取店铺信息失败!");</script>');
-        }
-        dd($res);
-
-        $data                       = $res['data'];
-        $shopid                     = $data['openid'] ?? '';
-        $accesstoken                = $data['access_token'] ?? '';
-        $access_token_expire_in     = $data['access_token_expire_in'] ?? '';
     }
 }
