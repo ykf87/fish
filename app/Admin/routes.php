@@ -10,7 +10,8 @@ Route::group([
     'middleware'    => config('admin.route.middleware'),
     'as'            => config('admin.route.prefix') . '.',
 ], function (Router $router) {
-	$router->get('tiktok-shops/addnew', 'TiktokshopController@addnew')->name('tiktok-shops.addnew');
+	$router->get('tiktok-account/addnew', 'TiktokaccountController@addnew')->name('tiktok-account.addnew');
     $router->get('/', 'HomeController@index')->name('home');
+    $router->resource('tiktok-account', TiktokaccountController::class);
     $router->resource('tiktok-shops', TiktokshopController::class);
 });

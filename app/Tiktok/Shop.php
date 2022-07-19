@@ -11,6 +11,14 @@ class Shop{
 	private $accessTokenUrl 	= '/api/token/getAccessToken';
 	private $refressTokenUrl 	= '/api/token/refreshToken';
 	private $authUrl 			= 'https://auth.tiktok-shops.com/oauth/authorize';
+	public static $resion 		= [
+		'GB'	=> '英国',
+		'MY'	=> '马来',
+		'PH'	=> '菲律宾',
+		'SG'	=> '新加坡',
+		'TH'	=> '泰国',
+		'VN'	=> '越南'
+	];
 
 	public function __construct(){
 		$this->domain 		= rtrim(env('TIKTOKDOMAIN'), '/');
@@ -110,7 +118,7 @@ class Shop{
 
 	//获取产品列表
 	//从tk端获取,本地不缓存
-	public function ProductLists($access_token, $shopId, $page = 1, $limit = 20, $search_status = null){
+	public function ProductLists($access_token, $shopId, $page = 1, $limit = 100, $search_status = null){
 		$uri 		= '/api/products/search';
 		$arr 		= $this->defaultParams($uri, $access_token, ['shop_id' => $shopId]);
 
@@ -123,7 +131,17 @@ class Shop{
 		}
 
 		$res 		= Http::post($this->domain . $uri . '?' . http_build_query($arr), $data);
-		dd($res);
+		$res 		= json_decode($res, true);
+		if(!isset($res['code'])){
+			return '未知错误,可能超时或其他原因!';
+		}
+		if($res['code'] != 0){
+			return isset($res['message']) ? $res['message'] : 'Tiktok返回错误!';
+		}
+		if(!isset($res['data']['products'])){
+			return '未知错误,可能超时或其他原因-缺少data';
+		}
+		return $res['data'];
 	}
 }
 

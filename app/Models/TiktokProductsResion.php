@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TiktokShop extends Model{
-	use HasFactory;
+class TiktokProductsResion extends Model
+{
+    use HasFactory;
 }

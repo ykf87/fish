@@ -23,7 +23,7 @@ class CallbackController extends Controller{
         if((time()-$res['time']) > 60000){
             exit('<script>window.parent.layer.closeAll();window.parent.layer.msg("授权超时!");</script>');
         }else{
-        	exit('<script>window.parent.layer.load(1);window.parent.location="/admin/tiktok-shops?code='.$code.'&aid='.$res['id'].'";</script>');
+        	exit('<script>window.parent.layer.load(1);window.parent.location="/admin/tiktok-account?code='.$code.'&aid='.$res['id'].'";</script>');
         }
 	}
 }

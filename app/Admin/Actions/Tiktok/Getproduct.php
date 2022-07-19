@@ -9,23 +9,46 @@ use Encore\Admin\Facades\Admin;
 use App\Tiktok\Shop;
 use Illuminate\Support\Arr;
 
-use App\Models\TiktokShop;
+use App\Models\TiktokProduct;
+use App\Models\TiktokAccount;
 
-class Getproduct extends RowAction
-{
-    public $name = '同步商品';
+class Getproduct extends RowAction{
+    public $name = '拉取商品';
     public function dialog(){
-        $this->confirm('确定同步?');
+        $this->confirm('确定拉取?');
     }
 
     public function handle(Model $form){
-        $shopId     = '7494083165931603338';
-        $rs         = $form->checkAccess(Admin::user()->id);
+        set_time_limit(0);
+        $shopId     = $form->shop_id;
+        $model      = TiktokAccount::find($form->account_id);
+        $rs         = $model->checkAccess(Admin::user()->id);
         if($rs !== true){//需要重新登录
-            return $this->response()->error('授权已过期,请重新授权!')->refresh();
+            return $this->response()->error('授权已过期,请重新授权登录!')->refresh();
         }
         $shop       = new Shop;
-        $shop->ProductLists($form->access_token, $shopId);
-    }
+        $page       = 1;
+        $limit      = 100;
+        $list       = $shop->ProductLists($model->access_token, $shopId, $page, $limit);
+        if(is_string($list) || !isset($list['products'])){
+            return $this->response()->error($list)->refresh();
+        }
+        $products   = $list['products'];
+        TiktokProduct::addFromTiktok($products, $form->id, $model->id);
 
+        $total      = $list['total'] ?? 1;
+        $pages      = ceil($total / $limit);
+        if($pages > $page){
+            $start  = $page+1;
+            for(;$start <= $pages; $start++){
+                $list    = $shop->ProductLists($model->access_token, $shopId, $start, $limit);
+                if(is_string($list) || !isset($list['products'])){
+                    return $this->response()->error($list)->refresh();
+                }
+                TiktokProduct::addFromTiktok($list['products'], $form->id, $model->id);
+            }
+        }
+
+        return $this->response()->success('产品拉取完成!')->refresh();
+    }
 }
