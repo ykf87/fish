@@ -1,0 +1,48 @@
+.flex{
+	display: flex;
+}
+.flex.v{
+	align-items: center;
+}
+.flex.c{
+	justify-content: center;
+}
+.flex.c > .flex1{
+	text-align: center;
+	justify-content: center;
+}
+.flex1{
+	flex: 1;
+}
+
+
+.select, .input{
+	height: 35px;
+	line-height: 35px;
+	border: solid 1px #ddd;
+	outline: none;
+	margin-left: 10px;
+	font-weight: normal!important;
+}
+.ml10{
+	margin-left: 10px;
+}
+.select{
+	padding-left: 4px;
+}
+.input{
+	padding: 0 8px;
+}
+.input[type=number]{
+	padding-right: 0;
+}
+.myform{
+	margin:0 20px 20px;
+	font-size: 12px;
+}
+.myform label{
+	font-weight: normal!important;
+}
+.myform > .flex{
+	margin-top: 20px;
+}

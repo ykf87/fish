@@ -14,4 +14,5 @@ Route::group([
     $router->get('/', 'HomeController@index')->name('home');
     $router->resource('tiktok-account', TiktokaccountController::class);
     $router->resource('tiktok-shops', TiktokshopController::class);
+    $router->resource('tiktok-products', TiktokProductController::class);
 });

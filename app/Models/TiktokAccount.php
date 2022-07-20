@@ -8,6 +8,7 @@ use App\Tiktok\Shop;
 
 class TiktokAccount extends Model{
 	use HasFactory;
+    public $timestamps = false;
 
 	//add or update
 	public function au($data, $adminid){

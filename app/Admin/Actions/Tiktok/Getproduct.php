@@ -15,7 +15,7 @@ use App\Models\TiktokAccount;
 class Getproduct extends RowAction{
     public $name = '拉取商品';
     public function dialog(){
-        $this->confirm('确定拉取?');
+        $this->confirm('拉取商品只会拉取新的产品,不会更改原有的产品.确定拉取?');
     }
 
     public function handle(Model $form){

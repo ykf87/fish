@@ -7,4 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class TiktokShop extends Model{
 	use HasFactory;
+	public $timestamps = false;
 }
