@@ -26,7 +26,42 @@ $('.addshopbtn').click(function () {
         title: '根据以下条件设置产品佣金!',
         type: 1,
         area: ['40%', '80%'],
-        content: '$html'
+        content: '$html',
+        btn: ['设置'],
+        yes: function(i, o){
+            var pp = $(o).find('form');
+            var yongjin     = pp.find('input[name=commission]');
+            var yjval       = parseInt(yongjin.val());
+            if(!yjval || yjval <= 0 || yjval >= 100){
+                layer.msg('请正确填写佣金!');
+                yongjin.focus();
+                return false;
+            }
+            var cannext = false;
+            pp.find('.checks').each(function(){
+                if($(this).val()){
+                    cannext = true;
+                    return false;
+                }
+            });
+            if(cannext == false){
+                layer.msg('请设置条件!');
+                return false;
+            }
+            var confirmind = layer.confirm('确定修改吗?', function(){
+                console.log(pp.serialize());
+                layer.close(confirmind);
+                var loadingind = layer.load(2);
+                $.post('/admin/tiktok-products/commission', pp.serialize(), function(res){
+                    layer.close(loadingind);
+                    if(res.code != 200){
+                        layer.msg(res.msg);
+                        return false;
+                    }
+                    history.go(0);
+                });
+            });
+        }
     });
     return false;
 });

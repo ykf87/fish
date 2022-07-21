@@ -10,6 +10,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use Encore\Admin\Facades\Admin;
+use Illuminate\Http\Request;
 
 use App\Admin\Extensions\BatchComm;
 
@@ -57,7 +58,7 @@ class TiktokProductController extends AdminController
                 $str    = mb_substr($val, 0, ($maxlen-1), 'utf-8') . '...';
             }
             return '<a title="'.$val.'">'.$str.'</a>';
-        })->filter();
+        })->filter('like');
         $grid->column('create_time', __('上架时间'))->display(function($val){
             return $val ? date('Y-m-d H:i:s', $val) : '';
         })->filter('range', 'datetime');
@@ -65,7 +66,9 @@ class TiktokProductController extends AdminController
         $grid->column('currency', __('货币'));
         $grid->column('maxprice', __('最高价'))->filter('range')->sortable();
         $grid->column('minprice', __('最低价'))->filter('range')->sortable();
-        $grid->column('commission', __('佣金比例'))->filter('range')->sortable()->editable();
+        $grid->column('commission', __('佣金比例'))->display(function($val){
+            return $val ? ($val * 100) . '%' : '';
+        })->filter('range')->sortable()->editable();
         $grid->column('stocks', __('总库存'))->filter('range');
 
 
@@ -136,5 +139,86 @@ class TiktokProductController extends AdminController
         // $form->number('stocks', __('Stocks'));
 
         return $form;
+    }
+
+    //设置佣金
+    public function commission(Request $request){
+        $newComm        = (int)$request->input('commission');
+        $minprice       = (float)$request->input('minprice');
+        $maxprice       = (float)$request->input('maxprice');
+        $minstock       = (int)$request->input('minstock');
+        $maxstock       = (int)$request->input('maxstock');
+        $mincomm        = (int)$request->input('mincomm');
+        $maxcomm        = (int)$request->input('maxcomm');
+        $account_id     = (int)$request->input('account_id');
+        $shop_id        = (int)$request->input('shop_id');
+        $productid      = (int)$request->input('product_id');
+        $productname    = trim($request->input('product_name'));
+        if($newComm <= 0 || $newComm >= 100){
+            return response()->json([
+                'code'  => 500,
+                'msg'   => '佣金设置错误,请输入1-100整数!',
+            ]);
+        }
+        $canChange  = false;
+
+        $model      = new TiktokProduct;
+        if($minprice > 0){
+            $canChange  = true;
+            $model      = $model->where('minprice', '>=', $minprice);
+        }
+        if($maxprice > 0){
+            $canChange  = true;
+            $model      = $model->where('maxprice', '<=', $maxprice);
+        }
+        if($minstock > 0){
+            $canChange  = true;
+            $model      = $model->where('stocks', '>=', $minstock);
+        }
+        if($maxstock > 0){
+            $canChange  = true;
+            $model      = $model->where('stocks', '<=', $maxstock);
+        }
+        if($mincomm > 0){
+            $canChange  = true;
+            $model      = $model->where('commission', '>=', (float)($mincomm / 100));
+        }
+        if($maxcomm > 0){
+            $canChange  = true;
+            $model      = $model->where('commission', '<=', (float)($maxcomm/100));
+        }
+        if($account_id > 0){
+            $canChange  = true;
+            $model      = $model->where('account_id', $account_id);
+        }
+        if($shop_id > 0){
+            $canChange  = true;
+            $model      = $model->where('shop_id', $shop_id);
+        }
+        if($productid > 0){
+            $canChange  = true;
+            $model      = $model->where('id', $productid);
+        }
+        if($productname){
+            $canChange  = true;
+            $model      = $model->like('name', "%$account_id%");
+        }
+        if($canChange !== true){
+            return response()->json([
+                'code'  => 500,
+                'msg'   => '请设置条件,不允许没有任何条件设置佣金!',
+            ]);
+        }
+
+        if($model->update(['commission' => (float)($newComm/100)])){
+            return response()->json([
+                'code'  => 200,
+                'msg'   => '修改成功!',
+            ]);
+        }
+        return response()->json([
+            'code'  => 500,
+            'msg'   => '修改失败!',
+        ]);
     }
 }

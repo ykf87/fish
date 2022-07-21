@@ -46,3 +46,12 @@
 .myform > .flex{
 	margin-top: 20px;
 }
+
+.must:before{
+	content: "*";
+	font-weight: bold;
+	color: red;
+	position: relative;
+	top: 3px;
+	margin-right: 4px;
+}
