@@ -13,6 +13,7 @@ use Encore\Admin\Facades\Admin;
 use Illuminate\Http\Request;
 
 use App\Admin\Extensions\BatchComm;
+use Illuminate\Support\Facades\DB;
 
 class TiktokProductController extends AdminController
 {
@@ -144,6 +145,7 @@ class TiktokProductController extends AdminController
     //设置佣金
     public function commission(Request $request){
         $newComm        = (int)$request->input('commission');
+        $commTo         = (int)$request->input('commission_to');
         $minprice       = (float)$request->input('minprice');
         $maxprice       = (float)$request->input('maxprice');
         $minstock       = (int)$request->input('minstock');
@@ -163,6 +165,7 @@ class TiktokProductController extends AdminController
         $canChange  = false;
 
         $model      = new TiktokProduct;
+        // $model      = $model->query();
         if($minprice > 0){
             $canChange  = true;
             $model      = $model->where('minprice', '>=', $minprice);
@@ -201,7 +204,7 @@ class TiktokProductController extends AdminController
         }
         if($productname){
             $canChange  = true;
-            $model      = $model->like('name', "%$account_id%");
+            $model      = $model->where('name', 'like', "%$productname%");
         }
         if($canChange !== true){
             return response()->json([
@@ -210,7 +213,23 @@ class TiktokProductController extends AdminController
             ]);
         }
 
-        if($model->update(['commission' => (float)($newComm/100)])){
+        if($commTo > 0 && $commTo > $newComm){
+            $from       = (float)($newComm/100);
+            $to         = (float)($commTo/100);
+
+            $sql        = str_replace('?', '"%s"', $model->toSql());
+            $sql        = str_replace('select * from ', 'update ', $sql);
+            $sql        = str_replace('where', ' set `commission` = cast(rand()*('.$to.'-'.$from.')+'.$from.' as decimal(18,2)) where', $sql);
+            $params     = $model->getBindings();
+            $sqlr       = sprintf($sql, ...$params);
+
+            $rest       = DB::update($sqlr);
+        }else{
+            $setTo      = (float)($newComm/100);
+            $rest       = $model->update(['commission' => $setTo]);
+        }
+
+        if($rest){
             return response()->json([
                 'code'  => 200,
                 'msg'   => '修改成功!',

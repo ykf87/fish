@@ -31,5 +31,6 @@ Route::group([
 	    'as'			=> 'tiktok.'
 	], function(){
 		Route::get('callback', 'CallbackController@index')->name('callback');
+		Route::post('proinfo', 'CallbackController@proinfo')->name('proinfo');
 	});
 });

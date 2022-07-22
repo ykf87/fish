@@ -1,7 +1,10 @@
 <form class="layui-form layui-form-pane myform" action="">
 	<label class="flex v mps">
 		<span class="must">佣金: </span>
-		<input type="number" name="commission" placeholder="请填写 0-100的整数, %" class="input flex1">
+		<div class="ml10 flex1 flex v">
+			<input type="number" name="commission" placeholder="请填写 0-100的整数, 固定佣金设置这个值就可以" class="input flex1">
+			<input type="number" name="commission_to" placeholder="0-100, 如果填写,佣金将在范围内随机." class="input flex1">
+		</div>
 	</label>
 	<div class="flex v">
 		<span>价格区间: </span>

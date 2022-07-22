@@ -35,6 +35,32 @@ class TiktokProduct extends Model{
 		8	=> 'danger',
 	];
 
+	//更新TK产品
+	public static function updFromTiktok($row){
+		if(!isset($row['product_id'])){
+			return false;
+		}
+		$productid 		= $row['product_id'];
+		$product 		= self::where('pid', $productid)->first();
+		if(!$product){
+			return false;
+		}
+		if(!isset($row['category_list']) || !isset($row['skus']) || !isset($row['images']) || !isset($row['brand'])){
+			return false;
+		}
+
+		DB::transaction(function () {
+			$product->name 			= $row['product_name'];
+			$product->status 		= $row['product_status'];
+			$product->description 	= $row['description'];
+			$product->brand 		= $row['brand'];
+			$product->save();
+
+			$images 		= $row['images'];
+		}
+	}
+
+	//新增TK产品
 	public static function addFromTiktok($products, $shopid, $accountid){
 		$dbproids 		= self::where('shop_id', $shopid)->pluck('id', 'pid')->toArray();
 		$getproids 		= Arr::pluck($products, 'id', 'id');

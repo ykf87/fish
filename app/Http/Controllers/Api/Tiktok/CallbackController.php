@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Globals\Ens;
 
+use App\Models\TiktokProduct;
 
 class CallbackController extends Controller{
 	public function index(Request $request){
@@ -26,4 +27,20 @@ class CallbackController extends Controller{
         	exit('<script>window.parent.layer.load(1);window.parent.location="/admin/tiktok-account?code='.$code.'&aid='.$res['id'].'";</script>');
         }
 	}
+
+    //产品详情
+    public function proinfo(Request $request){
+        $data   = $request->input('data');
+        if(!$data){
+            return;
+        }
+        $data   = json_decode($data, true);
+        $data   = $data['data'] ?? null;
+        if(!$data){
+            return;
+        }
+
+        TiktokProduct::updFromTiktok($data);
+        // file_put_contents(__DIR__ . '/1.txt', $data['product_id']);
+    }
 }
