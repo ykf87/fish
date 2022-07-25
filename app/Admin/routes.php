@@ -16,4 +16,5 @@ Route::group([
     $router->resource('tiktok-account', TiktokaccountController::class);
     $router->resource('tiktok-shops', TiktokshopController::class);
     $router->resource('tiktok-products', TiktokProductController::class);
+    $router->resource('tiktok-orders', TiktokOrdersController::class);
 });

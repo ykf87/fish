@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 
 use App\Admin\Extensions\BatchComm;
 use Illuminate\Support\Facades\DB;
+use App\Admin\Actions\Post\BatchUpdateProduct;
 
 class TiktokProductController extends AdminController
 {
@@ -60,6 +61,7 @@ class TiktokProductController extends AdminController
             }
             return '<a title="'.$val.'">'.$str.'</a>';
         })->filter('like');
+        $grid->column('thumbs', __('图集'))->carousel(100, 100);
         $grid->column('create_time', __('上架时间'))->display(function($val){
             return $val ? date('Y-m-d H:i:s', $val) : '';
         })->filter('range', 'datetime');
@@ -71,6 +73,8 @@ class TiktokProductController extends AdminController
             return $val ? ($val * 100) . '%' : '';
         })->filter('range')->sortable()->editable();
         $grid->column('stocks', __('总库存'))->filter('range');
+        $grid->column('sales', __('销量'))->filter('range');
+        $grid->column('gmv', __('销售额'))->filter('range');
 
 
         $grid->disableCreateButton();
@@ -85,6 +89,9 @@ class TiktokProductController extends AdminController
         });
         $grid->tools(function ($tools) {
             $tools->append(new BatchComm());
+        });
+        $grid->batchActions(function ($batch) {
+            $batch->add(new BatchUpdateProduct());
         });
 
         return $grid;
@@ -154,7 +161,7 @@ class TiktokProductController extends AdminController
         $maxcomm        = (int)$request->input('maxcomm');
         $account_id     = (int)$request->input('account_id');
         $shop_id        = (int)$request->input('shop_id');
-        $productid      = (int)$request->input('product_id');
+        $productid      = trim($request->input('product_id'));
         $productname    = trim($request->input('product_name'));
         if($newComm <= 0 || $newComm >= 100){
             return response()->json([
@@ -198,9 +205,31 @@ class TiktokProductController extends AdminController
             $canChange  = true;
             $model      = $model->where('shop_id', $shop_id);
         }
-        if($productid > 0){
-            $canChange  = true;
-            $model      = $model->where('id', $productid);
+        if($productid){
+            $productid  = str_replace(' ', '', $productid);
+            $pids       = explode(',', $productid);
+            $pidsInt    = [];
+            foreach($pids as $pppid){
+                if(strpos($pppid, '-') !== false){
+                    $tmp    = explode('-', $pppid);
+                    if(isset($tmp[1])){
+                        $start  = (int)$tmp[0];
+                        $end    = (int)$tmp[1];
+                        for(; $start <= $end; $start++){
+                            $pidsInt[]  = $start;
+                        }
+                    }
+                }else{
+                    $tmp    = (int)$pppid;
+                    if($tmp > 0){
+                        $pidsInt[]  = $tmp;
+                    }
+                }
+            }
+            if(count($pidsInt)>0){
+                $canChange  = true;
+                $model      = $model->whereIn('id', $pidsInt);
+            }
         }
         if($productname){
             $canChange  = true;

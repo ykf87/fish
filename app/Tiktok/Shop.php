@@ -4,6 +4,9 @@ namespace App\Tiktok;
 use App\Globals\Ens;
 use App\Globals\Http;
 
+use Illuminate\Support\Facades\Storage;
+use GuzzleHttp;
+
 class Shop{
 	private $domain 			= '';
 	private $appid 				= '';
@@ -143,5 +146,165 @@ class Shop{
 		}
 		return $res['data'];
 	}
-}
 
+	//同步商品详情
+	public function ProductInfo(array $ids, string $accesstoken, int $shopid){
+		if(empty($ids)){
+			return false;
+		}
+		$idslen 	= count($ids);
+		$limit 		= 20;
+		$pages 		= ceil($idslen / $limit);
+
+		for($i = 1; $i <= $pages; $i++){
+			$params 	= [
+				'access_token'	=> $accesstoken,
+				'shop_id'		=> $shopid,
+				'callback'		=> route('api.tiktok.proinfo'),
+				'ids'			=> implode(',', array_slice($ids, ($i-1)*$limit, $limit)),
+			];
+			try {
+	            $http = new GuzzleHttp\Client;
+	            $response = $http->post(env('TIKTOK_GO_URL') . 'proinfo', [
+	                'form_params' => $params,
+	            ]);
+	            $res    = (string)$response->getBody();
+	            $res 	= json_decode($res, true);
+	            if(!isset($res['code']) || $res['code'] != 200){
+	            	return $res['msg'] ?? '未知错误!';
+	            }
+	        } catch (\Exception $e) {
+	            return $e->getMessage();
+	        }
+		}
+		return true;
+
+		
+		// if(empty($ids)){
+		// 	return false;
+		// }
+		// $params 	= [
+		// 	'-at'		=> $accesstoken,
+		// 	'-appkey'	=> $this->appid,
+		// 	'-secret'	=> $this->appkey,
+		// 	'-si'		=> $shopid,
+		// 	'-callback'=> route('api.tiktok.proinfo'),
+		// 	'-ids'		=> implode(',', $ids),
+		// ];
+
+		// $str 		= Storage::path('tkpros.exe');
+		// foreach($params as $k => $item){
+		// 	$str 	.= ' ' . $k . ' ' . $item;
+		// }
+		// $out 		= '';
+		// exec($str, $out);
+		// return $out;
+	}
+
+
+	//获取店铺所有订单列表
+	public function OrderLists($access_token, $shopId){
+		set_time_limit(0);
+		$uri 		= '/api/orders/search';
+		$arr 		= $this->defaultParams($uri, $access_token, ['shop_id' => $shopId]);
+		$orders 	= [];
+
+		$limit 		= 50;
+		$data 		= [
+			'page_size'			=> $limit,
+		];
+
+		//首次执行
+		$url 		= $this->domain . $uri . '?' . http_build_query($arr);
+		$res 		= $this->getodlist($url, $data);
+		if(!is_array($res)){
+			return $res;
+		}
+
+		try {
+			$pages 				= ceil((int)$res['total'] / $limit);
+			$data['cursor']		= $res['next_cursor'];
+			$hasMore 			= $res['more'];
+			$list 				= $res['order_list'] ?? [];
+			if(is_array($list) && !empty($list)){
+				foreach($list as $item){
+					$orders[] 		= ['order_id' => $item['order_id'], 'order_status' => $item['order_status']];
+				}
+			}
+
+			if($hasMore == true){
+				while(true) {
+					$res 		= $this->getodlist($url, $data);
+					if(!is_array($res)){
+						return $res;
+					}
+					$data['cursor']		= $res['next_cursor'];
+					$list 				= $res['order_list'] ?? [];
+					if(is_array($list) && !empty($list)){
+						foreach($list as $item){
+							$orders[] 		= ['order_id' => $item['order_id'], 'order_status' => $item['order_status']];
+						}
+					}
+					if($res['more'] !== true){
+						break;
+					}
+					if(--$pages < 1){
+						break;
+					}
+				}
+			}
+			return $orders;
+		} catch (\Exception $e) {
+			return $e->getMessage();
+		}
+	}
+
+	//真正执行获取订单的方法
+	private function getodlist($url, $data){
+		$res 		= Http::post($url, $data);
+		$res 		= json_decode($res, true);
+		if(!isset($res['code'])){
+			return '未知错误,可能超时或其他原因!';
+		}
+		if($res['code'] != 0){
+			return isset($res['message']) ? $res['message'] : 'Tiktok返回错误!';
+		}
+		if(!isset($res['data'])){
+			return '未知错误,可能超时或其他原因-缺少data';
+		}
+		return $res['data'];
+	}
+
+	//同步订单详情
+	public function SyncOrderInfo(array $ids, string $accesstoken, string $shopid){
+		if(empty($ids)){
+			return false;
+		}
+		$idslen 	= count($ids);
+		$limit 		= 20;
+		$pages 		= ceil($idslen / $limit);
+
+		for($i = 1; $i <= $pages; $i++){
+			$params 	= [
+				'access_token'	=> $accesstoken,
+				'shop_id'		=> $shopid,
+				'callback'		=> route('api.tiktok.proinfo'),
+				'ids'			=> implode(',', array_slice($ids, ($i-1)*$limit, $limit)),
+			];
+			try {
+				$http = new GuzzleHttp\Client;
+				$response = $http->post(env('TIKTOK_GO_URL') . 'orderinfo', [
+					'form_params' => $params,
+				]);
+				$res    = (string)$response->getBody();
+				$res 	= json_decode($res, true);
+				if(!isset($res['code']) || $res['code'] != 200){
+					return $res['msg'] ?? '未知错误!';
+				}
+			}catch (\Exception $e) {
+				return $e->getMessage();
+			}
+		}
+		return true;
+	}
+}

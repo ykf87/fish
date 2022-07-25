@@ -9,7 +9,11 @@ use App\Models\TiktokProductsSku;
 use App\Models\TiktokProductsResion;
 use App\Models\TiktokShop;
 use App\Models\TiktokAccount;
+use App\Models\TiktokCategory;
+use App\Models\TiktokProductsCategory;
 use Illuminate\Support\Arr;
+
+use Illuminate\Support\Facades\DB;
 
 class TiktokProduct extends Model{
 	use HasFactory;
@@ -45,19 +49,96 @@ class TiktokProduct extends Model{
 		if(!$product){
 			return false;
 		}
-		if(!isset($row['category_list']) || !isset($row['skus']) || !isset($row['images']) || !isset($row['brand'])){
+
+		if(!isset($row['category_list']) || !isset($row['images'])){
 			return false;
 		}
 
-		DB::transaction(function () {
+		DB::transaction(function () use($row, $product) {
 			$product->name 			= $row['product_name'];
 			$product->status 		= $row['product_status'];
 			$product->description 	= $row['description'];
-			$product->brand 		= $row['brand'];
-			$product->save();
+			if(isset($row['brand'])){
+				$product->brand 	= $row['brand'];
+			}
 
-			$images 		= $row['images'];
-		}
+			$images 				= [];
+			$thums 					= [];
+			foreach($row['images'] as $item){
+				$images[] 			= $item['url_list'][0];
+				$thums[]			= $item['thumb_url_list'][0];
+			}
+			// $images 				= array_flip(array_flip($images));
+			// $thums 					= array_flip(array_flip($thums));
+			$product->thumbs 		= implode(',', $thums);
+			$product->images 		= implode(',', $images);
+
+			$cates 				= [];
+			$proCateIds 		= [];
+			foreach($row['category_list'] as $item){
+				$cates[$item['id']] 		= [
+					'id'		=> $item['id'],
+					'parent'	=> $item['parent_id'],
+					'name'		=> $item['local_display_name'],
+					'is_leaf'	=> (int)$item['is_leaf'],
+				];
+				$proCateIds[]	= ['id' => $product->id, 'cateid' => $item['id']];
+			}
+			$getCateIds 		= array_keys($cates);
+			$hads 				= TiktokCategory::whereIn('id', $getCateIds)->pluck('id', 'id')->toArray();
+			$cateInsert 		= array_diff_key($cates, $hads);
+			if(count($cateInsert) > 0){
+				TiktokCategory::insert($cateInsert);
+			}
+			if(count($proCateIds) > 0){
+				TiktokProductsCategory::where('id', $product->id)->delete();
+				TiktokProductsCategory::insert($proCateIds);
+			}
+
+			$curr 				= '';
+			$minprice 			= 9999999999;
+			$maxprice			= 0;
+			$stock 				= 0;
+			if(isset($row['skus'])){
+				foreach($row['skus'] as $item){
+					$curr 		= $item['price']['currency'];
+					if($minprice > $item['price']['price_include_vat']){
+						$minprice 	= $item['price']['price_include_vat'];
+					}
+					if($maxprice < $item['price']['price_include_vat']){
+						$maxprice 	= $item['price']['price_include_vat'];
+					}
+					$stock 		+= $item['stock_infos'][0]['available_stock'];
+
+					$insertSkus[$item['id']]	= [
+						'pid'				=> $product->id,
+						'sid'				=> $item['id'],
+						'currency'			=> $item['price']['currency'],
+						'original_price'	=> $item['price']['original_price'],
+						'price_include_vat'	=> $item['price']['price_include_vat'],
+						'seller_sku'		=> $item['seller_sku'],
+						'stock'				=> $item['stock_infos'][0]['available_stock'],
+					];
+				}
+				$hads 			= TiktokProductsSku::where('pid', $product->id)->pluck('pid', 'sid')->toArray();
+				$insertSkusNew 	= array_diff_key($insertSkus, $hads);
+				$delSkus 		= array_diff_key($hads, $insertSkus);
+				if(count($delSkus) > 0){
+					TiktokProductsSku::where('pid', $product->id)->whereIn('sid', array_keys($delSkus))->delete();
+				}
+				if(count($insertSkusNew) > 0){
+					TiktokProductsSku::insert($insertSkusNew);
+				}
+				$product->currency 	= $curr;
+				if($maxprice>=$minprice){
+					$product->maxprice 	= $maxprice;
+					$product->minprice 	= $minprice;
+				}
+				$product->stocks 	= $stock;
+			}
+
+			$product->save();
+		});
 	}
 
 	//新增TK产品
@@ -163,5 +244,9 @@ class TiktokProduct extends Model{
 
 		TiktokShop::where('id', $shopid)->update(['product_number' => self::where('shop_id', $shopid)->count()]);
 		TiktokAccount::where('id', $accountid)->update(['product_num' => self::where('account_id', $accountid)->count()]);
+	}
+
+	public function getThumbsAttribute($val){
+		return explode(',', $val);
 	}
 }

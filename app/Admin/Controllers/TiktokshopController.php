@@ -11,6 +11,7 @@ use Encore\Admin\Show;
 use Encore\Admin\Facades\Admin;
 use App\Tiktok\Shop;
 use App\Admin\Actions\Tiktok\Getproduct;
+use App\Admin\Actions\Tiktok\Getorder;
 
 class TiktokshopController extends AdminController
 {
@@ -59,6 +60,7 @@ class TiktokshopController extends AdminController
             $actions->disableView();
 
             $actions->add(new Getproduct);
+            $actions->add(new Getorder);
         });
         return $grid;
     }

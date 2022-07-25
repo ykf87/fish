@@ -7,7 +7,6 @@ use Encore\Admin\Grid\Tools\AbstractTool;
 use Illuminate\Support\Facades\Request;
 use Encore\Admin\Facades\Admin as uadmin;
 
-use App\Tiktok\Shop;
 use App\Models\TiktokAccount;
 use App\Models\TiktokShop;
 
@@ -16,17 +15,22 @@ class BatchComm extends AbstractTool{
         $admin_id       = uadmin::user()->id;
         $accounts       = TiktokAccount::where('aid', $admin_id)->pluck('seller_name', 'id')->toArray();
         $shops          = TiktokShop::where('aid', $admin_id)->pluck('shop_region', 'id')->toArray();
-        $html           = str_replace("\r\n", '', view('admin.tiktok.setcomm', [
+        // $html           = str_replace("\r\n", '', view('admin.tiktok.setcomm', [
+        //     'accounts'  => $accounts,
+        //     'shops'     => $shops,
+        // ]));
+        $html           = view('admin.tiktok.setcomm', [
             'accounts'  => $accounts,
             'shops'     => $shops,
-        ]));
+        ]);
+        uadmin::html(response($html)->getContent());
         return <<<EOT
 $('.addshopbtn').click(function () {
     layer.open({
         title: '根据以下条件设置产品佣金!',
         type: 1,
         area: ['40%', '80%'],
-        content: '$html',
+        content: $('.nllppsdf:eq(0)').html(),
         btn: ['设置'],
         yes: function(i, o){
             var pp = $(o).find('form');
