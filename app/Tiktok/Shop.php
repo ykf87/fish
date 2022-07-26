@@ -280,6 +280,15 @@ class Shop{
 		if(empty($ids)){
 			return false;
 		}
+
+
+		// $uri 		= '/api/orders/detail/query';
+		// $arr 		= $this->defaultParams($uri, $accesstoken, ['shop_id' => $shopid]);
+		// $url 		= $this->domain . $uri . '?' . http_build_query($arr);
+		// $res 		= Http::post($url, ['order_id_list' => $ids]);
+		// dd($url, $res);
+
+
 		$idslen 	= count($ids);
 		$limit 		= 20;
 		$pages 		= ceil($idslen / $limit);
@@ -288,7 +297,7 @@ class Shop{
 			$params 	= [
 				'access_token'	=> $accesstoken,
 				'shop_id'		=> $shopid,
-				'callback'		=> route('api.tiktok.proinfo'),
+				'callback'		=> route('api.tiktok.orderinfo'),
 				'ids'			=> implode(',', array_slice($ids, ($i-1)*$limit, $limit)),
 			];
 			try {

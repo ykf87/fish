@@ -30,8 +30,8 @@ class Getorder extends RowAction{
         }
         $shop       = new Shop;
 
-$shop->SyncOrderInfo(['576551124170148789', '576460901765384600'], $model->access_token, $shopId);
-dd('-----');
+$res    = $shop->SyncOrderInfo(['576551124170148789', '576460901765384600'], $model->access_token, $shopId);
+dd($res);
 
         $list       = $shop->OrderLists($model->access_token, $shopId);
         if(!is_array($list)){

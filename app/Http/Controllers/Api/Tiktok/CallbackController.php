@@ -43,4 +43,20 @@ class CallbackController extends Controller{
         TiktokProduct::updFromTiktok($data);
         // file_put_contents(__DIR__ . '/1.txt', $data['product_id']);
     }
+
+    //订单详情
+    public function orderinfo(Request $request){
+        $data   = $request->input('data');
+        if(!$data){
+            return;
+        }
+        $data   = json_decode($data, true);
+        $data   = $data['data'] ?? null;
+        if(!$data){
+            return;
+        }
+
+        TiktokProduct::updFromTiktok($data);
+        // file_put_contents(__DIR__ . '/1.txt', $data['product_id']);
+    }
 }
