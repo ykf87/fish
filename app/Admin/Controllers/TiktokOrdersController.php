@@ -12,6 +12,7 @@ use Encore\Admin\Show;
 use App\Admin\Extensions\BatchGetOrder;
 
 use Encore\Admin\Facades\Admin;
+use Encore\Admin\Widgets\Table;
 
 class TiktokOrdersController extends AdminController
 {
@@ -49,17 +50,23 @@ class TiktokOrdersController extends AdminController
             return $shops[$val] ?? $val;
         })->filter($shops);
         $grid->column('order_id', __('订单号'))->filter('like');
-        $grid->column('status', __('订单状态'))->using(TiktokOrder::$status)->filter(TiktokOrder::$status);//->label(TiktokOrder::$statusLabel);
         $grid->column('payment', __('付款方式'))->hide();
         $grid->column('paytime', __('支付时间'))->hide();
         $grid->column('shipment', __('配送方式'))->hide();
-        $grid->column('shipping_fee', __('快递费'))->hide();
         $grid->column('addtime', __('下单时间'))->display(function($val){
             return $val ? date('Y-m-d H:i:s', $val) : null;
         })->filter('range');
+        $grid->column('pro_num', __('产品数量'))->modal('订单产品详情', function ($model) {
+            $comments = $model->pros()->take(10)->get()->map(function ($comment) {
+                return $comment->only(['sku_name', 'quantity', 'sku_sale_price']);
+            });
+
+            return new Table(['属性名称', '数量', '单价'], $comments->toArray());
+        })->sortable();
         $grid->column('remark', __('买家备注'))->hide();
         $grid->column('currency', __('货币'));
         $grid->column('sub_total', __('产品总额'))->filter('range');
+        $grid->column('shipping_fee', __('快递费'))->hide();
         $grid->column('total_amount', __('付款金额'))->filter('range');
         $grid->column('resion', __('收货地区'));
         $grid->column('fulladdress', __('收货地址'))->hide()->filter('like');
@@ -67,6 +74,7 @@ class TiktokOrdersController extends AdminController
         $grid->column('phone', __('联系电话'))->display(function($val){
             return $val;
         })->filter('like');
+        $grid->column('status', __('订单状态'))->using(TiktokOrder::$status)->filter(TiktokOrder::$status);//->label(TiktokOrder::$statusLabel);
         // $grid->column('buyer_uid', __('Buyer uid'));
 
 

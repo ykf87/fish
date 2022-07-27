@@ -283,7 +283,7 @@ class Shop{
 
 
 		// $uri 		= '/api/orders/detail/query';
-		// $arr 		= $this->defaultParams($uri, $accesstoken, ['shop_id' => $shopid]);
+		// $arr 		= $this->defaultParams($uri, $accesstoken, ['shop_id' => $shopid, 'orderSeller' => '7494083165931603338']);
 		// $url 		= $this->domain . $uri . '?' . http_build_query($arr);
 		// $res 		= Http::post($url, ['order_id_list' => $ids]);
 		// dd($url, $res);

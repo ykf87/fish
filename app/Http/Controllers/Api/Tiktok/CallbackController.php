@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Api\Tiktok;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Globals\Ens;
+use Illuminate\Support\Arr;
 
 use App\Models\TiktokProduct;
+use App\Models\TiktokOrder;
+use Illuminate\Support\Facades\DB;
 
 class CallbackController extends Controller{
 	public function index(Request $request){
@@ -52,11 +55,32 @@ class CallbackController extends Controller{
         }
         $data   = json_decode($data, true);
         $data   = $data['data'] ?? null;
-        if(!$data){
+        if(!$data || !isset($data['order_list'])){
             return;
         }
 
-        TiktokProduct::updFromTiktok($data);
-        // file_put_contents(__DIR__ . '/1.txt', $data['product_id']);
+        $list       = $data['order_list'];
+        $getOrders  = [];
+        foreach($list as $item){
+            $getOrders[$item['order_id']]   = $item;
+        }
+
+        $dbOrders   = TiktokOrder::whereIn('order_id', array_keys($getOrders))->get();
+        foreach($dbOrders as $item){
+            if(isset($getOrders[$item->order_id])){
+                $item->updateOrder($getOrders[$item->order_id]);
+            }
+        }
+    }
+
+    //汇总一些数据
+    public function aggregate(){
+        //汇总产品销量
+        $sql        = 'update tiktok_products as p inner join (select product_id, sum(quantity) as sales, sum(sku_sale_price) as gmv from tiktok_order_products group by product_id) as r on r.product_id = p.pid set p.sales = r.sales, p.gmv = r.gmv';
+        DB::unprepared($sql);
+
+        //汇总商店销量
+        $sql        = 'update tiktok_shops as s inner join (select shop_id, sum(sales) as sales, sum(gmv) as gmv from tiktok_products group by shop_id) as r on r.shop_id = s.id set s.sales = r.sales, s.gmv = r.gmv';
+        DB::unprepared($sql);
     }
 }

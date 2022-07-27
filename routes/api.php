@@ -33,10 +33,6 @@ Route::group([
 		Route::get('callback', 'CallbackController@index')->name('callback');
 		Route::post('proinfo', 'CallbackController@proinfo')->name('proinfo');
 		Route::post('orderinfo', 'CallbackController@orderinfo')->name('orderinfo');
-
-		Route::post('text', function(){
-			echo file_get_contents("php://input");
-			exit();
-		});
+		Route::get('aggregate', 'CallbackController@aggregate')->name('aggregate');
 	});
 });

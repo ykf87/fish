@@ -47,6 +47,7 @@ class TiktokshopController extends AdminController
             return Shop::$resion[$val] ?? $val;
         });
         $grid->column('product_number', __('已拉取产品数量'));
+        $grid->column('sales', __('订单总数'));
 
 
         $grid->disableCreateButton();

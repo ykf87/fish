@@ -20,6 +20,7 @@ class Getorder extends RowAction{
     }
 
     public function handle(Model $form){
+        // if($form extends)
         set_time_limit(0);
         $admin_id   = Admin::user()->id;
         $shopId     = $form->shop_id;
@@ -30,23 +31,31 @@ class Getorder extends RowAction{
         }
         $shop       = new Shop;
 
-$res    = $shop->SyncOrderInfo(['576551124170148789', '576460901765384600'], $model->access_token, $shopId);
-dd($res);
+// $res    = $shop->SyncOrderInfo(['576460901740611992', '576460901765384600'], $model->access_token, $shopId);
+// dd($res);
 
         $list       = $shop->OrderLists($model->access_token, $shopId);
         if(!is_array($list)){
             return $this->response()->error($list)->refresh();
         }
-        $orderIds   = Arr::pluck($list, 'order_id');
-        $dborders   = TiktokOrder::whereIn('order_id', $orderIds)->pluck('status', 'order_id')->toArray();
+        $orderIds       = Arr::pluck($list, 'order_id');
+        $dborders       = [];
+        $toktokOrders   = TiktokOrder::whereIn('order_id', $orderIds)->get()->toArray();
+        foreach($toktokOrders as $item){
+            $dborders[$item['order_id']] = $item;
+        }
 
         $inarr      = [];
         $ccc        = 0;
         $uuu        = 0;
         $iii        = 0;
+        $orderids   = [];
         foreach($list as $item){
             if(isset($dborders[$item['order_id']])){
-                if($dborders[$item['order_id']] == $item['order_status']){
+                if(!$dborders[$item['order_id']]['addtime']){
+                    $orderids[]         = $item['order_id'];
+                }
+                if($dborders[$item['order_id']]['status'] == $item['order_status']){
                     $ccc++;
                     continue;
                 }
@@ -60,12 +69,22 @@ dd($res);
                     'order_id'      => $item['order_id'],
                     'status'        => $item['order_status']
                 ];
+                $orderids[]         = $item['order_id'];
             }
         }
         $iii        = count($inarr);
         if($iii > 0){
             TiktokOrder::insert($inarr);
         }
+        if(count($orderids)){
+            $page   = 1;
+            $limit  = 20;
+            $pages  = ceil(count($orderids) / $limit);
+            for(;$page<=$pages;$page++){
+                $shop->SyncOrderInfo(array_slice($orderids, ($page-1)*$limit, $limit), $model->access_token, $shopId);
+            }
+        }
+
 
         return $this->response()->success("订单拉取完成,更新: $uuu 个, 新增: $iii 个, 未处理: $ccc 个")->refresh();
     }
