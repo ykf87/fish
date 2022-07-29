@@ -246,6 +246,68 @@ class TiktokProduct extends Model{
 		TiktokAccount::where('id', $accountid)->update(['product_num' => self::where('account_id', $accountid)->count()]);
 	}
 
+	//前端查询
+	public function frontList(int $page, int $limit, $q, $cate, $sort){
+		if($page < 1){
+			$page 	= 1;
+		}
+		if($limit < 1){
+			$limit 	= 20;
+		}
+		$obj 		= DB::table('tiktok_products as p')->select('p.id', 'p.pid', 'p.images as image', 'p.name as title', 'p.stocks as stock', 'p.sales as cumulative_sales', 'p.minprice as unit_price', 'p.commission as commission_ratio', 'p.commission_price as commission', 'p.currency');
+		if($q){
+			$obj 	= $obj->where('p.name', 'like', "%$q%");
+		}
+		if($cate > 0){
+			$cateids 		= TiktokCategory::where('parent', $cate)->pluck('id')->toArray();
+			$cateids[] 		= $cate;
+			$cateids 		= array_flip(array_flip($cateids));
+
+			$obj 			= $obj->rightJoin('tiktok_products_categories as c', 'c.id', '=', 'p.id')->whereIn('c.cateid', $cateids);
+		}
+		switch($sort){
+			case 1://到手价升序
+				$obj 		= $obj->orderBy('p.maxprice');
+			break;
+			case 2://到手价降序
+				$obj 		= $obj->orderByDesc('p.maxprice');
+			break;
+			case 3://佣金比例升序
+				$obj 		= $obj->orderBy('p.commission');
+			break;
+			case 4://佣金比例降序
+				$obj 		= $obj->orderByDesc('p.commission');
+			break;
+			case 5://佣金金额升序
+				$obj 		= $obj->orderBy('p.commission_price');
+			break;
+			case 6://佣金金额降序
+				$obj 		= $obj->orderByDesc('p.commission_price');
+			break;
+			case 7://总销量降序
+				$obj 		= $obj->orderByDesc('p.sales');
+			break;
+			case 8://24小时内销量降序
+				$mms 		= time() - 3600*24;
+				$obj 		= $obj->leftJoin('tiktok_order_products as o', 'o.product_id', '=', 'p.pid')->where('addtime', '>=', $mms)->orderByDesc('p.sales');
+			break;
+			case 9://2小时内销售降序
+				$mms 		= time() - 3600*2;
+				$obj 		= $obj->leftJoin('tiktok_order_products as o', 'o.product_id', '=', 'p.pid')->where('addtime', '>=', $mms)->orderByDesc('p.sales');
+			break;
+			default:
+				$obj 		= $obj->inRandomOrder();
+		}
+
+		$total 		= $obj->count();
+		return [
+			'page'			=> $page,
+			'limit'			=> $limit,
+			'total_limit'	=> $total,
+			'product_lists'	=> $obj->offset(($page-1)*$limit)->limit($limit)->get(),
+		];
+	}
+
 	public function getThumbsAttribute($val){
 		return explode(',', $val);
 	}

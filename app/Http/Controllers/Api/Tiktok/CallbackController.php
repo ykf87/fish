@@ -12,6 +12,7 @@ use App\Models\TiktokOrder;
 use Illuminate\Support\Facades\DB;
 
 class CallbackController extends Controller{
+    //后台回调
 	public function index(Request $request){
 		echo '<center style="padding: 50px 0;">授权处理中.....</center>';
 		$state      = $request->get('state');
@@ -30,6 +31,11 @@ class CallbackController extends Controller{
         	exit('<script>window.parent.layer.load(1);window.parent.location="/admin/tiktok-account?code='.$code.'&aid='.$res['id'].'";</script>');
         }
 	}
+
+    //前端登录回调
+    public function userLogin(Request $request){
+        
+    }
 
     //产品详情
     public function proinfo(Request $request){
@@ -76,11 +82,16 @@ class CallbackController extends Controller{
     //汇总一些数据
     public function aggregate(){
         //汇总产品销量
-        $sql        = 'update tiktok_products as p inner join (select product_id, sum(quantity) as sales, sum(sku_sale_price) as gmv from tiktok_order_products group by product_id) as r on r.product_id = p.pid set p.sales = r.sales, p.gmv = r.gmv';
+        $sql    = 'update tiktok_products set sales = 0, gmv = 0, commissioned = 0 where sales > 0';
+        DB::unprepared($sql);
+        $sql        = 'update tiktok_products as p inner join (select product_id as product_id, sum(quantity) as sales, sum(sku_sale_price) as gmv, sum(commissioned) as comm from tiktok_order_products group by product_id) as r on r.product_id = p.pid set p.sales = r.sales, p.gmv = r.gmv, p.commissioned = r.comm';
         DB::unprepared($sql);
 
+
         //汇总商店销量
-        $sql        = 'update tiktok_shops as s inner join (select shop_id, sum(sales) as sales, sum(gmv) as gmv from tiktok_products group by shop_id) as r on r.shop_id = s.id set s.sales = r.sales, s.gmv = r.gmv';
+        $sql    = 'update tiktok_shops set sales = 0, gmv = 0 where sales > 0';
+        DB::unprepared($sql);
+        $sql        = 'update tiktok_shops as s inner join (select shopid, count(id) as sales, sum(total_amount) as gmv from tiktok_orders group by shopid) as r on r.shopid = s.id set s.sales = r.sales, s.gmv = r.gmv';
         DB::unprepared($sql);
     }
 }

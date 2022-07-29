@@ -39,6 +39,7 @@ class TiktokOrdersController extends AdminController
         if(request()->get('shop_id')){
             $grid->model()->where('shop_id', request()->get('shop_id'));
         }
+        $grid->model()->orderByDesc('addtime');
         $accounts       = TiktokAccount::where('aid', $admin_id)->pluck('seller_name', 'id')->toArray();
         $shops          = TiktokShop::where('aid', $admin_id)->pluck('shop_region', 'id')->toArray();
 

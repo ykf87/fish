@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\TiktokOrderProduct;
+use App\Models\TiktokProduct;
+use Illuminate\Support\Arr;
 class TiktokOrder extends Model{
 	use HasFactory;
     public $timestamps = false;
@@ -26,8 +28,9 @@ class TiktokOrder extends Model{
 	}
 
 	public function updateOrder(array $order){
+		// print_r($order);
 		$this->payment 			= $order['payment_method'];
-		$this->shipment 		= $order['shipping_provider'];
+		$this->shipment 		= $order['shipping_provider'] ?? null;
 		$this->addtime 			= $order['create_time'] / 1000;
 		$this->paytime 			= $order['paid_time'] / 1000;
 		$this->remark 			= $order['buyer_message'];
@@ -45,8 +48,10 @@ class TiktokOrder extends Model{
 		$this->buyer_uid 		= $order['buyer_uid'];
 
 		$orderProducts 			= [];
+		$getProducts 			= Arr::pluck($order['item_list'], 'product_id');
+		$dbProducts 			= TiktokProduct::whereIn('pid', $getProducts)->pluck('commission', 'pid')->toArray();
 		foreach($order['item_list'] as $item){
-			$orderProducts[]	= [
+			$rrr	= [
 				'id' 			=> $this->id,
 				'product_id' 	=> $item['product_id'],
 				'sku_id'		=> $item['sku_id'],
@@ -54,7 +59,12 @@ class TiktokOrder extends Model{
 				'quantity'		=> $item['quantity'],
 				'sku_image'		=> $item['sku_image'],
 				'sku_sale_price'=> $item['sku_sale_price'],
+				'addtime'		=> $this->addtime,
 			];
+			if(isset($dbProducts[$item['product_id']]) && $dbProducts[$item['product_id']] > 0 && $dbProducts[$item['product_id']] < 1){
+				$rrr['commissioned']		= $item['sku_sale_price'] * $dbProducts[$item['product_id']];
+			}
+			$orderProducts[] 	= $rrr;
 		}
 		$this->pro_num 			= count($orderProducts);
 		DB::transaction(function () use($orderProducts) {

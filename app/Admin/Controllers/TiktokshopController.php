@@ -46,8 +46,9 @@ class TiktokshopController extends AdminController
         $grid->column('shop_region', __('所在地区'))->display(function($val){
             return Shop::$resion[$val] ?? $val;
         });
-        $grid->column('product_number', __('已拉取产品数量'));
-        $grid->column('sales', __('订单总数'));
+        $grid->column('product_number', __('已拉取产品数量'))->sortable();
+        $grid->column('sales', __('订单总数'))->sortable();
+        $grid->column('gmv', __('销售额'))->sortable();
 
 
         $grid->disableCreateButton();

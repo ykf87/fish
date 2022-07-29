@@ -41,6 +41,7 @@ class TiktokProductController extends AdminController
         if(request()->get('shop_id')){
             $grid->model()->where('shop_id', request()->get('shop_id'));
         }
+        $grid->model()->orderByDesc('create_time');
         $accounts       = TiktokAccount::where('aid', $admin_id)->pluck('seller_name', 'id')->toArray();
         $shops          = TiktokShop::where('aid', $admin_id)->pluck('shop_region', 'id')->toArray();
 
@@ -48,7 +49,7 @@ class TiktokProductController extends AdminController
         $grid->column('account_id', __('授权账号'))->display(function($val) use($accounts){
             return $accounts[$val] ?? $val;
         })->filter($accounts);
-        $grid->column('shop_id', __('店铺地区'))->display(function($val) use($shops){
+        $grid->column('shop_id', __('地区'))->display(function($val) use($shops){
             return $shops[$val] ?? $val;
         })->filter($shops);
         $grid->column('pid', __('产品id'))->hide();
@@ -73,8 +74,9 @@ class TiktokProductController extends AdminController
             return $val ? ($val * 100) . '%' : '';
         })->filter('range')->sortable()->editable();
         $grid->column('stocks', __('总库存'))->filter('range');
-        $grid->column('sales', __('销量'))->filter('range');
-        $grid->column('gmv', __('销售额'))->filter('range');
+        $grid->column('sales', __('销量'))->filter('range')->sortable();
+        $grid->column('gmv', __('销售额'))->filter('range')->sortable();
+        $grid->column('commissioned', __('佣金'))->filter('range')->sortable();
 
 
         $grid->disableCreateButton();
@@ -259,6 +261,8 @@ class TiktokProductController extends AdminController
         }
 
         if($rest){
+            $sql        = 'update tiktok_products set commission_price = (maxprice*commission) where commission_price is null and commission > 0 and commission<1';
+            DB::unprepared($sql);
             return response()->json([
                 'code'  => 200,
                 'msg'   => '修改成功!',

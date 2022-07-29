@@ -31,8 +31,21 @@ Route::group([
 	    'as'			=> 'tiktok.'
 	], function(){
 		Route::get('callback', 'CallbackController@index')->name('callback');
+		Route::get('login', 'CallbackController@userLogin')->name('login');
 		Route::post('proinfo', 'CallbackController@proinfo')->name('proinfo');
 		Route::post('orderinfo', 'CallbackController@orderinfo')->name('orderinfo');
 		Route::get('aggregate', 'CallbackController@aggregate')->name('aggregate');
+		Route::group([
+			'prefix'        => 'index/',
+		    'as'			=> 'index.'
+		], function(){
+			Route::get('index', 'IndexController@index')->name('index');
+		});
+		Route::group([
+			'prefix'        => 'product/',
+		    'as'			=> 'product.'
+		], function(){
+			Route::get('options', 'ProductController@options')->name('options');
+		});
 	});
 });

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Tiktok\Shop;
 
+
 class TiktokAccount extends Model{
 	use HasFactory;
     public $timestamps = false;
@@ -16,6 +17,7 @@ class TiktokAccount extends Model{
         if(!$shopId){
             return '获取店铺失败!';
         }
+
 
         $arr        = [
             'status'    => 1

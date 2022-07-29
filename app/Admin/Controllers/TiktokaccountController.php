@@ -15,6 +15,8 @@ use Encore\Admin\Admin as SAdmin;
 
 use App\Admin\Extensions\AuthTiktok;
 use App\Admin\Actions\Tiktok\Getshop;
+use App\Safety\Aess;
+
 
 class TiktokaccountController extends AdminController
 {
@@ -32,6 +34,8 @@ class TiktokaccountController extends AdminController
      */
     protected function grid()
     {
+        // $res    = Aess::decode(base64_decode('Z3llMXlzZkl6QmVKS0ZhUldlRWJabUpyRXZHSE5HM3p0SmtrS0x2VG9RNThoZGRmTVQ3MFZFVFREOXNmSHY1Vg=='));
+        // dd($res);
         // $shop   = new Shop;
         // print_r($shop->ActiveShops('ROW_fMKaBwAAAADXLEz_KeZemMx3gcCIoaPTk5xGimWCw3EUdZE_z9cC1ikyIBR6buCF1a1irhiiZ_rQFwZ2lgJDnz9duR8x9fWC-sHD54GPYlcS4cH1uUw5SvXjEQn-JPMpUdE4_pTgCSOhhaFhkhfBU-LMzmRwKoib'));
         $request    = request();

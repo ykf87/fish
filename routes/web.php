@@ -16,3 +16,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('redirect', 'App\Http\Controllers\Api\Tiktok\CallbackController@userLogin')->name('login');
