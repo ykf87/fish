@@ -311,4 +311,21 @@ class TiktokProduct extends Model{
 	public function getThumbsAttribute($val){
 		return explode(',', $val);
 	}
+
+	//产品列表
+	public function list($page, $limit, $days = 0){
+		if($page < 1){
+			$page 	= 1;
+		}
+		if($limit < 1){
+			$limit 	= 20;
+		}
+
+
+		$obj 		= self::select('p.id', 'p.pid as product_id', 'p.images as image', 'p.name as title', 'p.minprice as unit_price', 'p.commission as commission_ratio', 'p.gmv as cumulative_sales', 'p.commissioned as accumulated_commission', 'p.currency');
+		if($days > 0){
+
+		}
+		// return self::select('id', 'pid as product_id', 'images as image', 'name as title', 'minprice as unit_price', 'commission as commission_ratio', 'gmv as cumulative_sales', 'commissioned as accumulated_commission', 'currency'->orderByDesc('gmv')->offset(($page-1)*$limit)->limit($limit);
+	}
 }

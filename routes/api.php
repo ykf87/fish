@@ -40,6 +40,7 @@ Route::group([
 		    'as'			=> 'index.'
 		], function(){
 			Route::get('index', 'IndexController@index')->name('index');
+			Route::get('ranking', 'IndexController@ranking')->name('ranking');
 		});
 		Route::group([
 			'prefix'        => 'product/',
