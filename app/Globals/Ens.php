@@ -5,7 +5,7 @@ namespace App\Globals;
 class Ens{
     public static $versionKeys = [
         100   => [
-            'key'   => 'uG7hF$gK!ZYmp4ok',
+            'key'   => 'nytSDzCa$G6*hy-i',
             'iv'    => '0zfeYUf5HP2qaZ8d',
         ],
     ];
@@ -48,7 +48,8 @@ class Ens{
     public static function decrypt($token, $versioncode = 100){
         $key        = self::$versionKeys[$versioncode]['key'];
         $iv         = self::$versionKeys[$versioncode]['iv'];
-         if(self::$method == 'AES-128-ECB'){
+        $token      = str_replace(['_', '-'], ['/', '+'], $token);
+        if(self::$method == 'AES-128-ECB'){
             return openssl_decrypt(base64_decode($token),self::$method,$key, self::$padding);
         }
         return openssl_decrypt(base64_decode($token),self::$method,$key, self::$padding,$iv);

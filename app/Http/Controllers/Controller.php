@@ -19,4 +19,14 @@ class Controller extends BaseController{
 			'data'=> $data,
 		]);
 	}
+	public function error($msg = '', $data = null){
+		if(!$msg){
+			$msg 	= 'Error';
+		}
+		return response()->json([
+			'code'=> 200,
+			'msg'=> __($msg),
+			'data'=> $data,
+		]);
+	}
 }

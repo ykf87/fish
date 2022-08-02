@@ -6,9 +6,29 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\TiktokProduct;
+use App\Models\TiktokCategory;
 
 class ProductController extends Controller{
-	//首页
+	//选品首页
+	public function index(Request $request){
+		$cateLists 		= TiktokCategory::where('parent', 0)->pluck('name', 'id');
+		$banner 		= [
+			[
+				'id'	=> 1,
+				'des'	=> 'test',
+				'image'	=> '',
+				'url'	=> '',
+			],[
+				'id'	=> 1,
+				'des'	=> 'test',
+				'image'	=> '',
+				'url'	=> '',
+			]
+		];
+		return $this->success(['category_lists' => $cateLists, 'banner' => $banner]);
+	}
+
+	//产品首页
 	public function options(Request $request){
 		$q 			= trim($request->input('search'));
 		$c 			= (int)$request->input('category');

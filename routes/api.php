@@ -46,7 +46,16 @@ Route::group([
 			'prefix'        => 'product/',
 		    'as'			=> 'product.'
 		], function(){
+			Route::get('index', 'ProductController@index')->name('index');
 			Route::get('options', 'ProductController@options')->name('options');
+		});
+
+		Route::group([
+			'middleware'	=> ['auths'],
+			'prefix'        => 'icic/',
+		    'as'			=> 'icic.'
+		], function(){
+			Route::get('index', 'IndexController@index')->name('index');
 		});
 	});
 });

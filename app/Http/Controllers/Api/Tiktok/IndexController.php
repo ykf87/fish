@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Models\TiktokOrder;
 use App\Models\TiktokProduct;
+use App\Models\TiktokOrderProduct;
 
 class IndexController extends Controller{
 	public function index(Request $request){
@@ -70,15 +71,20 @@ class IndexController extends Controller{
 			$limit 	= 20;
 		}
 
-
+		$list 		= [];
+		$total 		= 0;
 		if($days > 0){
 			$days 				*= -1;
 			$addTimeMust 		= strtotime($days . ' days');
-
+			$list 				= TiktokOrderProduct::list($addTimeMust)->orderByDesc('cumulative_sales')->groupBy('op.product_id')->offset(($page-1)*$limit)->limit($limit)->get();
+			$total 				= TiktokOrderProduct::list($addTimeMust)->groupBy('op.product_id')->get()->count();
 		}else{
-			$list 			= TiktokProduct::list($page, $limit)->get();
+			$list 				= TiktokProduct::list()->orderByDesc('gmv')->offset(($page-1)*$limit)->limit($limit)->get();
+			$total 				= TiktokProduct::list()->count();
 		}
 		
-		
+		return $this->success([
+			'merchandise_ranking' => ['total_limit' => $total, 'rank_lists' => $list, 'page' => $page, 'limit' => $limit],
+		]);
 	}
 }
