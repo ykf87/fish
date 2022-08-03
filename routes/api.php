@@ -48,14 +48,30 @@ Route::group([
 		], function(){
 			Route::get('index', 'ProductController@index')->name('index');
 			Route::get('options', 'ProductController@options')->name('options');
+			Route::get('detail', 'ProductController@detail')->name('detail')->middleware(['getlogin']);
+			Route::post('collect', 'ProductController@collect')->name('collect')->middleware(['auths']);
+			Route::post('uncollect', 'ProductController@uncollect')->name('uncollect')->middleware(['auths']);
+			Route::post('apply', 'ProductController@apply')->name('apply')->middleware(['auths']);
 		});
 
 		Route::group([
 			'middleware'	=> ['auths'],
-			'prefix'        => 'icic/',
-		    'as'			=> 'icic.'
+			'prefix'        => 'user/',
+		    'as'			=> 'user.'
 		], function(){
-			Route::get('index', 'IndexController@index')->name('index');
+			Route::get('address', 'AddressController@index')->name('address');
+			Route::post('address', 'AddressController@add')->name('address.add');
+			Route::post('address/default', 'AddressController@default')->name('address.default');
+		});
+
+		//样品
+		Route::group([
+			'middleware'	=> ['auths'],
+			'prefix'        => 'sample/',
+		    'as'			=> 'sample.'
+		], function(){
+			Route::post('unapply', 'SampleController@unapply')->name('unapply')->middleware(['auths']);
+			Route::get('lists', 'SampleController@index')->name('address');
 		});
 	});
 });

@@ -73,7 +73,7 @@ class ClientUserController extends AdminController
         });
         // $table->column('background', __('Background'));
         $grid->column('signature', __('签名'))->hide();
-        $grid->column('visits', __('访问量'))->hide()->sortable();
+        // $grid->column('visits', __('访问量'))->hide()->sortable();
         $grid->column('addtime', __('注册时间'))->sortable()->filter('range')->display(function($val){
             return $val ? date('Y-m-d H:i:s', $val) : null;
         });
@@ -99,12 +99,14 @@ class ClientUserController extends AdminController
         $grid->column('province', __('城市'))->hide();
         // $table->column('city', __('City'));
         // $table->column('singleid', __('Singleid'));
+        $grid->column('staff', __('员工'))->editable('select', ['否', '是'])->filter(['否','是']);
         $grid->column('lang', __('语言'))->hide();
         $grid->column('currency', __('币种'))->hide();
         $grid->column('timezone', __('时区'))->hide();
         $grid->column('platform', __('平台'))->hide();
         // $table->column('md5', __('Md5'));
         $grid->column('private', __('私密账号'))->hide();
+        $grid->column('tiktok', __('绑定账号'))->sortable();
 
 
         $grid->disableCreateButton();
@@ -187,44 +189,45 @@ class ClientUserController extends AdminController
     {
         $form = new Form(new UCUser());
 
-        $form->number('pid', __('Pid'));
-        $form->text('invite', __('Invite'));
-        $form->textarea('chain', __('Chain'));
-        $form->text('account', __('Account'));
-        $form->email('mail', __('Mail'));
-        $form->mobile('phone', __('Phone'));
-        $form->switch('mailvery', __('Mailvery'));
-        $form->switch('phonevery', __('Phonevery'));
-        $form->password('pwd', __('Pwd'));
-        $form->text('nickname', __('Nickname'));
-        $form->image('avatar', __('Avatar'));
-        $form->text('background', __('Background'));
-        $form->text('signature', __('Signature'));
-        $form->number('visits', __('Visits'));
-        $form->number('addtime', __('Addtime'));
-        $form->switch('status', __('Status'))->default(1);
-        $form->switch('sex', __('Sex'));
-        $form->switch('height', __('Height'));
-        $form->decimal('weight', __('Weight'))->default(0.00);
-        $form->number('birth', __('Birth'));
-        $form->switch('age', __('Age'));
-        $form->text('job', __('Job'));
-        $form->switch('income', __('Income'));
-        $form->switch('emotion', __('Emotion'));
-        $form->switch('constellation', __('Constellation'));
-        $form->switch('edu', __('Edu'));
-        $form->textarea('temperament', __('Temperament'));
-        $form->number('ip', __('Ip'));
-        $form->number('country', __('Country'));
-        $form->number('province', __('Province'));
-        $form->number('city', __('City'));
-        $form->switch('singleid', __('Singleid'));
-        $form->text('lang', __('Lang'));
-        $form->text('currency', __('Currency'));
-        $form->text('timezone', __('Timezone'));
-        $form->switch('platform', __('Platform'));
-        $form->text('md5', __('Md5'));
-        $form->switch('private', __('Private'));
+        $form->switch('staff', __('员工'));
+        // $form->number('pid', __('Pid'));
+        // $form->text('invite', __('Invite'));
+        // $form->textarea('chain', __('Chain'));
+        // $form->text('account', __('Account'));
+        // $form->email('mail', __('Mail'));
+        // $form->mobile('phone', __('Phone'));
+        // $form->switch('mailvery', __('Mailvery'));
+        // $form->switch('phonevery', __('Phonevery'));
+        // $form->password('pwd', __('Pwd'));
+        // $form->text('nickname', __('Nickname'));
+        // $form->image('avatar', __('Avatar'));
+        // $form->text('background', __('Background'));
+        // $form->text('signature', __('Signature'));
+        // $form->number('visits', __('Visits'));
+        // $form->number('addtime', __('Addtime'));
+        // $form->switch('status', __('Status'))->default(1);
+        // $form->switch('sex', __('Sex'));
+        // $form->switch('height', __('Height'));
+        // $form->decimal('weight', __('Weight'))->default(0.00);
+        // $form->number('birth', __('Birth'));
+        // $form->switch('age', __('Age'));
+        // $form->text('job', __('Job'));
+        // $form->switch('income', __('Income'));
+        // $form->switch('emotion', __('Emotion'));
+        // $form->switch('constellation', __('Constellation'));
+        // $form->switch('edu', __('Edu'));
+        // $form->textarea('temperament', __('Temperament'));
+        // $form->number('ip', __('Ip'));
+        // $form->number('country', __('Country'));
+        // $form->number('province', __('Province'));
+        // $form->number('city', __('City'));
+        // $form->switch('singleid', __('Singleid'));
+        // $form->text('lang', __('Lang'));
+        // $form->text('currency', __('Currency'));
+        // $form->text('timezone', __('Timezone'));
+        // $form->switch('platform', __('Platform'));
+        // // $form->text('md5', __('Md5'));
+        // $form->switch('private', __('Private'));
 
         return $form;
     }

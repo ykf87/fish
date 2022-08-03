@@ -24,7 +24,7 @@ class Controller extends BaseController{
 			$msg 	= 'Error';
 		}
 		return response()->json([
-			'code'=> 200,
+			'code'=> 500,
 			'msg'=> __($msg),
 			'data'=> $data,
 		]);

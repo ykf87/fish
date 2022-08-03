@@ -21,7 +21,7 @@ class TiktokProduct extends Model{
 	public static $status 	= [
 		1	=> '草稿',
 		2	=> '待定',
-		3	=> '初创',
+		3	=> '失败',
 		4	=> '上线',
 		5	=> '卖家停用',
 		6	=> '平台停用',
@@ -254,7 +254,7 @@ class TiktokProduct extends Model{
 		if($limit < 1){
 			$limit 	= 20;
 		}
-		$obj 		= DB::table('tiktok_products as p')->select('p.id', 'p.pid', 'p.images as image', 'p.name as title', 'p.stocks as stock', 'p.sales as cumulative_sales', 'p.minprice as unit_price', 'p.commission as commission_ratio', 'p.commission_price as commission', 'p.currency');
+		$obj 		= DB::table('tiktok_products as p')->select('p.id', 'p.pid', 'p.images as image', 'p.name as title', 'p.stocks as stock', 'p.sales as cumulative_sales', 'p.minprice as unit_price', 'p.commission as commission_ratio', 'p.commission_price as commission', 'p.currency');//->where('p.status', 3);
 		if($q){
 			$obj 	= $obj->where('p.name', 'like', "%$q%");
 		}
@@ -317,5 +317,10 @@ class TiktokProduct extends Model{
 		$obj 		= self::select('id', 'pid as product_id', 'images as image', 'name as title', 'minprice as unit_price', 'commission as commission_ratio', 'gmv as cumulative_sales', 'commissioned as accumulated_commission', 'currency');
 		return $obj;
 		// return self::select('id', 'pid as product_id', 'images as image', 'name as title', 'minprice as unit_price', 'commission as commission_ratio', 'gmv as cumulative_sales', 'commissioned as accumulated_commission', 'currency'->orderByDesc('gmv')->offset(($page-1)*$limit)->limit($limit);
+	}
+
+	//商品详情
+	public function detail($id){
+		return self::select('images as banner', 'stocks as stock', 'minprice as unit_price', 'commission_price as commission', 'commission as commission_ratio', 'sales as cumulative_sales', 'fans', 'selling_point', 'currency', 'description as content')->find($id);
 	}
 }

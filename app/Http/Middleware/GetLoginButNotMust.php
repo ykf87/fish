@@ -7,14 +7,15 @@ use Illuminate\Http\Request;
 use App\Globals\Ens;
 use App\Models\UCUser;
 
-class AuthMiddleware{
+class GetLoginButNotMust
+{
     /**
-    * Handle an incoming request.
-    *
-    * @param  \Illuminate\Http\Request  $request
-    * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-    * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
-    */
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+     */
     public function handle(Request $request, Closure $next){
         if($request->get('_user')){
             return $next($request);
@@ -29,12 +30,11 @@ class AuthMiddleware{
                         $user   = UCUser::find($info['id']);
                         if($user && $user->singleid == $info['sid']){
                             $request->merge(['_user' => $user]);
-                            return $next($request);
                         }
                     }
                 }
             }
         }
-        return response()->json(['code' => 401, 'msg' => __('Please Login'), 'data' => null]);
+        return $next($request);
     }
 }

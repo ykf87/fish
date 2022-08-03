@@ -59,7 +59,7 @@ class Getorder extends RowAction{
                     $ccc++;
                     continue;
                 }
-                TiktokOrder::where('order_id', $item['order_id'])->update(['order_status' => $item['order_status']]);
+                TiktokOrder::where('order_id', $item['order_id'])->update(['status' => $item['order_status']]);
                 $uuu++;
             }else{
                 $inarr[]    = [
