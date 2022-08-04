@@ -48,10 +48,12 @@ Route::group([
 		], function(){
 			Route::get('index', 'ProductController@index')->name('index');
 			Route::get('options', 'ProductController@options')->name('options');
-			Route::get('detail', 'ProductController@detail')->name('detail')->middleware(['getlogin']);
-			Route::post('collect', 'ProductController@collect')->name('collect')->middleware(['auths']);
-			Route::post('uncollect', 'ProductController@uncollect')->name('uncollect')->middleware(['auths']);
-			Route::post('apply', 'ProductController@apply')->name('apply')->middleware(['auths']);
+			Route::get('detail', 'ProductController@detail')->name('detail')->middleware(['getlogin']);//商品详情
+			Route::get('collection', 'ProductController@collects')->name('collects')->middleware(['auths']);//收藏列表
+			Route::post('collection', 'ProductController@collection')->name('collection')->middleware(['auths']);//收藏/取消收藏同一个接口
+			Route::post('collect', 'ProductController@collect')->name('collect')->middleware(['auths']);//收藏
+			Route::post('uncollect', 'ProductController@uncollect')->name('uncollect')->middleware(['auths']);//取消收藏
+			Route::post('apply', 'ProductController@apply')->name('apply')->middleware(['auths']);//申领样品
 		});
 
 		Route::group([
@@ -60,8 +62,18 @@ Route::group([
 		    'as'			=> 'user.'
 		], function(){
 			Route::get('address', 'AddressController@index')->name('address');
-			Route::post('address', 'AddressController@add')->name('address.add');
+			Route::post('address', 'AddressController@add')->name('address.add');//添加地址
+			Route::post('address/editer', 'AddressController@editer')->name('address.editer');
 			Route::post('address/default', 'AddressController@default')->name('address.default');
+
+			Route::group([
+				'prefix'		=> 'darren/',
+				'as'			=> 'darren.'
+			], function(){
+				Route::get('', 'DarrenController@index')->name('index');
+				Route::post('add', 'DarrenController@add')->name('add');
+				Route::post('remove', 'DarrenController@remove')->name('remove');
+			});
 		});
 
 		//样品
@@ -70,7 +82,7 @@ Route::group([
 			'prefix'        => 'sample/',
 		    'as'			=> 'sample.'
 		], function(){
-			Route::post('unapply', 'SampleController@unapply')->name('unapply')->middleware(['auths']);
+			Route::post('cancel', 'SampleController@unapply')->name('cancel');
 			Route::get('lists', 'SampleController@index')->name('address');
 		});
 	});

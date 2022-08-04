@@ -20,46 +20,120 @@ class AddressController extends Controller{
 			$limit 	= 20;
 		}
 
-		return $this->success(TiktokAddress::where('uid', $user->id)->orderByDesc('default')->orderByDesc('addtime')->offset(($page-1)*$limit)->limit($limit)->get(), '');
+		$list 		= TiktokAddress::select('id', 'name', 'phone as tel', 'country as country_id', 'country_name', 'city as city_id', 'city_name', 'address as detail', 'default as is_default')
+						->where('uid', $user->id)->orderByDesc('default')->orderByDesc('addtime')->offset(($page-1)*$limit)->limit($limit)->get();
+		return $this->success($list, '');
 	}
 
 	//添加地址
 	public function add(Request $request){
 		$user 		= $request->get('_user');
+		$id 		= (int)$request->input('id');
+		$name 		= trim($request->input('name'), '');
+		$phone 		= trim($request->input('tel'), '');
+		$country 	= (int)$request->input('country_id');
+		$cname 		= $request->input('country_name');
+		$city 		= (int)$request->input('city_id');
+		$ctname		= $request->input('city_name');
+		$address 	= trim($request->input('detail'), '');
+		$default 	= $request->input('is_default');
+
+		$successMsg 	= 'Address added successfully';
+		if(!$id){
+			if(!$name){
+				return $this->error('Please fill in your name');
+			}
+			if(!$phone){
+				return $this->error('Please fill in your phone number');
+			}
+			if(!$country){
+				return $this->error('Please select a country');
+			}
+			if(!$address){
+				return $this->error('Please fill in your full address');
+			}
+			$had 	= TiktokAddress::where('uid', $user->id)->count();
+			if($had >= 10){
+				return $this->error('Fill in up to 10 shipping addresses');
+			}
+
+			$addr 					= new TiktokAddress;
+			$addr->addtime 			= time();
+			$addr->uid 				= $user->id;
+		}else{
+			$addr 					= TiktokAddress::find($id);
+			if(!$addr){
+				return $this->error('Address does not exist');
+			}
+			$successMsg 			= 'Address updated successfully';
+		}
+
+
+		if($name){
+			$addr->name 			= $name;
+		}
+		if($phone){
+			$addr->phone 			= $phone;
+		}
+		if($country){
+			$addr->country 			= $country;
+			$addr->country_name 	= $cname;
+		}
+		if($city){
+			$addr->city 			= $city;
+			$addr->city_name 		= $ctname;
+		}
+		if($address){
+			$addr->address 			= $address;
+		}
+		if($default){
+			$addr->default 	= 1;
+		}
+
+		if(!$addr->save()){
+			return $this->error('Address addition failure');
+		}
+		if($addr->default == 1){
+			TiktokAddress::where('default', 1)->where('id', '!=', $addr->id)->update(['default' => 0]);
+		}
+		return $this->success(null, $successMsg);
+	}
+
+	//修改地址
+	public function editer(Request $request){
+		$user 		= $request->get('_user');
+
+		$id 		= $request->input('id');
 		$name 		= trim($request->input('name'), '');
 		$phone 		= trim($request->input('phone'), '');
 		$country 	= (int)$request->input('country');
 		$address 	= trim($request->input('address'), '');
 
-		if(!$name){
-			return $this->error('Please fill in your name');
+		$row 		= TiktokAddress::find($id);
+		if(!$row || $row->uid != $user->id){
+			return $this->error('Address does not exist, please add it first');
 		}
-		if(!$phone){
-			return $this->error('Please fill in your phone number');
+		$arr 		= [];
+		if($name && $row->name != $name){
+			$arr['name']	= $name;
 		}
-		if(!$country){
-			return $this->error('Please select a country');
+		if($phone && $row->phone != $phone){
+			$arr['phone']	= $phone;
 		}
-		if(!$address){
-			return $this->error('Please fill in your full address');
+		if($country && $row->country != $country){
+			$arr['country']	= $country;
+		}
+		if($address && $row->address != $address){
+			$arr['address']	= $address;
 		}
 
-		$had 	= TiktokAddress::where('uid', $user->id)->count();
-		if($had >= 5){
-			return $this->error('Fill in up to 5 shipping addresses');
+		if(empty($arr)){
+			return $this->success(null, 'Modified successfully');
 		}
-
-		$addr 			= new TiktokAddress;
-		$addr->uid 		= $user->id;
-		$addr->name 	= $name;
-		$addr->phone 	= $phone;
-		$addr->country 	= $country;
-		$addr->address 	= $address;
-		$addr->addtime 	= time();
-		if(!$addr->save()){
-			return $this->error('Address addition failure');
+		if(TiktokAddress::where('id', $row->id)->update($arr)){
+			return $this->success(null, 'Modified successfully');
 		}
-		return $this->success(null, 'Address added successfully');
+		return $this->error('Modification failure');
 	}
 
 	//删除地址

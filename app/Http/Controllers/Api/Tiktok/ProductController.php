@@ -10,6 +10,7 @@ use App\Models\TiktokCategory;
 use App\Models\TiktokUserCollection;
 use App\Models\TiktokSample;
 use App\Models\TiktokDarren;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller{
 	//选品首页
@@ -19,12 +20,12 @@ class ProductController extends Controller{
 			[
 				'id'	=> 1,
 				'des'	=> 'test',
-				'image'	=> '',
+				'image'	=> Storage::disk('admin')->url('banner/1.png'),
 				'url'	=> '',
 			],[
 				'id'	=> 1,
 				'des'	=> 'test',
-				'image'	=> '',
+				'image'	=> Storage::disk('admin')->url('banner/2.png'),
 				'url'	=> '',
 			]
 		];
@@ -52,6 +53,9 @@ class ProductController extends Controller{
 	public function detail(Request $request){
 		$user 		= $request->get('_user');
 		$id 		= $request->input('id');
+		if(!$id){
+			return $this->error('');
+		}
 		$row 		= TiktokProduct::detail($id);
 		if(!$row){
 			return $this->error('');
@@ -90,10 +94,41 @@ class ProductController extends Controller{
 		return $this->success($row);
 	}
 
+	//收藏列表
+	public function collects(Request $request){
+		$user 	= $request->get('_user');
+		$page 	= (int)$request->input('page', 1);
+		$limit 	= (int)$request->input('limit', 20);
+		if($page < 1)$page = 1;
+		if($limit < 1)$limit = 20;
+
+		$total 	= TiktokUserCollection::list($user->id)->count();
+		$list 	= TiktokUserCollection::list($user->id)->orderByDesc('c.addtime')->offset(($page-1)*$limit)->limit($limit)->get();
+		$arr 	= [
+			'total_limit'	=> $total,
+			'page'			=> $page,
+			'limit'			=> $limit,
+			'collection_lists'	=> $list,
+		];
+		return $this->success($arr, '');
+	}
+
+	//收藏/取消收藏
+	public function collection(Request $request){
+		$user 	= $request->get('_user');
+		$coloct	= $request->input('is_collection');
+
+		if($coloct == 'true'){
+			return $this->collect($request);
+		}else{
+			return $this->uncollect($request);
+		}
+	}
+
 	//收藏商品
 	public function collect(Request $request){
 		$user 	= $request->get('_user');
-		$pid 	= $request->get('id');
+		$pid 	= $request->input('id');
 
 		$had 	= TiktokUserCollection::where('id', $user->id)->where('pid', $pid)->first();
 		if(!$had){
@@ -111,7 +146,7 @@ class ProductController extends Controller{
 	//取消商品收藏
 	public function uncollect(Request $request){
 		$user 	= $request->get('_user');
-		$pid 	= $request->get('id');
+		$pid 	= $request->input('id');
 
 		$had 	= TiktokUserCollection::where('id', $user->id)->where('pid', $pid)->first();
 		if($had){
@@ -159,6 +194,9 @@ class ProductController extends Controller{
 		if(!$daren || $daren->account_id != $user->id){
 			return $this->error('Your tiktok account does not exist');
 		}
+		if($daren->status != 1){
+			return $this->error('Your tiktok account is under review or has been rejected');
+		}
 
 		if($pro->fans > 0 && $daren->fans < $pro->fans){
 			return $this->error('Your tiktok account does not meet the requirements for sending samples');
@@ -173,7 +211,7 @@ class ProductController extends Controller{
 		$row->pid				= $id;
 		$row->product_id		= $pro->pid;
 		$row->product_name		= $pro->name;
-		$row->product_image		= $images;
+		$row->product_image		= $pro->images ? explode(',', $pro->images)[0] : '';
 		$row->addtime			= time();
 		$row->remark			= $notes;
 

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\TiktokSample;
 
 class SampleController extends Controller{
+	//样品列表
 	public function index(Request $request){
 		$user 		= $request->get('_user');
 		$page 		= (int)$request->input('page');
