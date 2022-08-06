@@ -13,6 +13,15 @@ class AddressController extends Controller{
 		$user 		= $request->get('_user');
 		$page 		= (int)$request->input('page');
 		$limit 		= (int)$request->input('limit');
+		$id 		= (int)$request->input('id');
+		if($id > 0){
+			$row 	= TiktokAddress::select('id', 'uid', 'name', 'phone as tel', 'country as country_id', 'country_name', 'city as city_id', 'city_name', 'address as detail', 'default as is_default')->find($id);//('id', $id)->first();
+			if($row && $row->uid == $user->id){
+				unset($row->uid);
+				return $this->success($row);
+			}
+			return $this->error('Not found');
+		}
 		if($page < 1){
 			$page 	= 1;
 		}

@@ -118,7 +118,7 @@ class ProductController extends Controller{
 		$user 	= $request->get('_user');
 		$coloct	= $request->input('is_collection');
 
-		if($coloct == 'true'){
+		if($coloct){
 			return $this->collect($request);
 		}else{
 			return $this->uncollect($request);

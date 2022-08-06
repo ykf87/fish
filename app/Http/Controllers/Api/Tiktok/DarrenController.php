@@ -33,6 +33,11 @@ class DarrenController extends Controller{
 		$backend 	= $request->file('backend');
 		$fans 		= (int)$request->input('fans');
 		$zans 		= (int)$request->input('praise_nums');
+		$backbase 	= false;
+		if(!$backend){
+			$backend 	= $request->input('backend');
+			$backbase 	= true;
+		}
 
 		if(!$unionid || !$backend){
 			return $this->error('Please submit the necessary information');
@@ -52,7 +57,25 @@ class DarrenController extends Controller{
 		if($hads >= 30){
 			return $this->error('Each account may not add more than 30 tiktok');
 		}
-		$backendUrl 	= $backend->store('backend/'.$user->id, 'admin');
+
+		if(!$backbase){
+			$backendUrl 	= $backend->store('backend/'.$user->id, 'admin');
+		}else{
+			// $backendUrl 	= $backend->store('backend/'.$user->id, 'admin');
+			preg_match('/^(data:\s*image\/(\w+);base64,)/',$backend,$res);
+			if(isset($res[2])){
+				$filepath 	= 'backend/'.$user->id . '.' . $res[2];
+				$filename 	= Storage::disk('admin')->path($filepath);
+				$content 	= base64_decode(str_replace($res[1], '', $backend));
+				if(Storage::disk('admin')->put($filepath, $content)){
+					$backendUrl 	= Storage::disk('admin')->url($filepath);
+				}else{
+					return $this->error('Upload image error');
+				}
+			}else{
+				return $this->error('Wrong image');
+			}
+		}
 
 		$row 		= new TiktokDarren;
 		$row->union_id 	= $unionid;

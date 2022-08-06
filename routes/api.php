@@ -65,6 +65,7 @@ Route::group([
 			Route::post('address', 'AddressController@add')->name('address.add');//添加地址
 			Route::post('address/editer', 'AddressController@editer')->name('address.editer');
 			Route::post('address/default', 'AddressController@default')->name('address.default');
+			Route::post('address/remove', 'AddressController@remove')->name('address.remove');
 
 			Route::group([
 				'prefix'		=> 'darren/',
