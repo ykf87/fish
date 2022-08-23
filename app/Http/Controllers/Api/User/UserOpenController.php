@@ -8,7 +8,11 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Globals\Ens;
+use App\Models\City;
 use Illuminate\Support\Facades\Redis;
+use App\Models\Country;
+use App\Models\Language;
+use Illuminate\Support\Facades\DB;
 
 class UserOpenController extends Controller
 {
@@ -29,19 +33,14 @@ class UserOpenController extends Controller
         // 生成随机验证码
         $code = mt_rand(111111, 999999);
         // resdis
-        Redis::set($toEmail, $code);
-
-        $value = Redis::get($toEmail);
-
-        dd($value);
+        Redis::setex($toEmail, 600, $code);
 
         $conetent = 'Your verification code: 【' . $code . '】and will expire in 10 minutes';
         $flag = Mail::raw($conetent, function ($message) use ($toEmail) {
             $message->to($toEmail)->subject("dome verification code");
         });
-
-        echo $flag;
     }
+
     /**
      * 用户注册
      *
@@ -78,10 +77,12 @@ class UserOpenController extends Controller
 
         // 生成用户信息
         $user = User::create([
-            'email'    => $email,
-            'password' => Hash::make($password),
-            'invite'   => $invite,
-            'name'     => $nickname
+            'email'        => $email,
+            'password'     => Hash::make($password),
+            'invite'       => $invite,
+            '分销链',
+            'login_acount' => 1,
+            'name'         => $nickname
         ]);
 
         // 生成token
@@ -106,6 +107,7 @@ class UserOpenController extends Controller
         $email             = $request->input('email');
         $password          = $request->input('password');
         $code              = (int) $request->input('code');
+        $redis             = new Redis;
 
         // 用户校验
         $user = User::where('email', $email)->first();
@@ -118,7 +120,12 @@ class UserOpenController extends Controller
                 return $this->error('passwordWrong');
             }
         } else {
-            echo '验证码校验';
+            $verify = $redis->get($email);
+            if ($code != $verify) {
+                return $this->error('Verification code error');
+            } else {
+                $verify = $redis->del($email);
+            }
         }
 
         // 生成token
@@ -144,6 +151,7 @@ class UserOpenController extends Controller
         $email             = $request->input('email');
         $password          = $request->input('password');
         $code              = (int) $request->input('code');
+        $redis             = new Redis;
 
         // 用户校验
         $user = User::where('email', $email)->first();
@@ -154,23 +162,78 @@ class UserOpenController extends Controller
         if (!$password) {
             return $this->error('Please fill in your new password');
         }
-
-        if (!$code) {
-            return $this->error('Please fill in your code');
+        // 验证码校验
+        $verify = $redis->get($email);
+        if ($code != $verify) {
+            return $this->error('Verification code error');
+        } else {
+            $verify = $redis->del($email);
         }
 
         // 更新数据
-        $user->password = md5($password);
+        $user->password = Hash::make($password);
 
         $user->save();
 
         // 生成token
-        $token = base64_encode(Ens::encrypt('{"id": "' . $user->id . '","time":' . time() . '}'));
+        $token = Ens::encrypt(base64_encode('{"id": "' . $user->id . '","time":' . time() . '}'));
 
         $resultData = [
             "token" => $token,
         ];
 
         return $this->success($resultData, '');
+    }
+
+    /**
+     * 获取国家列表
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function getCountries(Request $request)
+    {
+        $page         = (int) $request->input('page');
+        $limit        = (int) $request->input('limit', 20);
+
+        $countries = Country::offset(($page - 1) * $limit)
+            ->limit($limit)
+            ->get()
+            ->toArray();
+
+        return $this->success($countries, '');
+    }
+
+    /**
+     * 获取城市列表
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function getCities(Request $request, $cn)
+    {
+        echo $cn;
+        $page         = (int) $request->input('page', 1);
+        $limit        = (int) $request->input('limit', 20);
+        $cities = City::where('country_id', $cn)
+            ->offset(($page - 1) * $limit)
+            ->limit($limit)
+            ->get()
+            ->toArray();
+
+        return $this->success($cities, '');
+    }
+
+    /**
+     * 获取语言列表
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function getLanguages(Request $request)
+    {
+        $langs = Language::all()->toArray();
+
+        return $this->success($langs, '');
     }
 }

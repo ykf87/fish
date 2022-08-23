@@ -98,4 +98,13 @@ Route::group([
 		Route::post('sign', 'UserOpenController@sign')->name('sign');
 		Route::post('login', 'UserOpenController@login')->name('login');
 	});
+	Route::group([
+		// 'middleware'	=> ['auths'],
+		'namespace'     => 'user',
+		'as'			=> 'user.'
+	], function () {
+		Route::get('country', 'UserOpenController@getCountries')->name('country');
+		Route::get('country/{cn}', 'UserOpenController@getCities')->name('city');
+		Route::get('langs', 'UserOpenController@getLanguages')->name('langs');
+	});
 });
