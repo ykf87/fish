@@ -54,13 +54,17 @@ class UserOpenController extends Controller
         $invite            = $request->input('invite');
         $nickname          = $request->input('nickname');
         $code              = $request->input('code');
+        $relation          = '';
+        $ip                =  $request->getClientIp();
+
+        $model              = new User();
 
         // 邮箱正则验证
         if (!filter_var($email, FILTER_VALIDATE_EMAIL) || !$email) {
             return $this->error('The email address is invalid');
         } else {
             // 邮箱唯一性验证
-            $user = User::where('email', $email)->count();
+            $user = $model->where('email', $email)->count();
             if ($user) {
                 return $this->error('The email address has been registered');
             }
@@ -73,20 +77,53 @@ class UserOpenController extends Controller
         if (!$nickname) {
             $nickname = explode("@", $email)[0];
         }
-        // 邮箱验证码验证
+        // 邀请码校验
+        if ($invite) {
+            // 关系链获取
+            $parentID = id_random_code($invite);
+            if ($parentID) {
+                $parent =  $model->find($parentID);
+                if (!$parent) {
+                    return $this->error('Invalid invitation code');
+                }
+                $relation = $parent->relation . '-' . $parent->id;
+            } else {
+                return $this->error('Invalid invitation code');
+            }
+        }
+        // 开始事务
+        DB::beginTransaction();
+        try {
+            // 生成用户信息
+            $user = $model->create([
+                'email'               => $email,
+                'password'            => Hash::make($password),
+                'parent_invite'       => $invite,
+                'relation'            => $relation,
+                'register_ip'         => $ip,
+                'nickname'            => $nickname
+            ]);
 
-        // 生成用户信息
-        $user = User::create([
-            'email'        => $email,
-            'password'     => Hash::make($password),
-            'invite'       => $invite,
-            '分销链',
-            'login_acount' => 1,
-            'name'         => $nickname
-        ]);
+            // 邀请码补全
+            $invitationCode =  id_random_code($user->id, 8);
 
+            $model->where('id', $user->id)->update([
+                'invitation_code' => $invitationCode,
+            ]);
+
+            DB::commit();
+        } catch (QueryException $ex) {
+            DB::rollback();
+            return $this->error('fail to register');
+        }
+        $data = [
+            'id' => $user->id,
+            'time' => time(),
+            'sid' => $user->singleid,
+
+        ];
         // 生成token
-        $token = base64_encode(Ens::encrypt('{"id": "' . $user->id . '","time":' . time() . '}'));
+        $token = Ens::encrypt(base64_encode(json_encode($data)));
 
         $resultData = [
             "token" => $token,
@@ -107,12 +144,22 @@ class UserOpenController extends Controller
         $email             = $request->input('email');
         $password          = $request->input('password');
         $code              = (int) $request->input('code');
+        $ip                =  $request->getClientIp();
         $redis             = new Redis;
 
         // 用户校验
         $user = User::where('email', $email)->first();
+
+        $count = $user->singleid;
+
+        $count++;
+
         if (!$user) {
             return $this->error('Unregistered email address');
+        }
+        // 用户状态校验
+        if ($user->status != 1) {
+            return $this->error('The account status is abnormal');
         }
         // 密码验证码校验
         if ($password) {
@@ -127,10 +174,21 @@ class UserOpenController extends Controller
                 $verify = $redis->del($email);
             }
         }
+        // 登录次数+1
+        User::where('email', $email)->update([
+            'last_ip'     => $ip,
+            'singleid'    => $count
+        ]);
 
         // 生成token
-        $token = base64_encode(Ens::encrypt('{"id": "' . $user->id . '","time":' . time() . '}'));
+        $data = [
+            'id' => $user->id,
+            'time' => time(),
+            'sid' => $count,
 
+        ];
+        // 生成token
+        $token = Ens::encrypt(base64_encode(json_encode($data)));
         $resultData = [
             "token" => $token,
             "id"    => $user->id,
@@ -151,7 +209,6 @@ class UserOpenController extends Controller
         $email             = $request->input('email');
         $password          = $request->input('password');
         $code              = (int) $request->input('code');
-        $redis             = new Redis;
 
         // 用户校验
         $user = User::where('email', $email)->first();
@@ -163,11 +220,11 @@ class UserOpenController extends Controller
             return $this->error('Please fill in your new password');
         }
         // 验证码校验
-        $verify = $redis->get($email);
+        $verify = Redis::get($email);
         if ($code != $verify) {
             return $this->error('Verification code error');
         } else {
-            $verify = $redis->del($email);
+            $verify = Redis::del($email);
         }
 
         // 更新数据
@@ -175,11 +232,11 @@ class UserOpenController extends Controller
 
         $user->save();
 
-        // 生成token
-        $token = Ens::encrypt(base64_encode('{"id": "' . $user->id . '","time":' . time() . '}'));
+        // // 生成token
+        // $token = Ens::encrypt(base64_encode('{"id": "' . $user->id . '","time":' . time() . ',"sid":' . $user->sid . '}'));
 
         $resultData = [
-            "token" => $token,
+            // "token" => $token,
         ];
 
         return $this->success($resultData, '');

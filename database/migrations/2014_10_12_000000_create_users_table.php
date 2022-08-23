@@ -15,13 +15,19 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('nickname');
             $table->string('email')->unique();
-            $table->unsignedInteger("integral")->default(0);
-            $table->string('invitation_code')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('avatar')->nullable();
+            $table->string('phone')->nullable();
             $table->string('password');
-            $table->rememberToken();
+            $table->unsignedInteger("singleid")->default(1);
+            $table->unsignedInteger("integral")->default(0);
+            $table->string('invitation_code')->nullable()->unique();
+            $table->string('parent_invite')->nullable();
+            $table->string('relation')->nullable();
+            $table->smallInteger('status')->default(1);
+            $table->ipAddress('register_ip')->comment('注册时的 IP 地址');
+            $table->ipAddress('last_ip')->nullable()->comment('最后登陆的 IP 地址');
             $table->timestamps();
         });
     }

@@ -91,20 +91,22 @@ Route::group([
 	Route::group([
 		// 'middleware'	=> ['auths'],
 		'namespace'     => 'user',
-		'prefix'        => 'user/',
 		'as'			=> 'user.'
 	], function () {
 		Route::post('emailcode', 'UserOpenController@sendCode')->name('emailcode');
 		Route::post('sign', 'UserOpenController@sign')->name('sign');
 		Route::post('login', 'UserOpenController@login')->name('login');
-	});
-	Route::group([
-		// 'middleware'	=> ['auths'],
-		'namespace'     => 'user',
-		'as'			=> 'user.'
-	], function () {
+		Route::post('forgot', 'UserOpenController@forgot')->name('forgot');
 		Route::get('country', 'UserOpenController@getCountries')->name('country');
 		Route::get('country/{cn}', 'UserOpenController@getCities')->name('city');
 		Route::get('langs', 'UserOpenController@getLanguages')->name('langs');
+	});
+	Route::group([
+		'middleware'	=> ['auths'],
+		'namespace'     => 'user',
+		'as'			=> 'user.'
+	], function () {
+		Route::get('user', 'UserAuthController@GetUserInfo');
+		Route::post('user/editerbatch', 'UserAuthController@updateUser');
 	});
 });
