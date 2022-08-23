@@ -21,15 +21,15 @@ use Illuminate\Support\Facades\Storage;
 
 Route::group([
 	'prefix'        => '/',
-    'namespace'     => 'App\Http\Controllers\Api',
-    // 'middleware'    => [],
-    'as'            => 'api.'
-], function(){
+	'namespace'     => 'App\Http\Controllers\Api',
+	// 'middleware'    => [],
+	'as'            => 'api.'
+], function () {
 	Route::group([
 		'prefix'        => 'tiktok/',
-	    'namespace'     => 'Tiktok',
-	    'as'			=> 'tiktok.'
-	], function(){
+		'namespace'     => 'Tiktok',
+		'as'			=> 'tiktok.'
+	], function () {
 		Route::get('callback', 'CallbackController@index')->name('callback');
 		Route::get('login', 'CallbackController@userLogin')->name('login');
 		Route::post('proinfo', 'CallbackController@proinfo')->name('proinfo');
@@ -37,32 +37,32 @@ Route::group([
 		Route::get('aggregate', 'CallbackController@aggregate')->name('aggregate');
 		Route::group([
 			'prefix'        => 'index/',
-		    'as'			=> 'index.'
-		], function(){
+			'as'			=> 'index.'
+		], function () {
 			Route::get('index', 'IndexController@index')->name('index');
 			Route::get('ranking', 'IndexController@ranking')->name('ranking');
 		});
 		Route::group([
 			'prefix'        => 'product/',
-		    'as'			=> 'product.'
-		], function(){
+			'as'			=> 'product.'
+		], function () {
 			Route::get('index', 'ProductController@index')->name('index');
 			Route::get('options', 'ProductController@options')->name('options');
-			Route::get('detail', 'ProductController@detail')->name('detail')->middleware(['getlogin']);//商品详情
-			Route::get('collection', 'ProductController@collects')->name('collects')->middleware(['auths']);//收藏列表
-			Route::post('collection', 'ProductController@collection')->name('collection')->middleware(['auths']);//收藏/取消收藏同一个接口
-			Route::post('collect', 'ProductController@collect')->name('collect')->middleware(['auths']);//收藏
-			Route::post('uncollect', 'ProductController@uncollect')->name('uncollect')->middleware(['auths']);//取消收藏
-			Route::post('apply', 'ProductController@apply')->name('apply')->middleware(['auths']);//申领样品
+			Route::get('detail', 'ProductController@detail')->name('detail')->middleware(['getlogin']); //商品详情
+			Route::get('collection', 'ProductController@collects')->name('collects')->middleware(['auths']); //收藏列表
+			Route::post('collection', 'ProductController@collection')->name('collection')->middleware(['auths']); //收藏/取消收藏同一个接口
+			Route::post('collect', 'ProductController@collect')->name('collect')->middleware(['auths']); //收藏
+			Route::post('uncollect', 'ProductController@uncollect')->name('uncollect')->middleware(['auths']); //取消收藏
+			Route::post('apply', 'ProductController@apply')->name('apply')->middleware(['auths']); //申领样品
 		});
 
 		Route::group([
 			'middleware'	=> ['auths'],
 			'prefix'        => 'user/',
-		    'as'			=> 'user.'
-		], function(){
+			'as'			=> 'user.'
+		], function () {
 			Route::get('address', 'AddressController@index')->name('address');
-			Route::post('address', 'AddressController@add')->name('address.add');//添加地址
+			Route::post('address', 'AddressController@add')->name('address.add'); //添加地址
 			Route::post('address/editer', 'AddressController@editer')->name('address.editer');
 			Route::post('address/default', 'AddressController@default')->name('address.default');
 			Route::post('address/remove', 'AddressController@remove')->name('address.remove');
@@ -70,7 +70,7 @@ Route::group([
 			Route::group([
 				'prefix'		=> 'darren/',
 				'as'			=> 'darren.'
-			], function(){
+			], function () {
 				Route::get('', 'DarrenController@index')->name('index');
 				Route::post('add', 'DarrenController@add')->name('add');
 				Route::post('remove', 'DarrenController@remove')->name('remove');
@@ -81,10 +81,32 @@ Route::group([
 		Route::group([
 			'middleware'	=> ['auths'],
 			'prefix'        => 'sample/',
-		    'as'			=> 'sample.'
-		], function(){
+			'as'			=> 'sample.'
+		], function () {
 			Route::post('cancel', 'SampleController@unapply')->name('cancel');
 			Route::get('lists', 'SampleController@index')->name('address');
 		});
+	});
+	// 用户
+	Route::group([
+		// 'middleware'	=> ['auths'],
+		'namespace'     => 'user',
+		'as'			=> 'user.'
+	], function () {
+		Route::post('emailcode', 'UserOpenController@sendCode')->name('emailcode');
+		Route::post('sign', 'UserOpenController@sign')->name('sign');
+		Route::post('login', 'UserOpenController@login')->name('login');
+		Route::post('forgot', 'UserOpenController@forgot')->name('forgot');
+		Route::get('country', 'UserOpenController@getCountries')->name('country');
+		Route::get('country/{cn}', 'UserOpenController@getCities')->name('city');
+		Route::get('langs', 'UserOpenController@getLanguages')->name('langs');
+	});
+	Route::group([
+		'middleware'	=> ['auths'],
+		'namespace'     => 'user',
+		'as'			=> 'user.'
+	], function () {
+		Route::get('user', 'UserAuthController@GetUserInfo');
+		Route::post('user/editerbatch', 'UserAuthController@updateUser');
 	});
 });
