@@ -247,7 +247,7 @@ class TiktokProduct extends Model{
 	}
 
 	//前端查询
-	public function frontList(int $page, int $limit, $q, $cate, $sort, $is_samples = null){
+	public static function frontList(int $page, int $limit, $q, $cate, $sort, $is_samples = null){
 		if($page < 1){
 			$page 	= 1;
 		}
@@ -316,14 +316,14 @@ class TiktokProduct extends Model{
 	}
 
 	//产品列表
-	public function list(){
+	public static function list(){
 		$obj 		= self::select('id', 'pid as product_id', 'images as image', 'name as title', 'minprice as unit_price', 'commission as commission_ratio', 'gmv as cumulative_sales', 'commissioned as accumulated_commission', 'currency', 'is_samples');
 		return $obj;
 		// return self::select('id', 'pid as product_id', 'images as image', 'name as title', 'minprice as unit_price', 'commission as commission_ratio', 'gmv as cumulative_sales', 'commissioned as accumulated_commission', 'currency'->orderByDesc('gmv')->offset(($page-1)*$limit)->limit($limit);
 	}
 
 	//商品详情
-	public function detail($id){
+	public static function detail($id){
 		return self::select('images as banner', 'stocks as stock', 'minprice as unit_price', 'commission_price as commission', 'commission as commission_ratio', 'sales as cumulative_sales', 'fans', 'selling_point', 'currency', 'description as content', 'is_samples', 'name as title')->find($id);
 	}
 }

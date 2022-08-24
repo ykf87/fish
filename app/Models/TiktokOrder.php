@@ -86,7 +86,7 @@ class TiktokOrder extends Model{
 	}
 
 	//订单列表
-	public function list($page, $limit){
+	public static function list($page, $limit){
 		if($page < 1){
 			$page 	= 1;
 		}

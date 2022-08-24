@@ -60,8 +60,7 @@ class SampleController extends Controller{
 		$obj 		= TiktokSample::select('s.*', 'p.commission_price as commission', 'p.minprice as unit_price', 'p.commission as commission_ratio', 's.shippment as express_company', 's.shipnum as express_no')->
 						from('tiktok_samples as s')->where('s.account_id', $user->id)->rightJoin('tiktok_products as p', 's.pid', '=', 'p.id');
 		switch($state){
-			case 2:.
-			
+			case 2:
 				$obj	= $obj->where('s.status', 0);
 				break;
 			case 3:
