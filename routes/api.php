@@ -90,7 +90,7 @@ Route::group([
 	// 用户
 	Route::group([
 		// 'middleware'	=> ['auths'],
-		'namespace'     => 'user',
+		'namespace'     => 'User',
 		'as'			=> 'user.'
 	], function () {
 		Route::post('emailcode', 'UserOpenController@sendCode')->name('emailcode');
@@ -103,7 +103,7 @@ Route::group([
 	});
 	Route::group([
 		'middleware'	=> ['auths'],
-		'namespace'     => 'user',
+		'namespace'     => 'User',
 		'as'			=> 'user.'
 	], function () {
 		Route::get('user', 'UserAuthController@GetUserInfo');

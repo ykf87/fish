@@ -247,16 +247,19 @@ class TiktokProduct extends Model{
 	}
 
 	//前端查询
-	public function frontList(int $page, int $limit, $q, $cate, $sort){
+	public function frontList(int $page, int $limit, $q, $cate, $sort, $is_samples = null){
 		if($page < 1){
 			$page 	= 1;
 		}
 		if($limit < 1){
 			$limit 	= 20;
 		}
-		$obj 		= DB::table('tiktok_products as p')->select('p.id', 'p.pid', 'p.images as image', 'p.name as title', 'p.stocks as stock', 'p.sales as cumulative_sales', 'p.minprice as unit_price', 'p.commission as commission_ratio', 'p.commission_price as commission', 'p.currency');//->where('p.status', 3);
+		$obj 		= DB::table('tiktok_products as p')->select('p.id', 'p.pid', 'p.images as image', 'p.name as title', 'p.stocks as stock', 'p.sales as cumulative_sales', 'p.minprice as unit_price', 'p.commission as commission_ratio', 'p.commission_price as commission', 'p.currency', 'p.is_samples');//->where('p.status', 3);
 		if($q){
 			$obj 	= $obj->where('p.name', 'like', "%$q%");
+		}
+		if($is_samples !== null){
+			$obj 	= $obj->where('p.is_samples', $is_samples);
 		}
 		if($cate > 0){
 			$cateids 		= TiktokCategory::where('parent', $cate)->pluck('id')->toArray();
@@ -314,13 +317,13 @@ class TiktokProduct extends Model{
 
 	//产品列表
 	public function list(){
-		$obj 		= self::select('id', 'pid as product_id', 'images as image', 'name as title', 'minprice as unit_price', 'commission as commission_ratio', 'gmv as cumulative_sales', 'commissioned as accumulated_commission', 'currency');
+		$obj 		= self::select('id', 'pid as product_id', 'images as image', 'name as title', 'minprice as unit_price', 'commission as commission_ratio', 'gmv as cumulative_sales', 'commissioned as accumulated_commission', 'currency', 'is_samples');
 		return $obj;
 		// return self::select('id', 'pid as product_id', 'images as image', 'name as title', 'minprice as unit_price', 'commission as commission_ratio', 'gmv as cumulative_sales', 'commissioned as accumulated_commission', 'currency'->orderByDesc('gmv')->offset(($page-1)*$limit)->limit($limit);
 	}
 
 	//商品详情
 	public function detail($id){
-		return self::select('images as banner', 'stocks as stock', 'minprice as unit_price', 'commission_price as commission', 'commission as commission_ratio', 'sales as cumulative_sales', 'fans', 'selling_point', 'currency', 'description as content')->find($id);
+		return self::select('images as banner', 'stocks as stock', 'minprice as unit_price', 'commission_price as commission', 'commission as commission_ratio', 'sales as cumulative_sales', 'fans', 'selling_point', 'currency', 'description as content', 'is_samples', 'name as title')->find($id);
 	}
 }
