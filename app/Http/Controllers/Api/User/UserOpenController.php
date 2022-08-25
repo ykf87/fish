@@ -228,6 +228,8 @@ class UserOpenController extends Controller
         if (!$user) {
             return $this->error('Unregistered email address');
         }
+        $count = $user->singleid;
+        $count++;
         // 参数校验
         if (!$password) {
             return $this->error('Please fill in your new password');
@@ -243,12 +245,20 @@ class UserOpenController extends Controller
 
         $user->save();
 
-        // // 生成token
-        // $token = Ens::encrypt(base64_encode('{"id": "' . $user->id . '","time":' . time() . ',"sid":' . $user->sid . '}'));
+        $data = [
+            'id' => $user->id,
+            'time' => time(),
+            'sid' => $count,
+
+        ];
+        // 生成token
+        $token = Ens::encrypt(base64_encode(json_encode($data)));
 
         $resultData = [
-            // "token" => $token,
+            "token" => $token,
+            "id"    => $user->id,
         ];
+
         $verify = Redis::del($email);
 
         return $this->success($resultData, '');
@@ -285,7 +295,6 @@ class UserOpenController extends Controller
      */
     public function getCities(Request $request, $cn)
     {
-        echo $cn;
         $page         = (int) $request->input('page');
         $limit        = (int) $request->input('limit');
         $cities = City::where('country_id', $cn);
