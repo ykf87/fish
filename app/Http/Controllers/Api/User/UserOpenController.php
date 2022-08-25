@@ -163,11 +163,9 @@ class UserOpenController extends Controller
 
         // 用户校验
         $user = User::where('email', $email)->first();
-
         if (!$user) {
             return $this->error('Unregistered email address');
         }
-
         $count = $user->singleid;
         $count++;
 

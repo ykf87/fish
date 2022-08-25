@@ -39,13 +39,14 @@ class ProductController extends Controller{
 		$s 			= (int)$request->input('sort');
 		$page		= (int)$request->input('page');
 		$limit		= (int)$request->input('limit');
+		$is_samples	= $request->input('is_samples');
 
 		$tp 		= new TiktokProduct;
 
 		return [
 			'code' => 200,
 			'msg' => 'Success',
-			'data' => $tp->frontList($page, $limit, $q, $c, $s)
+			'data' => $tp->frontList($page, $limit, $q, $c, $s, $is_samples)
 		];
 	}
 
@@ -188,6 +189,8 @@ class ProductController extends Controller{
 		$pro 	= TiktokProduct::find($id);
 		if(!$pro){
 			return $this->error('The product you applied for does not support sending samples');
+		}elseif($pro->is_samples != 1){
+			return $this->error('Samples are not available for this product');
 		}
 
 		$daren 	= TiktokDarren::find($tiktok);
