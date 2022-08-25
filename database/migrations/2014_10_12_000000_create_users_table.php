@@ -22,10 +22,10 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->unsignedInteger("singleid")->default(1);
             $table->unsignedInteger("integral")->default(0);
-            $table->string('invitation_code')->nullable()->unique();
-            $table->string('parent_invite')->nullable();
+            $table->string('invitation_code', 8)->nullable()->unique();
+            $table->string('parent_invite', 8)->nullable();
             $table->string('relation')->nullable();
-            $table->smallInteger('status')->default(1);
+            $table->tinyInteger('status')->default(1);
             $table->ipAddress('register_ip')->comment('注册时的 IP 地址');
             $table->ipAddress('last_ip')->nullable()->comment('最后登陆的 IP 地址');
             $table->timestamps();

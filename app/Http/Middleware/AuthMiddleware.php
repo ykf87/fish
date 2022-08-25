@@ -29,7 +29,6 @@ class AuthMiddleware
                 if (isset($info['id']) && isset($info['time']) && isset($info['sid'])) {
                     if (time() - $info['time'] < (86400 * 60)) { //60天后 token 失效
                         $user   = User::find($info['id']);
-                        var_dump($info);
                         if ($user && $user->singleid == $info['sid']) {
                             $request->merge(['_user' => $user]);
                             return $next($request);
