@@ -36,9 +36,13 @@ class UserOpenController extends Controller
         Redis::setex($toEmail, 600, $code);
 
         $conetent = 'Your verification code: 【' . $code . '】and will expire in 10 minutes';
-        $flag = Mail::raw($conetent, function ($message) use ($toEmail) {
+
+        Mail::raw($conetent, function ($message) use ($toEmail) {
+
             $message->to($toEmail)->subject("dome verification code");
         });
+
+        return $this->success(null, 'The verification code is sent successfully. Please check your email address');
     }
 
     /**
@@ -72,7 +76,15 @@ class UserOpenController extends Controller
 
         // 参数校验
         if (!$password) {
-            return $this->error('Please fill in your password');
+            if (!$code) {
+                return $this->error('Please fill in your password or verification code');
+            } else {
+                // 校验验证码
+                $verify = Redis::get($email);
+                if (!$verify || $code != $verify) {
+                    return $this->error('Verification code error');
+                }
+            }
         }
         if (!$nickname) {
             $nickname = explode("@", $email)[0];
@@ -119,7 +131,7 @@ class UserOpenController extends Controller
         $data = [
             'id' => $user->id,
             'time' => time(),
-            'sid' => $user->singleid,
+            'sid' => 1,
 
         ];
         // 生成token
@@ -129,6 +141,9 @@ class UserOpenController extends Controller
             "token" => $token,
             "id"    => $user->id,
         ];
+
+        // 删除缓存验证码
+        $verify = Redis::del($email);
 
         return $this->success($resultData, '');
     }
@@ -145,17 +160,15 @@ class UserOpenController extends Controller
         $password          = $request->input('password');
         $code              = (int) $request->input('code');
         $ip                =  $request->getClientIp();
-        $redis             = new Redis;
 
         // 用户校验
         $user = User::where('email', $email)->first();
         if (!$user) {
             return $this->error('Unregistered email address');
         }
-
         $count = $user->singleid;
-
         $count++;
+
         // 用户状态校验
         if ($user->status != 1) {
             return $this->error('The account status is abnormal');
@@ -166,11 +179,10 @@ class UserOpenController extends Controller
                 return $this->error('passwordWrong');
             }
         } else {
-            $verify = $redis->get($email);
-            if ($code != $verify) {
+            $verify = Redis::get($email);
+
+            if (!$verify || $code != $verify) {
                 return $this->error('Verification code error');
-            } else {
-                $verify = $redis->del($email);
             }
         }
         // 登录次数+1
@@ -192,6 +204,8 @@ class UserOpenController extends Controller
             "token" => $token,
             "id"    => $user->id,
         ];
+
+        $verify = Redis::del($email);
 
 
         return $this->success($resultData, '');
@@ -222,9 +236,7 @@ class UserOpenController extends Controller
         $verify = Redis::get($email);
         if ($code != $verify) {
             return $this->error('Verification code error');
-        } else {
-            $verify = Redis::del($email);
-        }
+        } else { }
 
         // 更新数据
         $user->password = Hash::make($password);
@@ -237,6 +249,7 @@ class UserOpenController extends Controller
         $resultData = [
             // "token" => $token,
         ];
+        $verify = Redis::del($email);
 
         return $this->success($resultData, '');
     }
@@ -250,14 +263,18 @@ class UserOpenController extends Controller
     public function getCountries(Request $request)
     {
         $page         = (int) $request->input('page');
-        $limit        = (int) $request->input('limit', 20);
+        $limit        = (int) $request->input('limit');
 
-        $countries = Country::offset(($page - 1) * $limit)
-            ->limit($limit)
-            ->get()
-            ->toArray();
+        if ($limit) {
+            $countries = Country::offset(($page - 1) * $limit)
+                ->limit($limit)
+                ->get();
+        } else {
+            $countries = Country::all();
+        }
 
-        return $this->success($countries, '');
+
+        return $this->success($countries->toArray(), '');
     }
 
     /**
@@ -269,15 +286,16 @@ class UserOpenController extends Controller
     public function getCities(Request $request, $cn)
     {
         echo $cn;
-        $page         = (int) $request->input('page', 1);
-        $limit        = (int) $request->input('limit', 20);
-        $cities = City::where('country_id', $cn)
-            ->offset(($page - 1) * $limit)
-            ->limit($limit)
-            ->get()
-            ->toArray();
+        $page         = (int) $request->input('page');
+        $limit        = (int) $request->input('limit');
+        $cities = City::where('country_id', $cn);
 
-        return $this->success($cities, '');
+        if ($limit) {
+            $cities->offset(($page - 1) * $limit)
+                ->limit($limit);
+        }
+
+        return $this->success($cities->get()->toArray(), '');
     }
 
     /**

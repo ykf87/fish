@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Globals\Ens;
+use Aws\S3\S3Client;
 use Encore\Admin\Grid\Displayers\Limit;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManagerStatic;
@@ -23,6 +24,10 @@ class UserAuthController extends Controller
         $user         = $request->get('_user');
 
         $info = User::find($user->id)->toArray();
+
+        if (file_exists('../.env')) {
+            $info['avatar'] = env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $info['avatar'];
+        }
 
         return $this->success($info, '');
     }
@@ -43,12 +48,12 @@ class UserAuthController extends Controller
 
 
 
-        // $user = $model->find($user->id);
 
-        if (!$nickname) {
-            return $this->error('Please fill in your nickname');
-        } else {
-            // $user->nickname = $nickname;
+        $user = $model->find($user->id);
+
+        if ($nickname) {
+            $user->nickname = $nickname;
+            $success['nickname'] = $nickname;
         }
 
         if ($avatar) {
@@ -56,26 +61,22 @@ class UserAuthController extends Controller
             preg_match('/^(data:\s*image\/(\w+);base64,)/', $avatar, $res);
 
             if (isset($res[2])) {
-                $filepath     = 'avatar/'  . '1.' . $res[2];
+                $filepath     = 'avatar/'  . $user->id . '.' . $res[2];
 
                 $content     = base64_decode(str_replace($res[1], '', $avatar));
 
-                var_dump($filepath);
-                if (Storage::disk('s3')->put($filepath, $content)) {
-                    $avatarUrl     = Storage::disk('s3')->url($filepath);
-                } else {
+                if (Storage::disk('s3')->put($filepath, $content)) { } else {
                     return $this->error('Upload image error');
                 }
             } else {
                 return $this->error('Wrong image');
             }
         };
+        $user->avatar =   $filepath;
+        $user->save();
 
-        var_dump($avatarUrl);
+        $success['avatar'] = env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $user->avatar;
 
-        // $user->save();
-
-
-        // return $this->success($user->toArray(), '');
+        return $this->success($success, '');
     }
 }
