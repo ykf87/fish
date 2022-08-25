@@ -44,7 +44,11 @@ class UserAuthController extends Controller
 
         $nickname          = $request->input('nickname');
         $avatar            = $request->input('avatar');
+        $mail              = $request->input('mail');
+        $mailcode          = $request->input('mailcode');
+        $password          = $request->input('password');
         $model             = new User();
+        $success = [];
 
 
 
@@ -54,6 +58,30 @@ class UserAuthController extends Controller
         if ($nickname) {
             $user->nickname = $nickname;
             $success['nickname'] = $nickname;
+        }
+
+        if ($mail) {
+            if (!filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+                return $this->error('The email address is invalid');
+            }
+            // 邮箱唯一性验证
+            $count = $model->where('email', $mail)->count();
+            if ($count) {
+                return $this->error('The email address has been registered');
+            }
+            // 校验验证码
+            $verify = Redis::get($mail);
+            if (!$verify || $mailcode != $verify) {
+                return $this->error('Verification code error');
+            }
+            //密码校验
+            if ($password) {
+                if (!Hash::check($password, $user->password)) {
+                    return $this->error('passwordWrong');
+                }
+            }
+            $success['mail'] = $mail;
+            $user->email = $mail;
         }
 
         if ($avatar) {
@@ -71,11 +99,12 @@ class UserAuthController extends Controller
             } else {
                 return $this->error('Wrong image');
             }
+            $user->avatar =   $filepath;
+            $success['avatar'] = env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $user->avatar;
         };
-        $user->avatar =   $filepath;
+
         $user->save();
 
-        $success['avatar'] = env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $user->avatar;
 
         return $this->success($success, '');
     }
