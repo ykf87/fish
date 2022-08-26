@@ -1,0 +1,71 @@
+<?php
+
+return [
+    'error_tips'                => [
+        'The email address is invalid' => 'The email address is invalid',
+        'The email address has been registered' => 'The email address has been registered',
+        'Please fill in your password or verification code' => 'Please fill in your password or verification code',
+        'Verification code error' => 'Verification code error',
+        'Invalid invitation code' => 'Invalid invitation code',
+        'fail to register' =>  'fail to register',
+        'Unregistered email address' => 'Unregistered email address',
+        'The account status is abnormal' => 'The account status is abnormal',
+        'passwordWrong' =>  'passwordWrong',
+        'Please fill in your new password' => 'Please fill in your new password',
+        'Upload image error' =>  'Upload image error',
+        'Wrong image' => 'Wrong image',
+        'Not found' => 'Not found',
+        'Please fill in your name' =>  'Please fill in your name',
+        'Please fill in your  phone number' =>   'Please fill in your  phone number',
+        'Please select a country' =>   'Please select a country',
+        'Please fill in your full address' => 'Please fill in your full address',
+        'Fill in up to 10 shipping addresses' => 'Fill in up to 10 shipping addresses',
+        'Address does not exist' =>  'Address does not exist',
+        'Address addition failure' =>   'Address addition failure',
+        'Address does not exist, please add it first' =>  'Address does not exist, please add it first',
+        'Modification failure' =>    'Modification failure',
+        'Address deletion failure' =>    'Address deletion failure',
+        'Default address setting failed' =>   'Default address setting failed',
+        'Please submit the necessary information' =>         'Please submit the necessary information',
+        'tiktok account has been added by other users' =>   'tiktok account has been added by other users',
+        'Your tiktok account is under review' =>   'Your tiktok account is under review',
+        'Your tiktok account already exists' =>  'Your tiktok account already exists',
+        'Each account may not add more than 30 tiktok' =>      'Each account may not add more than 30 tiktok',
+        'Failed to add' =>    'Failed to add',
+        'Failed to delete' => 'Failed to delete',
+        'Collection failure' => 'Collection failure',
+        'Failed to cancel collection' => 'Failed to cancel collection',
+        'Please select a product' => 'Please select a product',
+        'Please select a tiktok account' =>     'Please select a tiktok account',
+        'Please select the shipping address' =>    'Please select the shipping address',
+        'Simultaneous application of samples can not exceed 10' => 'Simultaneous application of samples can not exceed 10',
+        'You have requested a sample, please wait for review' =>  'You have requested a sample, please wait for review',
+        'The product you applied for does not support sending samples' => 'The product you applied for does not support sending samples',
+        'Samples are not available for this product' =>  'Samples are not available for this product',
+        'Your tiktok account does not exist' => 'Your tiktok account does not exist',
+        'Your tiktok account is under review or has been rejected' =>         'Your tiktok account is under review or has been rejected',
+        'Your tiktok account does not meet the requirements for sending samples' =>      'Your tiktok account does not meet the requirements for sending samples',
+        'Sample Request Failed' =>  'Sample Request Failed',
+        'Sample request does not exist' =>  'Sample request does not exist',
+        'Cannot be cancelled' =>  'Cannot be cancelled',
+        'Cancellation Failure' =>  'Cancellation Failure'
+
+
+    ],
+    'success_tips' => [
+        'Succcess' =>    'Succcess',
+        'The verification code is sent successfully. Please check your email address' =>         'The verification code is sent successfully. Please check your email address',
+        'Address updated successfully' => 'Address updated successfully',
+        'Modified successfully' => 'Modified successfully',
+        'Address deleted successfully' => 'Address deleted successfully',
+        'Default address set successfully' => 'Default address set successfully',
+        'Added successfully, waiting for review' => 'Added successfully, waiting for review',
+        'Deleted successfully' => 'Deleted successfully',
+        'Collection success' => 'Collection success',
+        'Successfully uncollected' => 'Successfully uncollected',
+        'Sample request successful' =>    'Sample request successful',
+        'Cancellation success' => 'Cancellation success'
+
+    ]
+
+];

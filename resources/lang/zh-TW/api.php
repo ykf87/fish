@@ -1,0 +1,71 @@
+<?php
+
+return [
+    'error_tips'                => [
+        'The email address is invalid' => '郵箱地址不符合要求',
+        'The email address has been registered' => '郵箱地址已註冊',
+        'Please fill in your password or verification code' => '請填寫您的密碼或驗證碼',
+        'Verification code error' => '驗證碼錯誤',
+        'Invalid invitation code' => '無效的邀請碼',
+        'fail to register' => '註冊失敗',
+        'Unregistered email address' => '未註冊的電子郵件地址',
+        'The account status is abnormal' => '帳號狀態異常',
+        'passwordWrong' => '密碼錯了',
+        'Please fill in your new password' => '請填寫您的新密碼',
+        'Upload image error' => '上傳圖片錯誤',
+        'Wrong image' => '錯誤的圖片',
+        'Not found' => '未找到',
+        'Please fill in your name' => '請填寫您的姓名',
+        'Please fill in your  phone number' => '請填寫你的電話號碼',
+        'Please select a country' => '請選擇國家',
+        'Please fill in your full address' => '請填寫你的詳細地址',
+        'Fill in up to 10 shipping addresses' => '最多填寫10個送貨地址',
+        'Address does not exist' => '地址不存在',
+        'Address addition failure' => '地址添加失敗',
+        'Address does not exist, please add it first' => '地址不存在，請先添加',
+        'Modification failure' => '修改失敗',
+        'Address deletion failure' => '地址刪除失敗',
+        'Default address setting failed' => '默認地址設置失敗',
+        'Please submit the necessary information' => '請提交必要的資料',
+        'tiktok account has been added by other users' => 'tiktok 賬號已被其他用戶添加',
+        'Your tiktok account is under review' => '您的tiktok賬號正在審覈中',
+        'Your tiktok account already exists' => '您的tiktok賬號已經存在',
+        'Each account may not add more than 30 tiktok' => '每個賬號添加Tiktok不能超過30個',
+        'Failed to add' => '添加失敗',
+        'Failed to delete' => '無法刪除',
+        'Collection failure' => '收藏失敗',
+        'Failed to cancel collection' => '取消收藏失敗',
+        'Please select a product' => '請選擇產品',
+        'Please select a tiktok account' => '請選擇tiktok賬號',
+        'Please select the shipping address' => '請選擇收貨地址',
+        'Simultaneous application of samples can not exceed 10' => '同時申請的樣品不能超過10個',
+        'You have requested a sample, please wait for review' => '您已經有同一個待審覈樣品',
+        'The product you applied for does not support sending samples' => '您申請的商品不支持寄送樣品',
+        'Samples are not available for this product' => '這個商品沒有樣品',
+        'Your tiktok account does not exist' => '您的tiktok賬號不存在',
+        'Your tiktok account is under review or has been rejected' => '您的Tiktok賬號正在審覈中或被拒絕',
+        'Your tiktok account does not meet the requirements for sending samples' => '您的Tiktok賬號不符合領取樣品的要求',
+        'Sample Request Failed' => '樣品申請失敗',
+        'Sample request does not exist' => '申請樣品不存在',
+        'Cannot be cancelled' => '無法取消',
+        'Cancellation Failure' => '取消失敗'
+
+
+    ],
+    'success_tips' => [
+        'Succcess' => '成功',
+        'The verification code is sent successfully. Please check your email address' => '驗證碼發送成功，請檢查你的郵箱',
+        'Address updated successfully' => '地址修改成功',
+        'Modified successfully' => '修改成功',
+        'Address deleted successfully' => '地址删除成功',
+        'Default address set successfully' => '默認地址設置成功',
+        'Added successfully, waiting for review' => '添加成功，等待審覈',
+        'Deleted successfully' => '刪除成功',
+        'Collection success' => '收藏成功',
+        'Successfully uncollected' => '取消收藏成功',
+        'Sample request successful' => '樣品申請成功',
+        'Cancellation success' => '取消成功'
+
+    ]
+
+];
