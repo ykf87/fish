@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Storage;
 Route::group([
 	'prefix'        => '/',
 	'namespace'     => 'App\Http\Controllers\Api',
-	// 'middleware'    => [],
+	// 'middleware'    => ['language'],
 	'as'            => 'api.'
 ], function () {
 	Route::group([

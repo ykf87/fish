@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Redis;
 use App\Models\Country;
 use App\Models\Language;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 
 class UserOpenController extends Controller
 {
