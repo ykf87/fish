@@ -31,6 +31,7 @@ class UserOpenController extends Controller
         if (!filter_var($toEmail, FILTER_VALIDATE_EMAIL) || !$toEmail) {
             return $this->error('The email address is invalid');
         }
+
         // 生成随机验证码
         $code = mt_rand(111111, 999999);
         // resdis
@@ -43,7 +44,7 @@ class UserOpenController extends Controller
             $message->to($toEmail)->subject("dome verification code");
         });
 
-        return $this->success(null, 'The verification code is sent successfully. Please check your email address');
+        return $this->success(null, 'verification code is sent successfully');
     }
 
     /**

@@ -53,8 +53,8 @@ return [
 
     ],
     'success_tips' => [
-        'Succcess' =>    'Succcess',
-        'The verification code is sent successfully. Please check your email address' =>         'The verification code is sent successfully. Please check your email address',
+        'Success' =>    'Success',
+        'verification code is sent successfully' =>         'The verification code is sent successfully. Please check your email address',
         'Address updated successfully' => 'Address updated successfully',
         'Modified successfully' => 'Modified successfully',
         'Address deleted successfully' => 'Address deleted successfully',
