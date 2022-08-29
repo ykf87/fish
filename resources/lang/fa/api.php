@@ -1,0 +1,71 @@
+<?php
+
+return [
+    'error_tips'                => [
+        'The email address is invalid' => 'L’adresse électronique est nulle',
+        'The email address has been registered' => 'L’adresse électronique a été enregistrée',
+        'Please fill in your password or verification code' => 'Veuillez remplir votre mot de passe ou code de vérification',
+        'Verification code error' => 'Erreur de code de vérification',
+        'Invalid invitation code' => 'Code d’invitation invalide',
+        'fail to register' =>  'Non-enregistrement',
+        'Unregistered email address' => 'Adresse électronique non enregistrée',
+        'The account status is abnormal' => 'Le statut du compte est anormal',
+        'passwordWrong' =>  'passwordWrong',
+        'Please fill in your new password' => 'Veuillez remplir votre nouveau mot de passe',
+        'Upload image error' =>  'télécharger erreur d’image',
+        'Wrong image' => 'Mauvaise image',
+        'Not found' => 'Non trouvé',
+        'Please fill in your name' =>  'Veuillez remplir votre nom',
+        'Please fill in your  phone number' =>   'Veuillez remplir votre numéro de téléphone',
+        'Please select a country' =>   'Veuillez sélectionner un pays',
+        'Please fill in your full address' => 'Veuillez remplir votre adresse complète',
+        'Fill in up to 10 shipping addresses' => 'Remplissez jusqu’à 10 adresses d’expédition',
+        'Address does not exist' =>  'Adresse n’existe pas',
+        'Address addition failure' =>   'Défaut d’adresse',
+        'Address does not exist, please add it first' =>  'L’adresse n’existe pas, merci de la joindre d’abord',
+        'Modification failure' =>    'Défaut de Modification',
+        'Address deletion failure' =>    'adresse de suppression Echec',
+        'Default address setting failed' =>   'Échec de la définition de l’adresse par défaut',
+        'Please submit the necessary information' =>         'Veuillez soumettre les informations nécessaires',
+        'tiktok account has been added by other users' =>   'Le compte tiktok a été ajouté par d’autres utilisateurs',
+        'Your tiktok account is under review' =>   'Votre compte tiktok est en cours de révision',
+        'Your tiktok account already exists' =>  'votre compte tiktok existe déjà ',
+        'Each account may not add more than 30 tiktok' =>      'Chaque compte ne peut pas ajouter plus de 30 tiktok',
+        'Failed to add' =>    'Omis d’ajouter',
+        'Failed to delete' => 'Échec de la suppression',
+        'Collection failure' => 'Échec de la collecte',
+        'Failed to cancel collection' => 'Non-annulation de la collecte',
+        'Please select a product' => 'Veuillez sélectionner un produit',
+        'Please select a tiktok account' =>     'Merci de sélectionner un compte tiktok',
+        'Please select the shipping address' =>    'Veuillez choisir l’adresse d’expédition',
+        'Simultaneous application of samples can not exceed 10' => 'L’application simultanée d’échantillons ne peut dépasser 10',
+        'You have requested a sample, please wait for review' =>  'Vous avez demandé un échantillon',
+        'The product you applied for does not support sending samples' => 'Le produit que vous avez demandé ne permet pas l’envoi d’échantillons',
+        'Samples are not available for this product' =>  'Des échantillons ne sont pas disponibles pour ce produit',
+        'Your tiktok account does not exist' => 'Votre compte tiktok n’existe pas',
+        'Your tiktok account is under review or has been rejected' =>         'Votre compte tiktok est en cours de révision ou a été rejeté',
+        'Your tiktok account does not meet the requirements for sending samples' =>      'Votre compte tiktok ne répond pas aux exigences pour l’envoi d’échantillons',
+        'Sample Request Failed' =>  'Demande d’échantillon rejetée',
+        'Sample request does not exist' =>  'La demande d’échantillon n’existe pas',
+        'Cannot be cancelled' =>  'Ne peut être annulé',
+        'Cancellation Failure' =>  'Échec de l’annulation'
+
+
+    ],
+    'success_tips' => [
+        'Succcess' =>    'Erfolg',
+        'The verification code is sent successfully. Please check your email address' =>         'Le code de vérification est envoyé avec succès.Veuillez vérifier votre adresse électronique',
+        'Address updated successfully' => 'Adresse mise à jour avec succès',
+        'Modified successfully' => 'Modifié avec succès',
+        'Address deleted successfully' => 'Adresse supprimée avec succès',
+        'Default address set successfully' => 'Adresse par défaut fixée avec succès',
+        'Added successfully, waiting for review' => 'Ajouté avec succès, en attendant la révision',
+        'Deleted successfully' => 'Supprimé avec succès',
+        'Collection success' => 'Succès de la collecte',
+        'Successfully uncollected' => 'Non collecté avec succès',
+        'Sample request successful' =>    'Demande d’échantillon réussie',
+        'Cancellation success' => 'Cancellation success'
+
+    ]
+
+];

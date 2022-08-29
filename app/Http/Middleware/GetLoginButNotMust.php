@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use App\Globals\Ens;
-use App\Models\UCUser;
+use App\Models\User;
 
 class GetLoginButNotMust
 {
@@ -28,7 +28,7 @@ class GetLoginButNotMust
                 $info   = json_decode($info, true);
                 if (isset($info['id']) && isset($info['time']) && isset($info['sid'])) {
                     if (time() - $info['time'] < (86400 * 60)) { //60天后 token 失效
-                        $user   = UCUser::find($info['id']);
+                        $user   = User::find($info['id']);
                         if ($user && $user->singleid == $info['sid']) {
                             $request->merge(['_user' => $user]);
                         }

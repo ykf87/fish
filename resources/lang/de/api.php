@@ -1,0 +1,71 @@
+<?php
+
+return [
+    'error_tips'                => [
+        'The email address is invalid' => 'Die E-Mail-Adresse ist ungültig',
+        'The email address has been registered' => 'Die E-Mail-Adresse wurde registriert',
+        'Please fill in your password or verification code' => 'Bitte geben Sie Ihr Passwort oder Ihren Bestätigungscode ein',
+        'Verification code error' => 'Verifizierungscodefehler',
+        'Invalid invitation code' => 'Ungültiger Einladungscode',
+        'fail to register' =>  'Registrierung fehlgeschlagen',
+        'Unregistered email address' => 'Nicht registrierte E-Mail-Adresse',
+        'The account status is abnormal' => 'Der Kontostatus ist abnormal',
+        'passwordWrong' =>  'passwordWrong',
+        'Please fill in your new password' => 'Bitte geben Sie Ihr neues Passwort ein',
+        'Upload image error' =>  'Fehler beim Hochladen von Bildern',
+        'Wrong image' => 'Falsches Bild',
+        'Not found' => 'Nicht gefunden',
+        'Please fill in your name' =>  'Bitte geben Sie Ihren Namen ein',
+        'Please fill in your  phone number' =>   'Bitte geben Sie Ihre Telefonnummer ein',
+        'Please select a country' =>   'Bitte wählen Sie ein Land aus',
+        'Please fill in your full address' => 'Bitte geben Sie Ihre vollständige Adresse ein',
+        'Fill in up to 10 shipping addresses' => 'Bis zu 10 Lieferadressen ausfüllen',
+        'Address does not exist' =>  'Fehler beim Hinzufügen von Adressen',
+        'Address addition failure' =>   'Défaut d’adresse',
+        'Address does not exist, please add it first' =>  'Adresse existiert nicht, bitte zuerst hinzufügen',
+        'Modification failure' =>    'Modification failure',
+        'Address deletion failure' =>    'adresse de suppression Echec',
+        'Default address setting failed' =>   'Standardadresseinstellung fehlgeschlagen',
+        'Please submit the necessary information' =>         'Bitte übermitteln Sie die erforderlichen Informationen',
+        'tiktok account has been added by other users' =>   'tiktok account has been added by other users',
+        'Your tiktok account is under review' =>   'Ihr tiktok-Konto wird überprüft',
+        'Your tiktok account already exists' =>  'Dein tiktok-Konto existiert bereits',
+        'Each account may not add more than 30 tiktok' =>      'Jedes Konto darf nicht mehr als 30 Tiktok hinzufügen',
+        'Failed to add' =>    'Fehler beim Hinzufügen',
+        'Failed to delete' => 'Nicht gelöscht',
+        'Collection failure' => 'Sammlungsfehler',
+        'Failed to cancel collection' => 'Die Sammlung konnte nicht abgebrochen werden',
+        'Please select a product' => 'Bitte wählen Sie ein Produkt aus',
+        'Please select a tiktok account' =>     'Bitte wählen Sie ein tiktok-Konto aus',
+        'Please select the shipping address' =>    'Bitte wählen Sie die Lieferadresse',
+        'Simultaneous application of samples can not exceed 10' => 'Die gleichzeitige Anwendung der Proben darf 10 nicht überschreiten',
+        'You have requested a sample, please wait for review' =>  'Sie haben eine Probe angefordert, bitte warten Sie auf die Überprüfung',
+        'The product you applied for does not support sending samples' => 'Das Produkt, für das Sie sich beworben haben, unterstützt nicht das Versenden von Mustern',
+        'Samples are not available for this product' =>  'Für dieses Produkt sind keine Muster verfügbar',
+        'Your tiktok account does not exist' => 'Ihr tiktok-Konto existiert nicht',
+        'Your tiktok account is under review or has been rejected' =>         'Ihr tiktok-Konto wird überprüft oder wurde abgelehnt',
+        'Your tiktok account does not meet the requirements for sending samples' =>      'Ihr tiktok-Konto erfüllt nicht die Anforderungen für den Versand von Proben',
+        'Sample Request Failed' =>  'Sample Request Failed',
+        'Sample request does not exist' =>  'Musteranforderung existiert nicht',
+        'Cannot be cancelled' =>  'Kann nicht storniert werden',
+        'Cancellation Failure' =>  'Stornierungsfehler'
+
+
+    ],
+    'success_tips' => [
+        'Succcess' =>    'Erfolg',
+        'The verification code is sent successfully. Please check your email address' =>         'Der Verifizierungscode wurde erfolgreich gesendet.Bitte überprüfen Sie Ihre E-Mail-Adresse',
+        'Address updated successfully' => 'Adresse wurde erfolgreich aktualisiert',
+        'Modified successfully' => 'Erfolgreich geändert',
+        'Address deleted successfully' => 'Adresse supprimée avec succès',
+        'Default address set successfully' => 'Adresse erfolgreich gelöscht',
+        'Added successfully, waiting for review' => 'Erfolgreich hinzugefügt, warten auf Überprüfung',
+        'Deleted successfully' => 'Erfolgreich gelöscht',
+        'Collection success' => 'Sammlungserfolg',
+        'Successfully uncollected' => 'Erfolgreich nicht abgeholt',
+        'Sample request successful' =>   'Musteranforderung erfolgreich',
+        'Cancellation success' => 'Stornierungserfolg'
+
+    ]
+
+];
