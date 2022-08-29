@@ -53,8 +53,8 @@ return [
 
     ],
     'success_tips' => [
-        'Succcess' => '成功',
-        'The verification code is sent successfully. Please check your email address' => '验证码发送成功，请检查你的邮箱',
+        'Success' => '成功',
+        'verification code is sent successfully' => '验证码发送成功，请检查你的邮箱',
         'Address updated successfully' => '地址修改成功',
         'Modified successfully' => '修改成功',
         'Address deleted successfully' => '地址删除成功',

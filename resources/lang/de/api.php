@@ -53,7 +53,7 @@ return [
 
     ],
     'success_tips' => [
-        'Succcess' =>    'Erfolg',
+        'Success' =>    'Erfolg',
         'The verification code is sent successfully. Please check your email address' =>         'Der Verifizierungscode wurde erfolgreich gesendet.Bitte überprüfen Sie Ihre E-Mail-Adresse',
         'Address updated successfully' => 'Adresse wurde erfolgreich aktualisiert',
         'Modified successfully' => 'Erfolgreich geändert',
