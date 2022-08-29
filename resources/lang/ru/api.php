@@ -1,0 +1,71 @@
+<?php
+
+return [
+    'error_tips'                => [
+        'The email address is invalid' => 'адрес электронной почты недействителен',
+        'The email address has been registered' => 'адрес электронной почты был зарегистрирован',
+        'Please fill in your password or verification code' => 'Пожалуйста, введите пароль или проверочный код',
+        'Verification code error' => 'Ошибка проверочного кода',
+        'Invalid invitation code' => 'Недействительный пригласительный код',
+        'fail to register' =>  'не регистрируется',
+        'Unregistered email address' => 'незарегистрированный адрес электронной почты',
+        'The account status is abnormal' => 'состояние счета ненормальное',
+        'passwordWrong' =>  'Ошибка пароля',
+        'Please fill in your new password' => 'Пожалуйста, введите ваш новый пароль',
+        'Upload image error' =>  'загрузить ошибку изображения',
+        'Wrong image' => 'неправильное изображение',
+        'Not found' => 'Не найден',
+        'Please fill in your name' =>  'Пожалуйста, введите ваше имя',
+        'Please fill in your  phone number' =>   'Пожалуйста, введите свой номер телефона.',
+        'Please select a country' =>   'Пожалуйста, выберите страну',
+        'Please fill in your full address' => 'Пожалуйста, введите полный адрес',
+        'Fill in up to 10 shipping addresses' => 'Заполните до 10 адресов доставки',
+        'Address does not exist' =>  'Адрес не существует ddition failure',
+        'Address addition failure' =>   'Адрес не существует ddition failure',
+        'Address does not exist, please add it first' =>  'адрес не существует, пожалуйста, добавьте его в первую очередь',
+        'Modification failure' =>    'Отказ от модификации',
+        'Address deletion failure' =>    'отказ от удаления адреса',
+        'Default address setting failed' =>   'значение адреса по умолчанию не удалось',
+        'Please submit the necessary information' =>         'Просьба представить необходимую информацию',
+        'tiktok account has been added by other users' =>   'учетная запись tiktok была добавлена другими пользователями',
+        'Your tiktok account is under review' =>   'Ваш аккаунт в tiktok находится на пересмотре',
+        'Your tiktok account already exists' =>  'Ваш аккаунт в tiktok уже существует',
+        'Each account may not add more than 30 tiktok' =>      'Каждый счет не может добавить более 30 tiktok',
+        'Failed to add' =>    'Не удалось добавить',
+        'Failed to delete' => 'Не удалось удалить',
+        'Collection failure' => 'Сбои в сборе данных',
+        'Failed to cancel collection' => 'не удалось отменить сбор',
+        'Please select a product' => 'Пожалуйста, выберите продукт',
+        'Please select a tiktok account' =>     'Пожалуйста, выберите учетную запись tiktok',
+        'Please select the shipping address' =>    'Пожалуйста, выберите адрес доставки',
+        'Simultaneous application of samples can not exceed 10' => 'Одновременное нанесение образцов не может превышать 10',
+        'You have requested a sample, please wait for review' =>  'вы просили образец, пожалуйста, подождите обзора',
+        'The product you applied for does not support sending samples' => 'Продукт, на который вы подали заявку, не поддерживает отправку образцов',
+        'Samples are not available for this product' =>  'Образцы по этому продукту отсутствуют',
+        'Your tiktok account does not exist' => 'Ваш аккаунт в tiktok не существует',
+        'Your tiktok account is under review or has been rejected' =>         'Ваш аккаунт в tiktok находится на пересмотре или отклонен',
+        'Your tiktok account does not meet the requirements for sending samples' =>      'ваш аккаунт в tiktok не отвечает требованиям для отправки образцов',
+        'Sample Request Failed' =>  'образец запроса не удалось',
+        'Sample request does not exist' =>  'образец запроса не существует',
+        'Cannot be cancelled' =>  'Не может быть отменено',
+        'Cancellation Failure' =>  'отказ от аннулирования'
+
+
+    ],
+    'success_tips' => [
+        'Succcess' =>    'В порядке наследования',
+        'The verification code is sent successfully. Please check your email address' =>         'проверочный код успешно отправляется.Пожалуйста, проверьте свой адрес электронной почты',
+        'Address updated successfully' => 'адрес успешно обновлен',
+        'Modified successfully' => 'Успешно модифицирован',
+        'Address deleted successfully' => 'адрес удалён успешно',
+        'Default address set successfully' => 'успешно установлен адрес по умолчанию',
+        'Added successfully, waiting for review' => 'успешно добавлен, ожидает рассмотрения',
+        'Deleted successfully' => 'успешно удалена',
+        'Collection success' => 'успех в сборе',
+        'Successfully uncollected' => 'Успешно не собраны',
+        'Sample request successful' =>   'образец запроса успешно',
+        'Cancellation success' => 'успех отмены'
+
+    ]
+
+];
