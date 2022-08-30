@@ -2,6 +2,7 @@
 
 return [
     'error_tips'                => [
+        'Error' => 'Error',
         'The email address is invalid' => 'The email address is invalid',
         'The email address has been registered' => 'The email address has been registered',
         'Please fill in your password or verification code' => 'Please fill in your password or verification code',

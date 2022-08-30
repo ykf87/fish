@@ -15,7 +15,8 @@ use Illuminate\Support\Arr;
 
 use Illuminate\Support\Facades\DB;
 
-class TiktokProduct extends Model{
+class TiktokProduct extends Model
+{
 	use HasFactory;
 	public $timestamps = false;
 	public static $status 	= [
@@ -40,31 +41,32 @@ class TiktokProduct extends Model{
 	];
 
 	//更新TK产品
-	public static function updFromTiktok($row){
-		if(!isset($row['product_id'])){
+	public static function updFromTiktok($row)
+	{
+		if (!isset($row['product_id'])) {
 			return false;
 		}
 		$productid 		= $row['product_id'];
 		$product 		= self::where('pid', $productid)->first();
-		if(!$product){
+		if (!$product) {
 			return false;
 		}
 
-		if(!isset($row['category_list']) || !isset($row['images'])){
+		if (!isset($row['category_list']) || !isset($row['images'])) {
 			return false;
 		}
 
-		DB::transaction(function () use($row, $product) {
+		DB::transaction(function () use ($row, $product) {
 			$product->name 			= $row['product_name'];
 			$product->status 		= $row['product_status'];
 			$product->description 	= $row['description'];
-			if(isset($row['brand'])){
+			if (isset($row['brand'])) {
 				$product->brand 	= $row['brand'];
 			}
 
 			$images 				= [];
 			$thums 					= [];
-			foreach($row['images'] as $item){
+			foreach ($row['images'] as $item) {
 				$images[] 			= $item['url_list'][0];
 				$thums[]			= $item['thumb_url_list'][0];
 			}
@@ -75,22 +77,22 @@ class TiktokProduct extends Model{
 
 			$cates 				= [];
 			$proCateIds 		= [];
-			foreach($row['category_list'] as $item){
+			foreach ($row['category_list'] as $item) {
 				$cates[$item['id']] 		= [
 					'id'		=> $item['id'],
 					'parent'	=> $item['parent_id'],
 					'name'		=> $item['local_display_name'],
-					'is_leaf'	=> (int)$item['is_leaf'],
+					'is_leaf'	=> (int) $item['is_leaf'],
 				];
 				$proCateIds[]	= ['id' => $product->id, 'cateid' => $item['id']];
 			}
 			$getCateIds 		= array_keys($cates);
 			$hads 				= TiktokCategory::whereIn('id', $getCateIds)->pluck('id', 'id')->toArray();
 			$cateInsert 		= array_diff_key($cates, $hads);
-			if(count($cateInsert) > 0){
+			if (count($cateInsert) > 0) {
 				TiktokCategory::insert($cateInsert);
 			}
-			if(count($proCateIds) > 0){
+			if (count($proCateIds) > 0) {
 				TiktokProductsCategory::where('id', $product->id)->delete();
 				TiktokProductsCategory::insert($proCateIds);
 			}
@@ -99,13 +101,13 @@ class TiktokProduct extends Model{
 			$minprice 			= 9999999999;
 			$maxprice			= 0;
 			$stock 				= 0;
-			if(isset($row['skus'])){
-				foreach($row['skus'] as $item){
+			if (isset($row['skus'])) {
+				foreach ($row['skus'] as $item) {
 					$curr 		= $item['price']['currency'];
-					if($minprice > $item['price']['price_include_vat']){
+					if ($minprice > $item['price']['price_include_vat']) {
 						$minprice 	= $item['price']['price_include_vat'];
 					}
-					if($maxprice < $item['price']['price_include_vat']){
+					if ($maxprice < $item['price']['price_include_vat']) {
 						$maxprice 	= $item['price']['price_include_vat'];
 					}
 					$stock 		+= $item['stock_infos'][0]['available_stock'];
@@ -123,14 +125,14 @@ class TiktokProduct extends Model{
 				$hads 			= TiktokProductsSku::where('pid', $product->id)->pluck('pid', 'sid')->toArray();
 				$insertSkusNew 	= array_diff_key($insertSkus, $hads);
 				$delSkus 		= array_diff_key($hads, $insertSkus);
-				if(count($delSkus) > 0){
+				if (count($delSkus) > 0) {
 					TiktokProductsSku::where('pid', $product->id)->whereIn('sid', array_keys($delSkus))->delete();
 				}
-				if(count($insertSkusNew) > 0){
+				if (count($insertSkusNew) > 0) {
 					TiktokProductsSku::insert($insertSkusNew);
 				}
 				$product->currency 	= $curr;
-				if($maxprice>=$minprice){
+				if ($maxprice >= $minprice) {
 					$product->maxprice 	= $maxprice;
 					$product->minprice 	= $minprice;
 				}
@@ -142,7 +144,8 @@ class TiktokProduct extends Model{
 	}
 
 	//新增TK产品
-	public static function addFromTiktok($products, $shopid, $accountid){
+	public static function addFromTiktok($products, $shopid, $accountid)
+	{
 		$dbproids 		= self::where('shop_id', $shopid)->pluck('id', 'pid')->toArray();
 		$getproids 		= Arr::pluck($products, 'id', 'id');
 		$adminId 		= Admin::user()->id;
@@ -151,8 +154,8 @@ class TiktokProduct extends Model{
 		$insertSkus 	= [];
 		$sellresions 	= [];
 		$pids 			= [];
-		foreach($products as $item){
-			if(isset($dbproids[$item['id']])){
+		foreach ($products as $item) {
+			if (isset($dbproids[$item['id']])) {
 				continue;
 			}
 			$pids[] 	= $item['id'];
@@ -160,13 +163,13 @@ class TiktokProduct extends Model{
 			$maxprice 	= 0;
 			$stock 		= 0;
 			$curr 		= '';
-			if(isset($item['skus'])){
-				foreach($item['skus'] as $sitem){
+			if (isset($item['skus'])) {
+				foreach ($item['skus'] as $sitem) {
 					$curr 		= $sitem['price']['currency'];
-					if($minprice > $sitem['price']['price_include_vat']){
+					if ($minprice > $sitem['price']['price_include_vat']) {
 						$minprice 	= $sitem['price']['price_include_vat'];
 					}
-					if($maxprice < $sitem['price']['price_include_vat']){
+					if ($maxprice < $sitem['price']['price_include_vat']) {
 						$maxprice 	= $sitem['price']['price_include_vat'];
 					}
 					$stock 		+= $sitem['stock_infos'][0]['available_stock'];
@@ -181,15 +184,15 @@ class TiktokProduct extends Model{
 						'stock'				=> $sitem['stock_infos'][0]['available_stock'],
 					];
 				}
-			}else{
+			} else {
 				$minprice 	= 0;
 			}
-			if(isset($item['sale_regions'])){
-				foreach($item['sale_regions'] as $rsion){
+			if (isset($item['sale_regions'])) {
+				foreach ($item['sale_regions'] as $rsion) {
 					$sellresions[$item['id']][] 	= ['resion' => $rsion];
 				}
 			}
-			if($maxprice < $minprice){
+			if ($maxprice < $minprice) {
 				$minprice 	= 0;
 			}
 			$arr 		= [
@@ -209,7 +212,7 @@ class TiktokProduct extends Model{
 			// self::insert($arr);
 		}
 
-		if(count($inserts) > 1){
+		if (count($inserts) > 1) {
 			self::insert($inserts);
 
 			$res 	= self::whereIn('pid', $pids)->pluck('id', 'pid')->toArray();
@@ -217,87 +220,88 @@ class TiktokProduct extends Model{
 			$isr 	= [];
 			// print_r($insertSkus);
 			// print_r($sellresions);
-			foreach($insertSkus as $pid => $arr){
-				if(isset($res[$pid])){
-					foreach($arr as $bbb){
+			foreach ($insertSkus as $pid => $arr) {
+				if (isset($res[$pid])) {
+					foreach ($arr as $bbb) {
 						$bbb['pid']	= $res[$pid];
 						$isk[] 		= $bbb;
 					}
 				}
 			}
-			if(count($isk) > 0){
+			if (count($isk) > 0) {
 				TiktokProductsSku::insert($isk);
 			}
-			foreach($sellresions as $pid => $vals){
-				if(isset($res[$pid])){
-					foreach($vals as $bbb){
+			foreach ($sellresions as $pid => $vals) {
+				if (isset($res[$pid])) {
+					foreach ($vals as $bbb) {
 						$bbb['pid']	= $res[$pid];
 						$isr[] 		= $bbb;
 					}
 				}
 			}
-			if(count($isr) > 0){
+			if (count($isr) > 0) {
 				TiktokProductsResion::insert($isr);
 			}
 		}
-		
+
 
 		TiktokShop::where('id', $shopid)->update(['product_number' => self::where('shop_id', $shopid)->count()]);
 		TiktokAccount::where('id', $accountid)->update(['product_num' => self::where('account_id', $accountid)->count()]);
 	}
 
 	//前端查询
-	public static function frontList(int $page, int $limit, $q, $cate, $sort, $is_samples = null){
-		if($page < 1){
+	public static function frontList(int $page, int $limit, $q, $cate, $sort, $is_samples = null)
+	{
+		if ($page < 1) {
 			$page 	= 1;
 		}
-		if($limit < 1){
+		if ($limit < 1) {
 			$limit 	= 20;
 		}
-		$obj 		= DB::table('tiktok_products as p')->select('p.id', 'p.pid', 'p.images as image', 'p.name as title', 'p.stocks as stock', 'p.sales as cumulative_sales', 'p.minprice as unit_price', 'p.commission as commission_ratio', 'p.commission_price as commission', 'p.currency', 'p.is_samples');//->where('p.status', 3);
-		if($q){
+		$obj 		= DB::table('tiktok_products as p')->select('p.id', 'p.pid', 'p.images as image', 'p.name as title', 'p.stocks as stock', 'p.sales as cumulative_sales', 'p.minprice as unit_price', 'p.commission as commission_ratio', 'p.commission_price as commission', 'p.currency', 'p.is_samples'); //->where('p.status', 3);
+		if ($q) {
 			$obj 	= $obj->where('p.name', 'like', "%$q%");
 		}
-		if($is_samples !== null){
+		if ($is_samples !== null) {
 			$obj 	= $obj->where('p.is_samples', $is_samples);
 		}
-		if($cate > 0){
+		if ($cate > 0) {
 			$cateids 		= TiktokCategory::where('parent', $cate)->pluck('id')->toArray();
 			$cateids[] 		= $cate;
 			$cateids 		= array_flip(array_flip($cateids));
 
 			$obj 			= $obj->rightJoin('tiktok_products_categories as c', 'c.id', '=', 'p.id')->whereIn('c.cateid', $cateids);
 		}
-		switch($sort){
-			case 1://到手价升序
+		switch ($sort) {
+			case 1: //到手价升序
 				$obj 		= $obj->orderBy('p.maxprice');
-			break;
-			case 2://到手价降序
+				break;
+			case 2: //到手价降序
 				$obj 		= $obj->orderByDesc('p.maxprice');
-			break;
-			case 3://佣金比例升序
+				break;
+			case 3: //佣金比例升序
 				$obj 		= $obj->orderBy('p.commission');
-			break;
-			case 4://佣金比例降序
+				break;
+			case 4: //佣金比例降序
 				$obj 		= $obj->orderByDesc('p.commission');
-			break;
-			case 5://佣金金额升序
+				break;
+			case 5: //佣金金额升序
 				$obj 		= $obj->orderBy('p.commission_price');
-			break;
-			case 6://佣金金额降序
+				break;
+			case 6: //佣金金额降序
 				$obj 		= $obj->orderByDesc('p.commission_price');
-			break;
-			case 7://总销量降序
+				break;
+			case 7: //总销量降序
 				$obj 		= $obj->orderByDesc('p.sales');
-			break;
-			case 8://24小时内销量降序
-				$mms 		= time() - 3600*24;
+				break;
+			case 8: //24小时内销量降序
+				$mms 		= time() - 3600 * 24;
 				$obj 		= $obj->leftJoin('tiktok_order_products as o', 'o.product_id', '=', 'p.pid')->where('addtime', '>=', $mms)->orderByDesc('p.sales');
-			break;
-			case 9://2小时内销售降序
-				$mms 		= time() - 3600*2;
+				break;
+			case 9: //2小时内销售降序
+				$mms 		= time() - 3600 * 2;
 				$obj 		= $obj->leftJoin('tiktok_order_products as o', 'o.product_id', '=', 'p.pid')->where('addtime', '>=', $mms)->orderByDesc('p.sales');
-			break;
+				break;
 			default:
 				$obj 		= $obj->inRandomOrder();
 		}
@@ -307,23 +311,26 @@ class TiktokProduct extends Model{
 			'page'			=> $page,
 			'limit'			=> $limit,
 			'total_limit'	=> $total,
-			'product_lists'	=> $obj->offset(($page-1)*$limit)->limit($limit)->get(),
+			'product_lists'	=> $obj->offset(($page - 1) * $limit)->limit($limit)->get(),
 		];
 	}
 
-	public function getThumbsAttribute($val){
+	public function getThumbsAttribute($val)
+	{
 		return explode(',', $val);
 	}
 
 	//产品列表
-	public static function list(){
+	public static function list()
+	{
 		$obj 		= self::select('id', 'pid as product_id', 'images as image', 'name as title', 'minprice as unit_price', 'commission as commission_ratio', 'gmv as cumulative_sales', 'commissioned as accumulated_commission', 'currency', 'is_samples');
 		return $obj;
 		// return self::select('id', 'pid as product_id', 'images as image', 'name as title', 'minprice as unit_price', 'commission as commission_ratio', 'gmv as cumulative_sales', 'commissioned as accumulated_commission', 'currency'->orderByDesc('gmv')->offset(($page-1)*$limit)->limit($limit);
 	}
 
 	//商品详情
-	public static function detail($id){
-		return self::select('images as banner', 'stocks as stock', 'minprice as unit_price', 'commission_price as commission', 'commission as commission_ratio', 'sales as cumulative_sales', 'fans', 'selling_point', 'currency', 'description as content', 'is_samples', 'name as title')->find($id);
+	public static function detail($id)
+	{
+		return self::select('images as banner', 'stocks as stock', 'minprice as unit_price', 'commission_price as commission', 'commission as commission_ratio', 'sales as cumulative_sales', 'fans', 'selling_point', 'currency', 'description as content', 'is_samples', 'name as title', 'pid')->find($id);
 	}
 }
