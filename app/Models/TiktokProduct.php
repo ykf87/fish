@@ -103,12 +103,13 @@ class TiktokProduct extends Model
 			$stock 				= 0;
 			if (isset($row['skus'])) {
 				foreach ($row['skus'] as $item) {
+					$price_include_vat = isset($item['price']['price_include_vat']) ? $item['price']['price_include_vat'] : '';
 					$curr 		= $item['price']['currency'];
-					if ($minprice > $item['price']['price_include_vat']) {
-						$minprice 	= $item['price']['price_include_vat'];
+					if ($minprice > $price_include_vat) {
+						$minprice 	= $price_include_vat;
 					}
-					if ($maxprice < $item['price']['price_include_vat']) {
-						$maxprice 	= $item['price']['price_include_vat'];
+					if ($maxprice < $price_include_vat) {
+						$maxprice 	= $price_include_vat;
 					}
 					$stock 		+= $item['stock_infos'][0]['available_stock'];
 
@@ -117,7 +118,7 @@ class TiktokProduct extends Model
 						'sid'				=> $item['id'],
 						'currency'			=> $item['price']['currency'],
 						'original_price'	=> $item['price']['original_price'],
-						'price_include_vat'	=> $item['price']['price_include_vat'],
+						'price_include_vat'	=> $price_include_vat,
 						'seller_sku'		=> $item['seller_sku'],
 						'stock'				=> $item['stock_infos'][0]['available_stock'],
 					];
@@ -165,12 +166,15 @@ class TiktokProduct extends Model
 			$curr 		= '';
 			if (isset($item['skus'])) {
 				foreach ($item['skus'] as $sitem) {
+
+					$price_include_vat = isset($sitem['price']['price_include_vat']) ? $sitem['price']['price_include_vat'] : '';
+
 					$curr 		= $sitem['price']['currency'];
-					if ($minprice > $sitem['price']['price_include_vat']) {
-						$minprice 	= $sitem['price']['price_include_vat'];
+					if ($minprice > $price_include_vat) {
+						$minprice 	= $price_include_vat;
 					}
-					if ($maxprice < $sitem['price']['price_include_vat']) {
-						$maxprice 	= $sitem['price']['price_include_vat'];
+					if ($maxprice < $price_include_vat) {
+						$maxprice 	= $price_include_vat;
 					}
 					$stock 		+= $sitem['stock_infos'][0]['available_stock'];
 
@@ -179,7 +183,7 @@ class TiktokProduct extends Model
 						'sid'				=> $sitem['id'],
 						'currency'			=> $sitem['price']['currency'],
 						'original_price'	=> $sitem['price']['original_price'],
-						'price_include_vat'	=> $sitem['price']['price_include_vat'],
+						'price_include_vat'	=> $price_include_vat,
 						'seller_sku'		=> $sitem['seller_sku'],
 						'stock'				=> $sitem['stock_infos'][0]['available_stock'],
 					];
