@@ -54,7 +54,7 @@ return [
     ],
     'success_tips' => [
         'Success' =>    'В порядке наследования',
-        'The verification code is sent successfully. Please check your email address' =>         'проверочный код успешно отправляется.Пожалуйста, проверьте свой адрес электронной почты',
+        'verification code is sent successfully' =>         'проверочный код успешно отправляется.Пожалуйста, проверьте свой адрес электронной почты',
         'Address updated successfully' => 'адрес успешно обновлен',
         'Modified successfully' => 'Успешно модифицирован',
         'Address deleted successfully' => 'адрес удалён успешно',

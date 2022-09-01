@@ -54,7 +54,7 @@ return [
     ],
     'success_tips' => [
         'Success' => 'Success',
-        'The verification code is sent successfully. Please check your email address' => '認証コードが正常に送信されます。メールアドレスをご確認ください',
+        'verification code is sent successfully' => '認証コードが正常に送信されます。メールアドレスをご確認ください',
         'Address updated successfully' => 'アドレス更新成功',
         'Modified successfully' => '修正成功',
         'Address deleted successfully' => 'アドレス削除成功',

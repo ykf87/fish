@@ -1,0 +1,71 @@
+<?php
+
+return [
+    'error_tips'                => [
+        'The email address is invalid' => 'Alamat e-mel tidak sah',
+        'The email address has been registered' => 'Alamat e-mel telah didaftarkan',
+        'Please fill in your password or verification code' => 'Sila isikan kata laluan atau kod pengesahan anda',
+        'Verification code error' => 'Verification code error',
+        'Invalid invitation code' => 'Kod jemputan tidak sah',
+        'fail to register' => 'gagal mendaftar',
+        'Unregistered email address' => 'Alamat e-mel tidak berdaftar',
+        'The account status is abnormal' => 'Status akaun tidak normal',
+        'passwordWrong' => 'passwordWrong',
+        'Please fill in your new password' => 'Sila isikan kata laluan baru anda',
+        'Upload image error' => 'Muat naik image error',
+        'Wrong image' => 'Wrong image',
+        'Not found' => 'Not found',
+        'Please fill in your name' => 'Sila isikan nama anda',
+        'Please fill in your  phone number' => 'Sila isikan nombor telefon anda',
+        'Please select a country' => 'Sila pilih negara',
+        'Please fill in your full address' => 'Sila isikan alamat penuh anda',
+        'Fill in up to 10 shipping addresses' => 'Isi sehingga 10 alamat penghantaran',
+        'Address does not exist' => 'Alamat tidak wujud',
+        'Address addition failure' => 'Kegagalan penambahan alamat',
+        'Address does not exist, please add it first' => 'Alamat tidak wujud, sila tambahkannya dahulu',
+        'Modification failure' => 'Kegagalan pengubahsuaian',
+        'Address deletion failure' => 'Kegagalan penghapusan alamat',
+        'Default address setting failed' => 'Default address setting failed',
+        'Please submit the necessary information' => 'Sila serahkan maklumat yang diperlukan',
+        'tiktok account has been added by other users' => 'Akaun tiktok telah ditambah oleh pengguna lain',
+        'Your tiktok account is under review' => 'Akaun tiktok anda sedang disemak',
+        'Your tiktok account already exists' => 'Akaun tiktok anda sudah wujud',
+        'Each account may not add more than 30 tiktok' => 'Setiap akaun tidak boleh menambah lebih daripada 30 tiktok',
+        'Failed to add' => 'Gagal menambah',
+        'Failed to delete' => 'Gagal memadam',
+        'Collection failure' => 'Kegagalan pengumpulan',
+        'Failed to cancel collection' => 'Gagal membatalkan collection',
+        'Please select a product' => 'Sila pilih produk',
+        'Please select a tiktok account' => 'Sila pilih akaun tiktok',
+        'Please select the shipping address' => 'Sila pilih alamat penghantaran',
+        'Simultaneous application of samples can not exceed 10' => 'Penggunaan sampel secara serentak tidak boleh melebihi 10',
+        'You have requested a sample, please wait for review' => 'Anda telah meminta sampel, sila tunggu semakan',
+        'The product you applied for does not support sending samples' => 'Produk yang anda pohon tidak menyokong menghantar sampel',
+        'Samples are not available for this product' => 'Sampel tidak tersedia untuk produk ini',
+        'Your tiktok account does not exist' => 'Akaun tiktok anda tidak wujud',
+        'Your tiktok account is under review or has been rejected' => 'Akaun tiktok anda sedang disemak atau telah ditolak',
+        'Your tiktok account does not meet the requirements for sending samples' => 'Akaun tiktok anda tidak memenuhi syarat untuk menghantar sampel',
+        'Sample Request Failed' => 'Sample Request Failed',
+        'Sample request does not exist' => 'Permintaan sampel tidak wujud',
+        'Cannot be cancelled' => 'Tidak boleh dibatalkan',
+        'Cancellation Failure' => 'Kegagalan Pembatalan'
+
+
+    ],
+    'success_tips' => [
+        'Success' => 'Kejayaan',
+        'verification code is sent successfully' => 'Kod pengesahan berjaya dihantar.Sila semak alamat e-mel anda',
+        'Address updated successfully' => 'Alamat dikemas kini berjaya',
+        'Modified successfully' => 'Diubahsuai berjaya',
+        'Address deleted successfully' => 'Alamat dipadam berjaya',
+        'Default address set successfully' => 'Default address set successfully',
+        'Added successfully, waiting for review' => 'Ditambah berjaya, menunggu semakan',
+        'Deleted successfully' => 'Dipadam berjaya',
+        'Collection success' => 'Kejayaan koleks',
+        'Successfully uncollected' => 'Berjaya dibongkar',
+        'Sample request successful' => 'Sample request successfu',
+        'Cancellation success' => 'Pembatalan kejayaan'
+
+    ]
+
+];
