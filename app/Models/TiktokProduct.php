@@ -103,7 +103,7 @@ class TiktokProduct extends Model
 			$stock 				= 0;
 			if (isset($row['skus'])) {
 				foreach ($row['skus'] as $item) {
-					$price_include_vat = isset($item['price']['price_include_vat']) ? $item['price']['price_include_vat'] : '';
+					$price_include_vat = isset($item['price']['price_include_vat']) ? $item['price']['price_include_vat'] : 0;
 					$curr 		= $item['price']['currency'];
 					if ($minprice > $price_include_vat) {
 						$minprice 	= $price_include_vat;
@@ -167,7 +167,7 @@ class TiktokProduct extends Model
 			if (isset($item['skus'])) {
 				foreach ($item['skus'] as $sitem) {
 
-					$price_include_vat = isset($sitem['price']['price_include_vat']) ? $sitem['price']['price_include_vat'] : '';
+					$price_include_vat = isset($sitem['price']['price_include_vat']) ? $sitem['price']['price_include_vat'] : 0;
 
 					$curr 		= $sitem['price']['currency'];
 					if ($minprice > $price_include_vat) {
