@@ -103,14 +103,16 @@ class TiktokProduct extends Model
 			$stock 				= 0;
 			if (isset($row['skus'])) {
 				foreach ($row['skus'] as $item) {
-					$price_include_vat = isset($item['price']['price_include_vat']) ? $item['price']['price_include_vat'] : 0;
+
+					$original_price = isset($item['price']['original_price']) ? $item['price']['original_price'] : 0;
+
+					if ($minprice > $original_price) {
+						$minprice 	= $original_price;
+					}
+					if ($maxprice < $original_price) {
+						$maxprice 	= $original_price;
+					}
 					$curr 		= $item['price']['currency'];
-					if ($minprice > $price_include_vat) {
-						$minprice 	= $price_include_vat;
-					}
-					if ($maxprice < $price_include_vat) {
-						$maxprice 	= $price_include_vat;
-					}
 					$stock 		+= $item['stock_infos'][0]['available_stock'];
 
 					$insertSkus[$item['id']]	= [
@@ -118,7 +120,7 @@ class TiktokProduct extends Model
 						'sid'				=> $item['id'],
 						'currency'			=> $item['price']['currency'],
 						'original_price'	=> $item['price']['original_price'],
-						'price_include_vat'	=> $price_include_vat,
+						'price_include_vat'	=> isset($item['price']['price_include_vat']) ? $item['price']['price_include_vat'] : 0,
 						'seller_sku'		=> $item['seller_sku'],
 						'stock'				=> $item['stock_infos'][0]['available_stock'],
 					];
@@ -167,23 +169,23 @@ class TiktokProduct extends Model
 			if (isset($item['skus'])) {
 				foreach ($item['skus'] as $sitem) {
 
-					$price_include_vat = isset($sitem['price']['price_include_vat']) ? $sitem['price']['price_include_vat'] : 0;
+					$original_price = isset($sitem['price']['original_price']) ? $sitem['price']['original_price'] : 0;
+
+					if ($minprice > $original_price) {
+						$minprice 	= $original_price;
+					}
+					if ($maxprice < $original_price) {
+						$maxprice 	= $original_price;
+					}
 
 					$curr 		= $sitem['price']['currency'];
-					if ($minprice > $price_include_vat) {
-						$minprice 	= $price_include_vat;
-					}
-					if ($maxprice < $price_include_vat) {
-						$maxprice 	= $price_include_vat;
-					}
 					$stock 		+= $sitem['stock_infos'][0]['available_stock'];
-
 
 					$insertSkus[$item['id']][]	= [
 						'sid'				=> $sitem['id'],
 						'currency'			=> $sitem['price']['currency'],
 						'original_price'	=> $sitem['price']['original_price'],
-						'price_include_vat'	=> $price_include_vat,
+						'price_include_vat'	=> isset($sitem['price']['price_include_vat']) ? $sitem['price']['price_include_vat'] : 0,
 						'seller_sku'		=> $sitem['seller_sku'],
 						'stock'				=> $sitem['stock_infos'][0]['available_stock'],
 					];
@@ -278,10 +280,10 @@ class TiktokProduct extends Model
 		}
 		switch ($sort) {
 			case 1: //到手价升序
-				$obj 		= $obj->orderBy('p.maxprice');
+				$obj 		= $obj->orderBy('p.minprice');
 				break;
 			case 2: //到手价降序
-				$obj 		= $obj->orderByDesc('p.maxprice');
+				$obj 		= $obj->orderByDesc('p.minprice');
 				break;
 			case 3: //佣金比例升序
 				$obj 		= $obj->orderBy('p.commission');
