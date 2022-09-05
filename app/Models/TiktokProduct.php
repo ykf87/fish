@@ -188,6 +188,7 @@ class TiktokProduct extends Model
 						'price_include_vat'	=> isset($sitem['price']['price_include_vat']) ? $sitem['price']['price_include_vat'] : 0,
 						'seller_sku'		=> $sitem['seller_sku'],
 						'stock'				=> $sitem['stock_infos'][0]['available_stock'],
+						'warehouse_id'      => $sitem['stock_infos'][0]['warehouse_id'],
 					];
 				}
 			} else {
@@ -338,5 +339,11 @@ class TiktokProduct extends Model
 	public static function detail($id)
 	{
 		return self::select('images as banner', 'stocks as stock', 'minprice as unit_price', 'commission_price as commission', 'commission as commission_ratio', 'sales as cumulative_sales', 'fans', 'selling_point', 'currency', 'description as content', 'is_samples', 'name as title', 'pid')->find($id);
+	}
+
+
+	public function shop()
+	{
+		return $this->belongsTo(TiktokShop::class);
 	}
 }

@@ -12,6 +12,7 @@ use Encore\Admin\Facades\Admin;
 use App\Tiktok\Shop;
 use App\Admin\Actions\Tiktok\Getproduct;
 use App\Admin\Actions\Tiktok\Getorder;
+use App\Admin\Actions\Tiktok\GetWarehouse;
 
 class TiktokshopController extends AdminController
 {
@@ -27,23 +28,26 @@ class TiktokshopController extends AdminController
      *
      * @return Grid
      */
-    protected function grid(){
+    protected function grid()
+    {
         $loginId        = Admin::user()->id;
         $tkaccounts     = TiktokAccount::where('aid', $loginId)->pluck('seller_name', 'id')->toArray();
 
         $grid       = new Grid(new TiktokShop());
         $grid->model()->where('aid', $loginId);
         $whereId    = request()->get('account_id');
-        if($whereId){
+        if ($whereId) {
             $grid->model()->where('account_id', $whereId);
         }
 
         $grid->column('id', __('编号'));
-        $grid->column('account_id', __('所属账号'))->display(function($val) use($tkaccounts){
+        $grid->column('account_id', __('所属账号'))->display(function ($val) use ($tkaccounts) {
             return $tkaccounts[$val] ?? $val;
         });
+        $grid->column('type', __('店铺类型'))->using(TiktokShop::$type)->filter(TiktokShop::$type);
+
         $grid->column('shop_id', __('店铺ID'));
-        $grid->column('shop_region', __('所在地区'))->display(function($val){
+        $grid->column('shop_region', __('所在地区'))->display(function ($val) {
             return Shop::$resion[$val] ?? $val;
         });
         $grid->column('product_number', __('已拉取产品数量'))->sortable();
@@ -61,8 +65,12 @@ class TiktokshopController extends AdminController
             // 去掉查看
             $actions->disableView();
 
+            // 获取产品
             $actions->add(new Getproduct);
+            // 获取订单
             $actions->add(new Getorder);
+            // 获取仓库
+            $actions->add(new GetWarehouse);
         });
         return $grid;
     }

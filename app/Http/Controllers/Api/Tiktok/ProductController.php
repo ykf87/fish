@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Tiktok;
 
 use App\Http\Controllers\Controller;
+use App\Models\Banner;
 use Illuminate\Http\Request;
 
 use App\Models\TiktokProduct;
@@ -19,20 +20,23 @@ class ProductController extends Controller
 	public function index(Request $request)
 	{
 		$cateLists 		= TiktokCategory::where('parent', 0)->pluck('name', 'id');
-		$banner 		= [
-			[
-				'id'	=> 1,
-				'des'	=> 'test',
-				'image'	=> Storage::disk('admin')->url('banner/1.png'),
-				'url'	=> '',
-			], [
-				'id'	=> 1,
-				'des'	=> 'test',
-				'image'	=> Storage::disk('admin')->url('banner/2.png'),
-				'url'	=> '',
-			]
-		];
-		return $this->success(['category_lists' => $cateLists, 'banner' => $banner]);
+		$list = Banner::all()->toArray();
+		$banners = [];
+		foreach ($list as $item) {
+			if (file_exists('../.env')) {
+				$item['image'] = $item['image'] ? env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $item['image'] : '';
+			}
+			$b = [
+				'id'	=> $item['id'],
+				'des'	=> $item['name'],
+				'image'	=> $item['image'],
+				'url'	=> $item['url'],
+			];
+
+			$banners[] = $b;
+		}
+
+		return $this->success(['category_lists' => $cateLists, 'banner' => $banners]);
 	}
 
 	//产品首页
