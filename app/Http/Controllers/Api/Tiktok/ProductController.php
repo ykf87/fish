@@ -13,6 +13,7 @@ use App\Models\TiktokSample;
 use App\Models\TiktokDarren;
 use App\Models\TiktokProductsResion;
 use Illuminate\Support\Facades\Storage;
+use App\Models\TiktokShop;
 
 class ProductController extends Controller
 {
@@ -46,13 +47,14 @@ class ProductController extends Controller
 		$page		= (int) $request->input('page');
 		$limit		= (int) $request->input('limit');
 		$is_samples	= $request->input('is_samples');
+		$cb	= (int)  $request->input('cb');
 
 		$tp 		= new TiktokProduct;
 
 		return [
 			'code' => 200,
 			'msg' => 'Success',
-			'data' => $tp->frontList($page, $limit, $q, $c, $s, $is_samples)
+			'data' => $tp->frontList($page, $limit, $q, $c, $s, $is_samples, $cb)
 		];
 	}
 
@@ -104,6 +106,9 @@ class ProductController extends Controller
 			$reg = $region->resion;
 		}
 		$row->product_link     	= 'https://shop.tiktok.com/view/product/' . $row->pid . '?region=' . $reg . '&locale=en';
+
+		$shop = TiktokShop::Find($row->shop_id)->first();
+		$row->cd = $shop->type;
 
 		return $this->success($row);
 	}
