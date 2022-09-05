@@ -23,13 +23,11 @@ class ProductController extends Controller
 		$list = Banner::all()->toArray();
 		$banners = [];
 		foreach ($list as $item) {
-			if (file_exists('../.env')) {
-				$item['image'] = $item['image'] ? env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $item['image'] : '';
-			}
+
 			$b = [
 				'id'	=> $item['id'],
 				'des'	=> $item['name'],
-				'image'	=> $item['image'],
+				'image'	=>  Storage::disk('admin')->url($item['image']),
 				'url'	=> $item['url'],
 			];
 

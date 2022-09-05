@@ -188,7 +188,6 @@ class TiktokProduct extends Model
 						'price_include_vat'	=> isset($sitem['price']['price_include_vat']) ? $sitem['price']['price_include_vat'] : 0,
 						'seller_sku'		=> $sitem['seller_sku'],
 						'stock'				=> $sitem['stock_infos'][0]['available_stock'],
-						'warehouse_id'      => $sitem['stock_infos'][0]['warehouse_id'],
 					];
 				}
 			} else {

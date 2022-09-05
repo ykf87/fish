@@ -82,10 +82,6 @@ class TiktokProductController extends AdminController
         $grid->column('stocks', __('总库存'))->filter('range');
         $grid->column('sales', __('销量'))->filter('range')->sortable()->editable();
         $grid->column('gmv', __('销售额'))->filter('range')->sortable();
-        $grid->column('warehouse', __('仓库地址'))->display(function () {
-            $warehouse = TiktokShopWarehouse::where('shop_id', $this->shop_id)->where('warehouse_type', '1')->first();
-            return $warehouse ? $warehouse->full_address : '';
-        });
         $grid->column('commissioned', __('产生佣金'))->filter('range')->sortable();
 
 
