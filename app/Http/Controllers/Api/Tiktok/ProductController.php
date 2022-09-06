@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Tiktok;
 
 use App\Http\Controllers\Controller;
+use App\Models\Banner;
 use Illuminate\Http\Request;
 
 use App\Models\TiktokProduct;
@@ -12,6 +13,7 @@ use App\Models\TiktokSample;
 use App\Models\TiktokDarren;
 use App\Models\TiktokProductsResion;
 use Illuminate\Support\Facades\Storage;
+use App\Models\TiktokShop;
 
 class ProductController extends Controller
 {
@@ -19,20 +21,21 @@ class ProductController extends Controller
 	public function index(Request $request)
 	{
 		$cateLists 		= TiktokCategory::where('parent', 0)->pluck('name', 'id');
-		$banner 		= [
-			[
-				'id'	=> 1,
-				'des'	=> 'test',
-				'image'	=> Storage::disk('admin')->url('banner/1.png'),
-				'url'	=> '',
-			], [
-				'id'	=> 1,
-				'des'	=> 'test',
-				'image'	=> Storage::disk('admin')->url('banner/2.png'),
-				'url'	=> '',
-			]
-		];
-		return $this->success(['category_lists' => $cateLists, 'banner' => $banner]);
+		$list = Banner::all()->toArray();
+		$banners = [];
+		foreach ($list as $item) {
+
+			$b = [
+				'id'	=> $item['id'],
+				'des'	=> $item['name'],
+				'image'	=>  Storage::disk('admin')->url($item['image']),
+				'url'	=> $item['url'],
+			];
+
+			$banners[] = $b;
+		}
+
+		return $this->success(['category_lists' => $cateLists, 'banner' => $banners]);
 	}
 
 	//产品首页
@@ -44,13 +47,14 @@ class ProductController extends Controller
 		$page		= (int) $request->input('page');
 		$limit		= (int) $request->input('limit');
 		$is_samples	= $request->input('is_samples');
+		$cb	= (int)  $request->input('cb');
 
 		$tp 		= new TiktokProduct;
 
 		return [
 			'code' => 200,
 			'msg' => 'Success',
-			'data' => $tp->frontList($page, $limit, $q, $c, $s, $is_samples)
+			'data' => $tp->frontList($page, $limit, $q, $c, $s, $is_samples, $cb)
 		];
 	}
 
@@ -102,6 +106,9 @@ class ProductController extends Controller
 			$reg = $region->resion;
 		}
 		$row->product_link     	= 'https://shop.tiktok.com/view/product/' . $row->pid . '?region=' . $reg . '&locale=en';
+
+		$shop = TiktokShop::Find($row->shop_id)->first();
+		$row->cd = $shop->type;
 
 		return $this->success($row);
 	}

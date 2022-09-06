@@ -14,18 +14,20 @@ use App\Models\TiktokShop;
 class Getshop extends RowAction
 {
     public $name = '同步店铺';
-    public function dialog(){
+    public function dialog()
+    {
         $this->confirm('确定同步?');
     }
 
-    public function handle(Model $form){
+    public function handle(Model $form)
+    {
         $rs     = $form->checkAccess(Admin::user()->id);
-        if($rs !== true){//需要重新登录
+        if ($rs !== true) { //需要重新登录
             return $this->response()->error('授权已过期,请重新授权!')->refresh();
         }
         $shop   = new Shop;
-        $list   = $shop->ActiveShops($form->access_token, Admin::user()->id);
-        if(!is_array($list)){
+        $list   = $shop->getAuthorizedShop($form->access_token);
+        if (!is_array($list)) {
             return $this->response()->error($list)->refresh();
         }
 
@@ -39,25 +41,37 @@ class Getshop extends RowAction
         // ];
 
         $hads   = TiktokShop::where('account_id', $form->id)->pluck('id', 'shop_id')->toArray();
-        $gets   = Arr::pluck($list, 'shop_region', 'shop_id');
-        $diffAdd    = array_diff_key($gets, $hads);
+        $gets   = Arr::pluck($list, 'region', 'shop_id');
+        // $diffAdd    = array_diff_key($gets, $hads);
         $diffDel    = array_diff_key($hads, $gets);
-        if(count($diffDel) > 0){
+        if (count($diffDel) > 0) {
             TiktokShop::whereIn('id', $diffDel)->delete();
         }
-        if(count($diffAdd) > 0){
-            $insertArr  = [];
-            foreach($diffAdd as $shopid => $resion){
+        $insertArr  = [];
+        foreach ($list as $item) {
+            if (isset($hads[$item['shop_id']])) {
+                $rrr        = [
+                    'shop_region'   => $item['region'],
+                    'type'          =>  $item['type'],
+                    'shop_name'     => $item['shop_name'],
+                ];
+                TiktokShop::where('id', $hads[$item['shop_id']])
+                    ->update($rrr);
+            } else {
                 $rrr        = [
                     'aid'           => Admin::user()->id,
                     'account_id'    => $form->id,
-                    'shop_id'       => $shopid,
-                    'shop_region'   => $resion,
+                    'shop_id'       => $item['shop_id'],
+                    'shop_region'   => $item['region'],
+                    'type'          =>  $item['type'],
+                    'shop_name'     => $item['shop_name'],
                 ];
+
                 $insertArr[]    = $rrr;
             }
-            TiktokShop::insert($insertArr);
         }
+        TiktokShop::insert($insertArr);
+
         $form->shop_num         = TiktokShop::where('account_id', $form->id)->count();
         $form->save();
         return $this->response()->success('更新店铺成功!')->refresh();
@@ -67,5 +81,4 @@ class Getshop extends RowAction
         //return $this->response()->error('服务未启动...')->refresh();
         // return $this->response()->success('启动成功!')->refresh();
     }
-
 }

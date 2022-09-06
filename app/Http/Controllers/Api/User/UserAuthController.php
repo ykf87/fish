@@ -25,9 +25,7 @@ class UserAuthController extends Controller
 
         $info = User::find($user->id)->toArray();
 
-        if (file_exists('../.env')) {
-            $info['avatar'] = $info['avatar'] ? env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $info['avatar'] : '';
-        }
+        $info['avatar'] = $info['avatar'] ? env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $info['avatar'] : '';
 
         return $this->success($info, '');
     }

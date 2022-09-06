@@ -256,7 +256,7 @@ class TiktokProduct extends Model
 	}
 
 	//前端查询
-	public static function frontList(int $page, int $limit, $q, $cate, $sort, $is_samples = null)
+	public static function frontList(int $page, int $limit, $q, $cate, $sort, $is_samples = null, $cb = null)
 	{
 		if ($page < 1) {
 			$page 	= 1;
@@ -264,7 +264,11 @@ class TiktokProduct extends Model
 		if ($limit < 1) {
 			$limit 	= 20;
 		}
-		$obj 		= DB::table('tiktok_products as p')->select('p.id', 'p.pid', 'p.images as image', 'p.name as title', 'p.stocks as stock', 'p.sales as cumulative_sales', 'p.minprice as unit_price', 'p.commission as commission_ratio', 'p.commission_price as commission', 'p.currency', 'p.is_samples'); //->where('p.status', 3);
+		$obj 		= DB::table('tiktok_products as p')->select('p.id', 'p.pid', 'p.images as image', 'p.name as title', 'p.stocks as stock', 'p.sales as cumulative_sales', 'p.minprice as unit_price', 'p.commission as commission_ratio', 'p.commission_price as commission', 'p.currency', 'p.is_samples', 'shop.type as cb'); //->where('p.status', 3);
+		$obj 		= $obj->leftJoin('tiktok_shops as shop', 'shop.id', '=', 'p.shop_id');
+		if ($cb) {
+			$obj 		= $obj->where('shop.type', $cb);
+		}
 		if ($q) {
 			$obj 	= $obj->where('p.name', 'like', "%$q%");
 		}
@@ -337,6 +341,12 @@ class TiktokProduct extends Model
 	//商品详情
 	public static function detail($id)
 	{
-		return self::select('images as banner', 'stocks as stock', 'minprice as unit_price', 'commission_price as commission', 'commission as commission_ratio', 'sales as cumulative_sales', 'fans', 'selling_point', 'currency', 'description as content', 'is_samples', 'name as title', 'pid')->find($id);
+		return self::select('images as banner', 'stocks as stock', 'minprice as unit_price', 'commission_price as commission', 'commission as commission_ratio', 'sales as cumulative_sales', 'fans', 'selling_point', 'currency', 'description as content', 'is_samples', 'name as title', 'pid', 'shop_id')->find($id);
+	}
+
+
+	public function shop()
+	{
+		return $this->belongsTo(TiktokShop::class);
 	}
 }

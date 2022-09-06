@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Tiktok;
 
 use App\Globals\Ens;
@@ -7,7 +8,8 @@ use App\Globals\Http;
 use Illuminate\Support\Facades\Storage;
 use GuzzleHttp;
 
-class Shop{
+class Shop
+{
 	private $domain 			= '';
 	private $appid 				= '';
 	private $appkey 			= '';
@@ -23,7 +25,8 @@ class Shop{
 		'VN'	=> '越南'
 	];
 
-	public function __construct(){
+	public function __construct()
+	{
 		$this->domain 		= rtrim(env('TIKTOKDOMAIN'), '/');
 		$this->appid 		= env('TIKTOKAPPID');
 		$this->appkey 		= env('TIKTOKAPPKEY');
@@ -31,66 +34,71 @@ class Shop{
 	}
 
 	//计算tiktok签名
-	public function sign($url, $arr = []){
+	public function sign($url, $arr = [])
+	{
 		$path 			= $url;
-		if(empty($arr)){
+		if (empty($arr)) {
 			$params 	= parse_url($url);
-			if(isset($params['query'])){
+			if (isset($params['query'])) {
 				$path 	= $params['path'];
 				$query 	= parse_url($params['query']);
 				$arr 	= [];
 				parse_str($params['query'], $arr);
-			}else{
+			} else {
 				return null;
 			}
-		}else{
-			if(strpos($url, 'http') === 0){
+		} else {
+			if (strpos($url, 'http') === 0) {
 				$params 	= parse_url($url);
 				$path 		= $params['path'] ?? $path;
 			}
 		}
 		$arr['timestamp'] 	= time();
 		$at 				= '';
-		if(isset($arr['access_token'])){
+		if (isset($arr['access_token'])) {
 			$at 			= $arr['access_token'];
 			unset($arr['access_token']);
 		}
-		if(isset($arr['sign'])){
+		if (isset($arr['sign'])) {
 			unset($arr['sign']);
 		}
 		ksort($arr);
 		$str 	= '';
-		foreach($arr as $k => $v){
+		foreach ($arr as $k => $v) {
 			$str 	.= $k . $v;
 		}
 		$input	= $this->appkey . $path . $str . $this->appkey;
 		$hash 	= hash_hmac('sha256', $input, $this->appkey);
 		$arr['sign']	= $hash;
-		if($at){
+		if ($at) {
 			$arr['access_token'] 	= $at;
 		}
 		return $arr;
 	}
 
 	//获取授权码
-	public function accesstoken($code){
+	public function accesstoken($code)
+	{
 		$url 	= sprintf('%s%s', 'https://auth.tiktok-shops.com', $this->accessTokenUrl);
 		return Http::post($url, ['app_key' => $this->appid, 'app_secret' => $this->appkey, 'auth_code' => $code, 'grant_type' => 'authorized_code']);
 	}
 
 	//刷新授权码
-	public function refreshaccesstoken($token){
+	public function refreshaccesstoken($token)
+	{
 		$url 	= sprintf('%s%s', 'https://auth.tiktok-shops.com', $this->refressTokenUrl);
 		return Http::post($url, ['app_key' => $this->appid, 'app_secret' => $this->appkey, 'refresh_token' => $token, 'grant_type' => 'refresh_token']);
 	}
 
 	//获取授权跳转链接
-	public function authurl($adminid){
-		return $this->authUrl . '?app_key=' . $this->appid . '&state=' . base64_encode(Ens::encrypt('{"id": "'.$adminid.'","time":'.time().'}'));
+	public function authurl($adminid)
+	{
+		return $this->authUrl . '?app_key=' . $this->appid . '&state=' . base64_encode(Ens::encrypt('{"id": "' . $adminid . '","time":' . time() . '}'));
 	}
 
-	public function defaultParams($uri, $accesstoken, $arr = []){
-		if(!is_array($arr)){
+	public function defaultParams($uri, $accesstoken, $arr = [])
+	{
+		if (!is_array($arr)) {
 			$arr 				= [];
 		}
 		$arr['app_key'] 		= $this->appid;
@@ -100,86 +108,91 @@ class Shop{
 
 
 	//获取活跃商店列表
-	public function ActiveShops($access_token, $adminid){
+	public function ActiveShops($access_token, $adminid)
+	{
+		$this->getAuthorizedShop($access_token);
 		$uri 		= '/api/seller/global/active_shops';
 
 		$arr 		= $this->defaultParams($uri, $access_token);
 		$url 		= $this->domain . $uri . '?' . http_build_query($arr);
 		$res 		= json_decode(Http::get($url), true);
-		if(!isset($res['code'])){
+		if (!isset($res['code'])) {
 			return '未知错误,可能超时或其他原因!';
 		}
-		if($res['code'] != 0){
+		if ($res['code'] != 0) {
 			return isset($res['message']) ? $res['message'] : 'Tiktok返回错误!';
 		}
-		if(!isset($res['data']['active_shops'])){
+		if (!isset($res['data']['active_shops'])) {
 			return '未知错误,可能超时或其他原因-缺少data';
 		}
 		$list 		= $res['data']['active_shops'];
+
 		return $list;
 	}
 
 	//获取产品列表
 	//从tk端获取,本地不缓存
-	public function ProductLists($access_token, $shopId, $page = 1, $limit = 100, $search_status = null){
+	public function ProductLists($access_token, $shopId, $page = 1, $limit = 100, $search_status = null)
+	{
 		$uri 		= '/api/products/search';
 		$arr 		= $this->defaultParams($uri, $access_token, ['shop_id' => $shopId]);
 
 		$data 		= [
-			'page_number'		=> (int)$page,
-			'page_size'			=> (int)$limit,
+			'page_number'		=> (int) $page,
+			'page_size'			=> (int) $limit,
 		];
-		if($search_status){
+		if ($search_status) {
 			$data['search_status']		= $search_status;
 		}
 
 		$res 		= Http::post($this->domain . $uri . '?' . http_build_query($arr), $data);
 		$res 		= json_decode($res, true);
-		if(!isset($res['code'])){
+		if (!isset($res['code'])) {
 			return '未知错误,可能超时或其他原因!';
 		}
-		if($res['code'] != 0){
+		if ($res['code'] != 0) {
 			return isset($res['message']) ? $res['message'] : 'Tiktok返回错误!';
 		}
-		if(!isset($res['data']['products'])){
+		if (!isset($res['data']['products'])) {
 			return '未知错误,可能超时或其他原因-缺少data';
 		}
 		return $res['data'];
 	}
 
 	//同步商品详情
-	public function ProductInfo(array $ids, string $accesstoken, int $shopid){
-		if(empty($ids)){
+	public function ProductInfo(array $ids, string $accesstoken, int $shopid)
+	{
+		if (empty($ids)) {
 			return false;
 		}
 		$idslen 	= count($ids);
 		$limit 		= 20;
 		$pages 		= ceil($idslen / $limit);
 
-		for($i = 1; $i <= $pages; $i++){
+		for ($i = 1; $i <= $pages; $i++) {
 			$params 	= [
 				'access_token'	=> $accesstoken,
 				'shop_id'		=> $shopid,
 				'callback'		=> route('api.tiktok.proinfo'),
-				'ids'			=> implode(',', array_slice($ids, ($i-1)*$limit, $limit)),
+				'ids'			=> implode(',', array_slice($ids, ($i - 1) * $limit, $limit)),
 			];
 			try {
-	            $http = new GuzzleHttp\Client;
-	            $response = $http->post(env('TIKTOK_GO_URL') . 'proinfo', [
-	                'form_params' => $params,
-	            ]);
-	            $res    = (string)$response->getBody();
-	            $res 	= json_decode($res, true);
-	            if(!isset($res['code']) || $res['code'] != 200){
-	            	return $res['msg'] ?? '未知错误!';
-	            }
-	        } catch (\Exception $e) {
-	            return $e->getMessage();
-	        }
+				$http = new GuzzleHttp\Client;
+				$response = $http->post(env('TIKTOK_GO_URL') . 'proinfo', [
+					'form_params' => $params,
+				]);
+				$res    = (string) $response->getBody();
+				$res 	= json_decode($res, true);
+				if (!isset($res['code']) || $res['code'] != 200) {
+					return $res['msg'] ?? '未知错误!';
+				}
+			} catch (\Exception $e) {
+				return $e->getMessage();
+			}
 		}
 		return true;
 
-		
+
 		// if(empty($ids)){
 		// 	return false;
 		// }
@@ -203,7 +216,8 @@ class Shop{
 
 
 	//获取店铺所有订单列表
-	public function OrderLists($access_token, $shopId){
+	public function OrderLists($access_token, $shopId)
+	{
 		set_time_limit(0);
 		$uri 		= '/api/orders/search';
 		$arr 		= $this->defaultParams($uri, $access_token, ['shop_id' => $shopId]);
@@ -217,38 +231,38 @@ class Shop{
 		//首次执行
 		$url 		= $this->domain . $uri . '?' . http_build_query($arr);
 		$res 		= $this->getodlist($url, $data);
-		if(!is_array($res)){
+		if (!is_array($res)) {
 			return $res;
 		}
 
 		try {
-			$pages 				= ceil((int)$res['total'] / $limit);
+			$pages 				= ceil((int) $res['total'] / $limit);
 			$data['cursor']		= $res['next_cursor'];
 			$hasMore 			= $res['more'];
 			$list 				= $res['order_list'] ?? [];
-			if(is_array($list) && !empty($list)){
-				foreach($list as $item){
+			if (is_array($list) && !empty($list)) {
+				foreach ($list as $item) {
 					$orders[] 		= ['order_id' => $item['order_id'], 'order_status' => $item['order_status']];
 				}
 			}
 
-			if($hasMore == true){
-				while(true) {
+			if ($hasMore == true) {
+				while (true) {
 					$res 		= $this->getodlist($url, $data);
-					if(!is_array($res)){
+					if (!is_array($res)) {
 						return $res;
 					}
 					$data['cursor']		= $res['next_cursor'];
 					$list 				= $res['order_list'] ?? [];
-					if(is_array($list) && !empty($list)){
-						foreach($list as $item){
+					if (is_array($list) && !empty($list)) {
+						foreach ($list as $item) {
 							$orders[] 		= ['order_id' => $item['order_id'], 'order_status' => $item['order_status']];
 						}
 					}
-					if($res['more'] !== true){
+					if ($res['more'] !== true) {
 						break;
 					}
-					if(--$pages < 1){
+					if (--$pages < 1) {
 						break;
 					}
 				}
@@ -260,24 +274,26 @@ class Shop{
 	}
 
 	//真正执行获取订单的方法
-	private function getodlist($url, $data){
+	private function getodlist($url, $data)
+	{
 		$res 		= Http::post($url, $data);
 		$res 		= json_decode($res, true);
-		if(!isset($res['code'])){
+		if (!isset($res['code'])) {
 			return '未知错误,可能超时或其他原因!';
 		}
-		if($res['code'] != 0){
+		if ($res['code'] != 0) {
 			return isset($res['message']) ? $res['message'] : 'Tiktok返回错误!';
 		}
-		if(!isset($res['data'])){
+		if (!isset($res['data'])) {
 			return '未知错误,可能超时或其他原因-缺少data';
 		}
 		return $res['data'];
 	}
 
 	//同步订单详情
-	public function SyncOrderInfo(array $ids, string $accesstoken, string $shopid){
-		if(empty($ids)){
+	public function SyncOrderInfo(array $ids, string $accesstoken, string $shopid)
+	{
+		if (empty($ids)) {
 			return false;
 		}
 
@@ -293,27 +309,81 @@ class Shop{
 		$limit 		= 20;
 		$pages 		= ceil($idslen / $limit);
 
-		for($i = 1; $i <= $pages; $i++){
+		for ($i = 1; $i <= $pages; $i++) {
 			$params 	= [
 				'access_token'	=> $accesstoken,
 				'shop_id'		=> $shopid,
 				'callback'		=> route('api.tiktok.orderinfo'),
-				'ids'			=> implode(',', array_slice($ids, ($i-1)*$limit, $limit)),
+				'ids'			=> implode(',', array_slice($ids, ($i - 1) * $limit, $limit)),
 			];
 			try {
 				$http = new GuzzleHttp\Client;
 				$response = $http->post(env('TIKTOK_GO_URL') . 'orderinfo', [
 					'form_params' => $params,
 				]);
-				$res    = (string)$response->getBody();
+				$res    = (string) $response->getBody();
 				$res 	= json_decode($res, true);
-				if(!isset($res['code']) || $res['code'] != 200){
+				if (!isset($res['code']) || $res['code'] != 200) {
 					return $res['msg'] ?? '未知错误!';
 				}
-			}catch (\Exception $e) {
+			} catch (\Exception $e) {
 				return $e->getMessage();
 			}
 		}
 		return true;
+	}
+	/**
+	 *  获取店铺仓库列表
+	 *
+	 * @param [type] $access_token
+	 * @param [type] $shopId
+	 * @return void|string
+	 */
+	public function getWarehouseList($access_token, $shopId)
+	{
+		$uri 		= '/api/logistics/get_warehouse_list';
+
+		$arr 		= $this->defaultParams($uri, $access_token, ['shop_id' => $shopId]);
+
+		$url 		= $this->domain . $uri . '?' . http_build_query($arr);
+		$res 		= json_decode(Http::get($url), true);
+		if (!isset($res['code'])) {
+			return '未知错误,可能超时或其他原因!';
+		}
+		if ($res['code'] != 0) {
+			return isset($res['message']) ? $res['message'] : 'Tiktok返回错误!';
+		}
+		if (!isset($res['data']['warehouse_list'])) {
+			return '未知错误,可能超时或其他原因-缺少data';
+		}
+		$list 		= $res['data']['warehouse_list'];
+		return $list;
+	}
+
+	/**
+	 * 获取授权店铺
+	 *
+	 * @param [type] $access_token
+	 * @return void|string
+	 */
+	public function getAuthorizedShop($access_token)
+	{
+		$uri 		= '/api/shop/get_authorized_shop';
+
+		$arr 		= $this->defaultParams($uri, $access_token);
+		$url 		= $this->domain . $uri . '?' . http_build_query($arr);
+		$res 		= json_decode(Http::get($url), true);
+		if (!isset($res['code'])) {
+			return '未知错误,可能超时或其他原因!';
+		}
+		if ($res['code'] != 0) {
+			return isset($res['message']) ? $res['message'] : 'Tiktok返回错误!';
+		}
+		if (!isset($res['data']['shop_list'])) {
+			return '未知错误,可能超时或其他原因-缺少data';
+		}
+		$list 		= $res['data']['shop_list'];
+
+		return $list;
 	}
 }
