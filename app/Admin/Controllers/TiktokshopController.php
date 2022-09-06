@@ -44,6 +44,7 @@ class TiktokshopController extends AdminController
         $grid->column('account_id', __('所属账号'))->display(function ($val) use ($tkaccounts) {
             return $tkaccounts[$val] ?? $val;
         });
+
         $grid->column('type', __('店铺类型'))->using(TiktokShop::$type)->filter(TiktokShop::$type);
 
         $grid->column('shop_id', __('店铺ID'));
@@ -69,8 +70,6 @@ class TiktokshopController extends AdminController
             $actions->add(new Getproduct);
             // 获取订单
             $actions->add(new Getorder);
-            // 获取仓库
-            $actions->add(new GetWarehouse);
         });
         return $grid;
     }
