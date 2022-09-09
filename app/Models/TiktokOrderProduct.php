@@ -9,7 +9,7 @@ class TiktokOrderProduct extends Model{
 	use HasFactory;
 	public $timestamps = false;
 
-	public function list($addtime = 1){
+	public static function list($addtime = 1){
 		$obj 		= self::from('tiktok_order_products as op')->
 						selectRaw('any_value(p.id) as id')->
 						selectRaw('any_value(op.product_id) as product_id')->
