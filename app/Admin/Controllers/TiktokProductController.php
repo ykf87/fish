@@ -2,6 +2,8 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Product\BatchOff;
+use App\Admin\Actions\Product\BatchOn;
 use App\Models\TiktokAccount;
 use App\Models\TiktokShop;
 use App\Models\TiktokProduct;
@@ -35,7 +37,10 @@ class TiktokProductController extends AdminController
     {
         $grid = new Grid(new TiktokProduct());
         $admin_id   = Admin::user()->id;
-        $grid->model()->where('aid', $admin_id);
+        if (!Admin::user()->can('product.manage-all')) {
+            $grid->model()->where('aid', $admin_id);
+        }
+
         if (request()->get('account_id')) {
             $grid->model()->where('account_id', request()->get('account_id'));
         }
@@ -100,6 +105,11 @@ class TiktokProductController extends AdminController
         });
         $grid->batchActions(function ($batch) {
             $batch->add(new BatchUpdateProduct());
+            if (Admin::user()->can('product.manage-all')) {
+                $batch->add(new BatchOff());
+                $batch->add(new BatchOn());
+            }
+            $batch->disableDelete();
         });
 
         return $grid;
