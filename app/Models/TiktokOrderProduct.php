@@ -11,14 +11,14 @@ class TiktokOrderProduct extends Model{
 
 	public static function list($addtime = 1){
 		$obj 		= self::from('tiktok_order_products as op')->
-						selectRaw('any_value(p.id) as id')->
-						selectRaw('any_value(op.product_id) as product_id')->
-						selectRaw('any_value(p.images) as image')->
-						selectRaw('any_value(p.name) as title')->
-						selectRaw('any_value(op.sku_sale_price) as unit_price')->
-						selectRaw('any_value(p.commission) as commission_ratio')->
-						selectRaw('any_value(p.commissioned) as accumulated_commission')->
-						selectRaw('any_value(p.currency) as currency')->
+						selectRaw('p.id as id')->
+						selectRaw('op.product_id as product_id')->
+						selectRaw('p.images as image')->
+						selectRaw('p.name as title')->
+						selectRaw('op.sku_sale_price as unit_price')->
+						selectRaw('p.commission as commission_ratio')->
+						selectRaw('p.commissioned as accumulated_commission')->
+						selectRaw('p.currency as currency')->
 						selectRaw('sum(op.sku_sale_price) as cumulative_sales')->
 						rightJoin('tiktok_products as p', 'p.pid', '=', 'op.product_id')->where('op.addtime', '>=', $addtime);
 		return $obj;
