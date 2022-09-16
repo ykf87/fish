@@ -108,7 +108,7 @@ class ProductController extends Controller
 		$row->product_link     	= 'https://shop.tiktok.com/view/product/' . $row->pid . '?region=' . $reg . '&locale=en';
 
 		$shop = TiktokShop::Find($row->shop_id)->first();
-		$row->cd = $shop->type;
+		$row->cb = $shop->type;
 
 		return $this->success($row);
 	}
