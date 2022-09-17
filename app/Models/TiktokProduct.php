@@ -272,7 +272,7 @@ class TiktokProduct extends Model
                 'p.id', 'p.pid', 'p.images as image', 'p.name as title', 'p.stocks as stock', 'p.sales as cumulative_sales',
                 'p.minprice as unit_price', 'p.commission as commission_ratio', 'p.commission_price as commission', 'p.currency',
                 'p.is_samples', 'p.status', 'shop.type as cb')
-            ->where('p.status', 4);
+            ->distinct()->where('p.status', 4)->where('commission', '>', 0.01);
 		$obj 		= $obj->leftJoin('tiktok_shops as shop', 'shop.id', '=', 'p.shop_id');
 		if ($cb) {
 			$obj 		= $obj->where('shop.type', $cb);
