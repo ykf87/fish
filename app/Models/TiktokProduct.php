@@ -259,7 +259,7 @@ class TiktokProduct extends Model
 	}
 
 	//前端查询
-	public static function frontList(int $page, int $limit, $q, $cate, $sort, $is_samples = null, $cb = null, $region)
+	public static function frontList(int $page, int $limit, $q, $cate, $sort, $is_samples = null, $cb = null, $region = null)
 	{
 		if ($page < 1) {
 			$page 	= 1;
@@ -277,6 +277,9 @@ class TiktokProduct extends Model
 		if ($cb) {
 			$obj 		= $obj->where('shop.type', $cb);
 		}
+		if ($region) {
+		    $obj->leftJoin('tiktok_products_resions as r', 'r.pid', '=', 'p.id')->where('r.resion', $region);
+        }
 		if ($q) {
 			$obj 	= $obj->where('p.name', 'like', "%$q%");
 		}
@@ -329,7 +332,7 @@ class TiktokProduct extends Model
 		$product_lists = $obj->offset(($page - 1) * $limit)->limit($limit)->get();
 
 		$product_lists->flatMap(function($val) {
-            $val->lefticon = config('currency.' . $val->currency) ?? '$';
+            $val->left_icon = config('currency.' . $val->currency) ?? '$';
         });
 
 		return [
