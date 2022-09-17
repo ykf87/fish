@@ -48,13 +48,14 @@ class ProductController extends Controller
 		$limit		= (int) $request->input('limit');
 		$is_samples	= $request->input('is_samples');
 		$cb	= (int)  $request->input('cb');
+		$region = $request->input('region');
 
 		$tp 		= new TiktokProduct;
 
 		return [
 			'code' => 200,
 			'msg' => 'Success',
-			'data' => $tp->frontList($page, $limit, $q, $c, $s, $is_samples, $cb)
+			'data' => $tp->frontList($page, $limit, $q, $c, $s, $is_samples, $cb, $region)
 		];
 	}
 
@@ -71,28 +72,6 @@ class ProductController extends Controller
 			return $this->error('');
 		}
 		$row->banner 	= explode(',', $row->banner);
-		switch ($row->currency) {
-			case 'SGD':
-				$row->left_icon 	= 'S$';
-				break;
-			case 'GBP':
-				$row->left_icon 	= '£';
-				break;
-			case 'MYR':
-				$row->left_icon 	= 'RM';
-				break;
-			case 'PHP':
-				$row->left_icon 	= 'PHP';
-				break;
-			case 'THB':
-				$row->left_icon 	= 'THB';
-				break;
-			case 'VND':
-				$row->left_icon 	= 'VND';
-				break;
-			default:
-				$row->left_icon 	= '$';
-		}
 		$row->benefits 	= '';
 		$row->delivery_place 	= 'CN';
 		$row->express_company 	= 'DHL';

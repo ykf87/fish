@@ -12,7 +12,6 @@ use App\Models\TiktokAccount;
 use App\Models\TiktokCategory;
 use App\Models\TiktokProductsCategory;
 use Illuminate\Support\Arr;
-
 use Illuminate\Support\Facades\DB;
 
 class TiktokProduct extends Model
@@ -42,7 +41,7 @@ class TiktokProduct extends Model
         9	=> 'danger',
 	];
 
-	protected $appends = ['currency_symbol'];
+	protected $appends = ['left_icon'];
 
 	//更新TK产品
 	public static function updFromTiktok($row)
@@ -260,7 +259,7 @@ class TiktokProduct extends Model
 	}
 
 	//前端查询
-	public static function frontList(int $page, int $limit, $q, $cate, $sort, $is_samples = null, $cb = null)
+	public static function frontList(int $page, int $limit, $q, $cate, $sort, $is_samples = null, $cb = null, $region)
 	{
 		if ($page < 1) {
 			$page 	= 1;
@@ -326,11 +325,18 @@ class TiktokProduct extends Model
 		}
 
 		$total 		= $obj->count();
+
+		$product_lists = $obj->offset(($page - 1) * $limit)->limit($limit)->get();
+
+		$product_lists->flatMap(function($val) {
+            $val->lefticon = config('currency.' . $val->currency) ?? '$';
+        });
+
 		return [
 			'page'			=> $page,
 			'limit'			=> $limit,
 			'total_limit'	=> $total,
-			'product_lists'	=> $obj->offset(($page - 1) * $limit)->limit($limit)->get(),
+			'product_lists'	=> $product_lists,
 		];
 	}
 
@@ -339,9 +345,9 @@ class TiktokProduct extends Model
 		return explode(',', $val);
 	}
 
-    public function getCurrencySymbolAttribute()
+    public function getLeftIconAttribute()
     {
-        return $this->currency;
+        return config('currency.' . $this->currency) ?? '$';
 	}
 
 	//产品列表
