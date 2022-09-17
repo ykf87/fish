@@ -317,7 +317,9 @@ class UserOpenController extends Controller
      */
     public function getLanguages(Request $request)
     {
-        $langs = Language::all()->toArray();
+        $langs = Language::with(['regions' => function ($query) {
+            $query->select(['language_id', 'region', 'name'])->where('status', 1)->orderByDesc('sort')->get();
+        }])->get();
 
         return $this->success($langs, '');
     }

@@ -42,6 +42,8 @@ class TiktokProduct extends Model
         9	=> 'danger',
 	];
 
+	protected $appends = ['currency_symbol'];
+
 	//更新TK产品
 	public static function updFromTiktok($row)
 	{
@@ -335,6 +337,11 @@ class TiktokProduct extends Model
 	public function getThumbsAttribute($val)
 	{
 		return explode(',', $val);
+	}
+
+    public function getCurrencySymbolAttribute()
+    {
+        return $this->currency;
 	}
 
 	//产品列表
