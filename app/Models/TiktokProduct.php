@@ -12,7 +12,6 @@ use App\Models\TiktokAccount;
 use App\Models\TiktokCategory;
 use App\Models\TiktokProductsCategory;
 use Illuminate\Support\Arr;
-
 use Illuminate\Support\Facades\DB;
 
 class TiktokProduct extends Model
@@ -41,6 +40,8 @@ class TiktokProduct extends Model
 		8	=> 'danger',
         9	=> 'danger',
 	];
+
+	protected $appends = ['left_icon'];
 
 	//更新TK产品
 	public static function updFromTiktok($row)
@@ -258,7 +259,7 @@ class TiktokProduct extends Model
 	}
 
 	//前端查询
-	public static function frontList(int $page, int $limit, $q, $cate, $sort, $is_samples = null, $cb = null)
+	public static function frontList(int $page, int $limit, $q, $cate, $sort, $is_samples = null, $cb = null, $region = null)
 	{
 		if ($page < 1) {
 			$page 	= 1;
@@ -276,6 +277,9 @@ class TiktokProduct extends Model
 		if ($cb) {
 			$obj 		= $obj->where('shop.type', $cb);
 		}
+		if ($region) {
+		    $obj->leftJoin('tiktok_products_resions as r', 'r.pid', '=', 'p.id')->where('r.resion', $region);
+        }
 		if ($q) {
 			$obj 	= $obj->where('p.name', 'like', "%$q%");
 		}
@@ -324,17 +328,29 @@ class TiktokProduct extends Model
 		}
 
 		$total 		= $obj->count();
+
+		$product_lists = $obj->offset(($page - 1) * $limit)->limit($limit)->get();
+
+		$product_lists->flatMap(function($val) {
+            $val->left_icon = config('currency.' . $val->currency) ?? '$';
+        });
+
 		return [
 			'page'			=> $page,
 			'limit'			=> $limit,
 			'total_limit'	=> $total,
-			'product_lists'	=> $obj->offset(($page - 1) * $limit)->limit($limit)->get(),
+			'product_lists'	=> $product_lists,
 		];
 	}
 
 	public function getThumbsAttribute($val)
 	{
 		return explode(',', $val);
+	}
+
+    public function getLeftIconAttribute()
+    {
+        return config('currency.' . $this->currency) ?? '$';
 	}
 
 	//产品列表

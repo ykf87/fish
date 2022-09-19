@@ -5,13 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Language extends Model
+class LanguageRegion extends Model
 {
     use HasFactory;
 
-    public function regions()
+    public function language()
     {
-        return $this->hasMany(LanguageRegion::class);
+        return $this->belongsTo(Language::class);
     }
-
 }
