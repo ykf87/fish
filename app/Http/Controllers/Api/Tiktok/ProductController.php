@@ -103,6 +103,9 @@ class ProductController extends Controller
 
 		$total 	= TiktokUserCollection::list($user->id)->count();
 		$list 	= TiktokUserCollection::list($user->id)->orderByDesc('c.addtime')->offset(($page - 1) * $limit)->limit($limit)->get();
+        $list->flatMap(function($val) {
+            $val->left_icon = config('currency.' . $val->currency) ?? '$';
+        });
 		$arr 	= [
 			'total_limit'	=> $total,
 			'page'			=> $page,

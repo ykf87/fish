@@ -57,7 +57,7 @@ class SampleController extends Controller{
 			'complete_nums'			=> $complete_nums,
 		];
 
-		$obj 		= TiktokSample::select('s.*', 'p.commission_price as commission', 'p.minprice as unit_price', 'p.commission as commission_ratio', 's.shippment as express_company', 's.shipnum as express_no')->
+		$obj 		= TiktokSample::select('s.*', 'p.commission_price as commission', 'p.minprice as unit_price', 'p.currency', 'p.commission as commission_ratio', 's.shippment as express_company', 's.shipnum as express_no')->
 						from('tiktok_samples as s')->where('s.account_id', $user->id)->rightJoin('tiktok_products as p', 's.pid', '=', 'p.id');
 		switch($state){
 			case 2:
@@ -78,7 +78,12 @@ class SampleController extends Controller{
 		}
 		$oss 			= clone $obj;
 		// $obj 			= $obj->offset(($page-1)*$limit)->limit($limit)->get();
-		$arr['lists']			= $obj->offset(($page-1)*$limit)->limit($limit)->orderByDesc('id')->get();
+        $lists = $obj->offset(($page-1)*$limit)->limit($limit)->orderByDesc('id')->get();
+        $lists->flatMap(function($val) {
+            $val->left_icon = config('currency.' . $val->currency) ?? '$';
+        });
+
+		$arr['lists']			= $lists;
 		$arr['total_limit']		= $oss->count();
 		return $this->success($arr, 'Succcess');
 	}

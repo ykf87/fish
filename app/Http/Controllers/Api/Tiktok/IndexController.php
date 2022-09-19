@@ -48,11 +48,15 @@ class IndexController extends Controller{
 				'effective_singular'	=> TiktokOrder::where('addtime', '>', $addTimeMust)->whereNotIn('status', [100,140])->count(),
 			]; 
 		}
+		$order_list = TiktokOrder::list($page, $limit)->where('addtime', '>', $addTimeMust)->get();
+        $order_list->flatMap(function($val) {
+            $val->left_icon = config('currency.' . $val->currency) ?? '$';
+        });
 		$arr['order']		= [
 			'order_page'		=> $page,
 			'order_limit'		=> $limit,
 			'order_total_limit'	=> $totalNum,
-			'orderList'			=> TiktokOrder::list($page, $limit)->where('addtime', '>', $addTimeMust)->get(),
+			'orderList'			=> $order_list,
 		];
 		return $this->success($arr);
 	}
@@ -82,6 +86,10 @@ class IndexController extends Controller{
 			$list 				= TiktokProduct::list()->orderByDesc('gmv')->offset(($page-1)*$limit)->limit($limit)->get();
 			$total 				= TiktokProduct::list()->count();
 		}
+
+        $list->flatMap(function($val) {
+            $val->left_icon = config('currency.' . $val->currency) ?? '$';
+        });
 		
 		return $this->success([
 			'merchandise_ranking' => ['total_limit' => $total, 'rank_lists' => $list, 'page' => $page, 'limit' => $limit],
