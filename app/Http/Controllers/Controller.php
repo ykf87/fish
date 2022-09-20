@@ -18,7 +18,7 @@ class Controller extends BaseController
 		}
 		return response()->json([
 			'code' => 200,
-			'msg' => __('api.success_tips.' . $msg, [], \Request::header('langs') ? \Request::header('langs') : 'en'),
+			'msg' => __('api.success_tips.' . $msg, [], \Request::header('lang') ? \Request::header('lang') : 'en'),
 			'data' => $data,
 		]);
 	}
@@ -29,7 +29,7 @@ class Controller extends BaseController
 		}
 		return response()->json([
 			'code' => 500,
-			'msg' => __('api.error_tips.' . $msg, [], \Request::header('langs') ? \Request::header('langs') : 'en'),
+			'msg' => __('api.error_tips.' . $msg, [], \Request::header('lang') ? \Request::header('lang') : 'en'),
 			'data' => $data,
 		]);
 	}
