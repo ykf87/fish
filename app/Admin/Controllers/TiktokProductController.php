@@ -77,6 +77,7 @@ class TiktokProductController extends AdminController
             return $val ? date('Y-m-d H:i:s', $val) : '';
         })->filter('range', 'datetime');
         $grid->column('status', __('状态'))->using(TiktokProduct::$status)->filter(TiktokProduct::$status)->label(TiktokProduct::$statusLabel);
+        $grid->column('ud', __('是否显示'))->using(TiktokProduct::$ud)->filter(TiktokProduct::$ud)->label(TiktokProduct::$udLabel);
         $grid->column('currency', __('货币'));
         $grid->column('maxprice', __('最高价'))->filter('range')->sortable();
         $grid->column('minprice', __('最低价'))->filter('range')->sortable();

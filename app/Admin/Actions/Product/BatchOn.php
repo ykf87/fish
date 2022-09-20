@@ -17,7 +17,7 @@ class BatchOn extends BatchAction
             return $this->response()->error('你无执行该操作的权限')->refresh();
         }
         $ids = $collection->pluck('id')->toArray();
-        $num = TiktokProduct::whereIn('id', $ids)->update(['status' => 4]);
+        $num = TiktokProduct::whereIn('id', $ids)->update(['ud' => 1]);
 
         return $this->response()->success(sprintf("成功批量上架 %s 个产品", $num))->refresh();
     }

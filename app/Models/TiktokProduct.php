@@ -27,7 +27,6 @@ class TiktokProduct extends Model
 		6	=> '平台停用',
 		7	=> '冻结',
 		8	=> '删除',
-        9	=> '下架',
 	];
 	public static $statusLabel 	= [
 		1	=> 'default',
@@ -38,8 +37,16 @@ class TiktokProduct extends Model
 		6	=> 'warning',
 		7	=> 'danger',
 		8	=> 'danger',
-        9	=> 'danger',
 	];
+
+    public static $ud 	= [
+        0	=> '隐藏',
+        1	=> '显示',
+    ];
+    public static $udLabel 	= [
+        0	=> 'default',
+        1	=> 'success',
+    ];
 
 	protected $appends = ['left_icon'];
 
@@ -272,7 +279,7 @@ class TiktokProduct extends Model
                 'p.id', 'p.pid', 'p.images as image', 'p.name as title', 'p.stocks as stock', 'p.sales as cumulative_sales',
                 'p.minprice as unit_price', 'p.commission as commission_ratio', 'p.commission_price as commission', 'p.currency',
                 'p.is_samples', 'p.status', 'shop.type as cb')
-            ->distinct()->where('p.status', 4)->where('commission', '>', 0.01);
+            ->distinct()->where('p.status', 4)->where('ud', 1)->where('commission', '>', 0.01);
 		$obj 		= $obj->leftJoin('tiktok_shops as shop', 'shop.id', '=', 'p.shop_id');
 		if ($cb) {
 			$obj 		= $obj->where('shop.type', $cb);
