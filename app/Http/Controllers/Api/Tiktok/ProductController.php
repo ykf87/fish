@@ -214,6 +214,7 @@ class ProductController extends Controller
 		}
 
 		$row 					= new TiktokSample;
+		$row->aid               = $pro->aid;
 		$row->account_id 		= $user->id;
 		$row->darren_id			= $tiktok;
 		$row->pid				= $id;
