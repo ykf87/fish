@@ -63,15 +63,12 @@ class TiktokProductController extends AdminController
         $grid->column('shop.type', __('产品类型'))->using(TiktokShop::$type)->filter(TiktokShop::$type);
 
         $grid->column('pid', __('产品id'))->hide();
-        $grid->column('name', __('产品名称'))->display(function ($val) {
-            $len        = mb_strlen($val, 'utf-8');
-            $str        = $val;
-            $maxlen     = 20;
-            if ($len >= 20) {
-                $str    = mb_substr($val, 0, ($maxlen - 1), 'utf-8') . '...';
-            }
-            return '<a title="' . $val . '">' . $str . '</a>';
-        })->filter('like');
+        $grid->column('name', __('产品名称'))->limit(20)->filter('like');
+        $grid->column('video_num', '视频数量')->display(function () {
+            $num = $this->original_video_num + $this->clip_video_num;
+            $url = admin_url('tiktok-products-videos?pid=' . $this->id);
+            return sprintf("<a href='%s'>%s</a>", $url, $num);
+        });
         $grid->column('thumbs', __('图集'))->carousel(100, 100);
         $grid->column('create_time', __('上架时间'))->display(function ($val) {
             return $val ? date('Y-m-d H:i:s', $val) : '';
