@@ -5,7 +5,7 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\ProductVideo\BatchDel;
 use App\Admin\Extensions\CreateButton;
 use App\Models\TiktokProduct;
-use App\Models\TikTokProductsVideo;
+use App\Models\TiktokProductsVideo;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
