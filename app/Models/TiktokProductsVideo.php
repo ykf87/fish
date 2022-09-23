@@ -23,6 +23,11 @@ class TiktokProductsVideo extends Model
         'clip'	=> 'success',
     ];
 
+    public function getVideoUrlAttribute($value)
+    {
+        return env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $value;
+    }
+
     public function product()
     {
         return $this->belongsTo(TiktokProduct::class, 'pid');

@@ -61,6 +61,9 @@ Route::group([
                 'middleware' => ['auths']
             ], function () {
                 route::get('check', 'ProductVideoController@check')->name('check');
+                route::get('original', 'ProductVideoController@original')->name('original');
+                route::post('receiveOriginal', 'ProductVideoController@receiveOriginal')->name('receiveOriginal');
+                route::post('receiveClip', 'ProductVideoController@receiveClip')->name('receiveClip');
             });
 		});
 
