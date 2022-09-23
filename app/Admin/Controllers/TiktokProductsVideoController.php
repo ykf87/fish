@@ -29,7 +29,7 @@ class TiktokProductsVideoController extends AdminController
      */
     protected function grid()
     {
-        $grid = new Grid(new TikTokProductsVideo());
+        $grid = new Grid(new TiktokProductsVideo());
 
         $pid = Request::input('pid');
 
