@@ -54,6 +54,17 @@ Route::group([
 			Route::post('collect', 'ProductController@collect')->name('collect')->middleware(['auths']); //收藏
 			Route::post('uncollect', 'ProductController@uncollect')->name('uncollect')->middleware(['auths']); //取消收藏
 			Route::post('apply', 'ProductController@apply')->name('apply')->middleware(['auths']); //申领样品
+
+            route::group([
+                'prefix' => 'video',
+                'as' => 'product.',
+                'middleware' => ['auths']
+            ], function () {
+                route::get('check', 'ProductVideoController@check')->name('check');
+                route::get('original', 'ProductVideoController@original')->name('original');
+                route::post('receiveOriginal', 'ProductVideoController@receiveOriginal')->name('receiveOriginal');
+                route::post('receiveClip', 'ProductVideoController@receiveClip')->name('receiveClip');
+            });
 		});
 
 		Route::group([
