@@ -29,6 +29,34 @@ class ProductVideoService
         return $data;
     }
 
+    public function receivedList($param)
+    {
+        if (empty($param['page'])) $param['page'] = 1;
+        if (empty($param['limit'])) $param['limit'] = 1;
+
+        $query = TiktokVideoReceive::query()->where('uid', $param['uid'])
+            ->select('pid', 'vid', 'type', 'receive_time');
+
+        if (!empty($param['pid'])) {
+            $query->where('pid', $param['pid']);
+        }
+        if (!empty($param['type'])) {
+            $query->where('type', $param['type']);
+        }
+
+        $total = $query->count();
+        $query->with('product:id,name')->with('video:id,title,video_url');
+
+        $res = $query->orderByDesc('id')->offset(($param['page'] - 1) * $param['limit'])->limit($param['limit'])->get();
+
+        return [
+            'page'			=> $param['page'],
+            'limit'			=> $param['limit'],
+            'total_limit'	=> $total,
+            'lists'	=> $res,
+        ];
+    }
+
     public function originalVideo(TiktokProduct $product, $uid)
     {
         $res = TiktokProductsVideo::where('pid', $product->id)
@@ -41,13 +69,15 @@ class ProductVideoService
 
         $received = TiktokVideoReceive::whereIn('vid', $vids)
             ->where('uid', $uid)
-            ->pluck('receive_time', 'vid')
+            ->select('receive_time', 'vid')
+            ->get()
             ->toArray();
+        $received = array_column($received, 'receive_time', 'vid');
 
         foreach ($res as &$info) {
             if (isset($received[$info['id']])) {
                 $info['is_received'] = 1;
-                $info['received_time'] = date('Y-m-d H:i:s', $received[$info['id']]);
+                $info['received_time'] =$received[$info['id']];
             } else {
                 $info['is_received'] = 0;
                 $info['received_time'] = '-';

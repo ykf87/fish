@@ -62,6 +62,7 @@ Route::group([
             ], function () {
                 route::get('check', 'ProductVideoController@check')->name('check');
                 route::get('original', 'ProductVideoController@original')->name('original');
+                route::get('receivedList', 'ProductVideoController@receivedList')->name('receivedList');
                 route::post('receiveOriginal', 'ProductVideoController@receiveOriginal')->name('receiveOriginal');
                 route::post('receiveClip', 'ProductVideoController@receiveClip')->name('receiveClip');
             });

@@ -11,7 +11,23 @@ class ProductVideoRequest extends BaseRequest
         return [
             'pid' => 'required|int',
         ];
+    }
 
+    public function ruleOriginal()
+    {
+        return [
+            'pid' => 'required|int',
+        ];
+    }
+
+    public function ruleReceivedList()
+    {
+        return [
+            'pid' => 'int',
+            'type' => [Rule::in(['original', 'clip'])],
+            'page' => 'int|min:1',
+            'limit' => 'int|min:1|max:50',
+        ];
     }
 
     public function ruleReceiveClip()
@@ -20,7 +36,6 @@ class ProductVideoRequest extends BaseRequest
             'pid' => 'required|int',
             'vid' => 'int',
         ];
-
     }
 
     public function ruleReceiveOriginal()
@@ -29,6 +44,5 @@ class ProductVideoRequest extends BaseRequest
             'pid' => 'required|int',
             'vid' => 'required|int',
         ];
-
     }
 }
