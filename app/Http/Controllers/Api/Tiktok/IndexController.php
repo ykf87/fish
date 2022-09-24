@@ -8,8 +8,39 @@ use Illuminate\Http\Request;
 use App\Models\TiktokOrder;
 use App\Models\TiktokProduct;
 use App\Models\TiktokOrderProduct;
+use Illuminate\Support\Facades\Storage;
 
 class IndexController extends Controller{
+
+    public function upload(Request $request){
+        $save_dir_abspath = 'upload_big';
+        $temp_save_dir='upload_big_temp/guest';
+        if(!Storage::exists($temp_save_dir)){  //临时文件夹
+            Storage::makeDirectory($temp_save_dir);
+        }
+
+        $block=$request->file('file');
+        $block_id=$request->input('id');  //0~tot-1
+        $block_tot=$request->input('total');
+
+        if (isset($block_id)) {
+            $block->move(storage_path('app/'.$temp_save_dir),$block_id); //以块号为名保存当前块
+        }
+
+        if(!empty($block_tot)){  //整个文件上传完成
+            $save_name = $request->input('name');
+            if (!is_dir($save_dir_abspath))
+                mkdir($save_dir_abspath, 0777, true);  // 文件夹不存在则创建
+            for($i=0;$i<$block_tot;$i++){
+                $content=Storage::get($temp_save_dir.'/'.$i);
+                file_put_contents($save_dir_abspath.'/'.$save_name,$content,$i?FILE_APPEND:FILE_TEXT);//追加:覆盖
+            }
+            Storage::deleteDirectory($temp_save_dir); //删除临时文件
+            return $save_dir_abspath . '/' . $save_name;  //标记上传完成
+        }
+        return false;
+    }
+
 	public function index(Request $request){
 		$days 		= (int)$request->input('days');
 		// $state 		= $request->input('state');

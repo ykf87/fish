@@ -104,9 +104,10 @@ class TiktokProductsVideoController extends AdminController
         $form->text('pid', __('商品id'))->default(Request::input('pid'))->required();
         $form->radio('type', __('视频类型'))->options(TiktokProductsVideo::$type)->default('original');
         $form->text('title', __('视频标题'));
-        $form->file('video_url', __('上传视频'))->rules('mimes:mp4,png');
+        $form->file('video_url', __('上传视频'))->uniqueName()->rules('mimes:mp4,png');
+        $form->file_upload('video_upload_test', __('上传视频'));
 
-        $form->submitted(function (Form $form) {
+        $form->saved(function (Form $form) {
             if (!$form->model()->pid) {
                 TiktokProduct::where('id', Request::input('pid'))->increment(Request::input('type') . '_video_num');
                 $form->aid = Admin::user()->id;

@@ -20,3 +20,4 @@
 Admin::js(asset('layer/layer.js'));
 Admin::css(asset('default.css'));
 Encore\Admin\Form::forget(['map', 'editor']);
+Encore\Admin\Form::extend('file_upload', \App\Admin\Extensions\FileUpload::class);
