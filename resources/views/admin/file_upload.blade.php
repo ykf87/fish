@@ -1,3 +1,5 @@
+<script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/spark-md5/3.0.0/spark-md5.js"></script>
 <style>
     /* 自定义进度条样式 */
     .precent input[type=range] {
