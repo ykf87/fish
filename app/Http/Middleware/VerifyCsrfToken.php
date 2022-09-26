@@ -13,6 +13,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         //
-        '/admin/tiktok-products/commission'
+        '/admin/tiktok-products/commission',
+        '/admin/tiktok/fileUpload'
     ];
 }
