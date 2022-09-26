@@ -10,6 +10,7 @@ use App\Models\TiktokProduct;
 use App\Models\TiktokOrderProduct;
 
 class IndexController extends Controller{
+
 	public function index(Request $request){
 		$days 		= (int)$request->input('days');
 		// $state 		= $request->input('state');

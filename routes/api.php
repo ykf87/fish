@@ -35,6 +35,7 @@ Route::group([
 		Route::post('proinfo', 'CallbackController@proinfo')->name('proinfo');
 		Route::post('orderinfo', 'CallbackController@orderinfo')->name('orderinfo');
 		Route::get('aggregate', 'CallbackController@aggregate')->name('aggregate');
+        Route::post('upload', 'IndexController@upload');
 		Route::group([
 			'prefix'        => 'index/',
 			'as'			=> 'index.'
