@@ -15,7 +15,7 @@ class CreateButton extends AbstractTool{
     {
         $data = [
             'button_name' => '新增视频',
-            'url' => admin_url('tiktok-products-videos/create?pid=' . Request::input('pid')),
+            'url' => admin_url(sprintf('tiktok-products-videos/create?pid=%s&type=%s', Request::input('pid'), Request::input('type'))),
         ];
         return view('admin.create_button', $data);
     }

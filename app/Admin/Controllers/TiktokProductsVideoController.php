@@ -35,9 +35,14 @@ class TiktokProductsVideoController extends AdminController
         $grid = new Grid(new TiktokProductsVideo());
 
         $pid = FRequest::input('pid');
+        $type = FRequest::input('type');
 
         if ($pid) {
             $grid->model()->where('pid', $pid);
+        }
+
+        if ($type) {
+            $grid->model()->where('type', $type);
         }
 
         if (!Admin::user()->isRole('administrator')) {
@@ -105,7 +110,7 @@ class TiktokProductsVideoController extends AdminController
 
         $form->text('aid', __('管理员id'))->default(Admin::user()->id)->disable();
         $form->text('pid', __('商品id'))->default(FRequest::input('pid'))->required();
-        $form->radio('type', __('视频类型'))->options(TiktokProductsVideo::$type)->default('original');
+        $form->radio('type', __('视频类型'))->options(TiktokProductsVideo::$type)->default(FRequest::input('type'))->required();
         $form->text('title', __('视频标题'));
         $form->text('video_url', __('视频url'))->required();
         $form->file_upload('video_upload_test', __('上传视频'));
@@ -152,7 +157,7 @@ class TiktokProductsVideoController extends AdminController
                 file_put_contents($local_file, $content, $i ? FILE_APPEND:FILE_TEXT);//追加:覆盖
             }
             $s3_file = 'file/' . $save_name;
-            Storage::disk('s3')->put($s3_file, file_get_contents($local_file));
+            //Storage::disk('s3')->put($s3_file, file_get_contents($local_file));
             Storage::deleteDirectory($temp_save_dir); //删除临时文件
             unlink($local_file);
             return ['success' => true, 'url' => $s3_file];  //标记上传完成
