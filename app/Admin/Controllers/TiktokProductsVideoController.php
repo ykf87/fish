@@ -141,7 +141,7 @@ class TiktokProductsVideoController extends AdminController
             $block->move(storage_path('app/'.$temp_save_dir),$block_id); //以块号为名保存当前块
         }
 
-        if(!empty($block_tot)){  //整个文件上传完成
+        if($block_tot - 1 == $block_id){  //整个文件上传完成
             $file_info = pathinfo($request->input('name'));
             $save_name = time() . rand(10000, 99999999) . '.' . $file_info['extension'];
             $local_file = $save_dir_abspath . '/' . $save_name;
@@ -155,8 +155,8 @@ class TiktokProductsVideoController extends AdminController
             Storage::disk('s3')->put($s3_file, file_get_contents($local_file));
             Storage::deleteDirectory($temp_save_dir); //删除临时文件
             unlink($local_file);
-            return $s3_file;  //标记上传完成
+            return ['success' => true, 'url' => $s3_file];  //标记上传完成
         }
-        return true;
+        return ['success' => true, 'url' => ''];
     }
 }
