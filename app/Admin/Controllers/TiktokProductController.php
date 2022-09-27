@@ -49,26 +49,31 @@ class TiktokProductController extends AdminController
         }
         $grid->model()->orderByDesc('create_time');
         $accounts       = TiktokAccount::where('aid', $admin_id)->pluck('seller_name', 'id')->toArray();
-        $shops          = TiktokShop::where('aid', $admin_id)->pluck('shop_region', 'id')->toArray();
-
+        $shops          = TiktokShop::pluck('shop_region', 'id')->toArray();
 
         $grid->column('id', __('编号'))->sortable();
         $grid->column('account_id', __('授权账号'))->display(function ($val) use ($accounts) {
             return $accounts[$val] ?? $val;
-        })->filter($accounts);
+        })->filter($accounts)->hide();
         $grid->column('shop_id', __('地区'))->display(function ($val) use ($shops) {
             return $shops[$val] ?? $val;
         })->filter($shops);
 
-        $grid->column('shop.type', __('产品类型'))->using(TiktokShop::$type)->filter(TiktokShop::$type);
+        $grid->column('shop.type', __('产品类型'))->using(TiktokShop::$type)->filter(TiktokShop::$type)->hide();
 
         $grid->column('pid', __('产品id'))->hide();
-        $grid->column('name', __('产品名称'))->limit(20)->filter('like');
-        $grid->column('video_num', '视频数量')->display(function () {
-            $num = $this->original_video_num + $this->clip_video_num;
-            $url = admin_url('tiktok-products-videos?pid=' . $this->id);
-            return sprintf("<a href='%s'>%s</a>", $url, $num);
-        });
+        $grid->column('name', __('产品名称'))->limit(30)->filter('like');
+
+        $grid->column('original_video_num', '原始视频')->display(function () {
+            $url = admin_url('tiktok-products-videos?type=original&pid=' . $this->id);
+            return sprintf("<a href='%s'>%s</a>", $url, $this->original_video_num);
+        })->sortable();
+
+        $grid->column('clip_video_num', '剪辑视频')->display(function () {
+            $url = admin_url('tiktok-products-videos?type=clip&pid=' . $this->id);
+            return sprintf("<a href='%s'>%s</a>", $url, $this->clip_video_num);
+        })->sortable();
+
         $grid->column('thumbs', __('图集'))->carousel(100, 100);
         $grid->column('create_time', __('上架时间'))->display(function ($val) {
             return $val ? date('Y-m-d H:i:s', $val) : '';
@@ -76,7 +81,7 @@ class TiktokProductController extends AdminController
         $grid->column('status', __('状态'))->using(TiktokProduct::$status)->filter(TiktokProduct::$status)->label(TiktokProduct::$statusLabel);
         $grid->column('ud', __('是否显示'))->using(TiktokProduct::$ud)->filter(TiktokProduct::$ud)->label(TiktokProduct::$udLabel);
         $grid->column('currency', __('货币'));
-        $grid->column('maxprice', __('最高价'))->filter('range')->sortable();
+        $grid->column('maxprice', __('最高价'))->filter('range')->sortable()->hide();
         $grid->column('minprice', __('最低价'))->filter('range')->sortable();
         $grid->column('commission', __('佣金比例'))->display(function ($val) {
 
@@ -84,7 +89,7 @@ class TiktokProductController extends AdminController
         })->filter('range')->sortable()->editable();
         $grid->column('stocks', __('总库存'))->filter('range');
         $grid->column('sales', __('销量'))->filter('range')->sortable()->editable();
-        $grid->column('gmv', __('销售额'))->filter('range')->sortable();
+        $grid->column('gmv', __('销售额'))->filter('range')->sortable()->hide();
         $grid->column('commissioned', __('产生佣金'))->filter('range')->sortable();
 
 

@@ -1,16 +1,17 @@
-<div class="form-group  ">
+<div class="form-group">
     <label for="title" class="col-sm-2  control-label">上传视频</label>
-    <div class="col-sm-8">
+    <div class="col-sm-2">
         <input type="file" id="file" name="file"/>
         <div class="btn-group pull-left grid-create-btn" style="margin-top:10px;">
             <a href="javascript:;" class="btn btn-sm btn-success uploadFile" title="上传视频">
                 <span class="hidden-xs">上传视频</span>
             </a>
         </div>
+    </div>
+    <div class="col-sm-4">
         <div id="wai">
             <div id="nei"></div>
         </div>
-
     </div>
 </div>
 
@@ -19,7 +20,6 @@
         width: 200px;
         height: 20px;
         border: 1px solid green;
-        margin-top: 50px;
         display:none;
     }
 
