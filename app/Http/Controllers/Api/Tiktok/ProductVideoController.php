@@ -82,6 +82,7 @@ class ProductVideoController extends Controller
             'id' => $video->id,
             'title' => $video->title,
             'video_url' => $video->video_url,
+            'full_video_url' => $video->full_video_url,
         ];
 
         return $this->success($data);
@@ -124,6 +125,7 @@ class ProductVideoController extends Controller
             'id' => $video->id,
             'title' => $video->title,
             'video_url' => $video->video_url,
+            'full_video_url' => $video->full_video_url,
         ];
 
         return $this->success($data);
