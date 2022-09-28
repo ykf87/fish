@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Models\Category;
+use Encore\Admin\Admin;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Row;
@@ -24,6 +25,7 @@ class CategoryController extends AdminController
 
     public function index(Content $content)
     {
+        Admin::style('.dd-handle{margin: 8px 0;}');
         return $content
             ->header($this->title)
             ->description('列表')->row(function (Row $row) {
@@ -77,7 +79,7 @@ class CategoryController extends AdminController
         if (strstr(Route::currentRouteName(), '.index')) {
             $form->setAction(admin_url('categories'));
         }
-        
+
         $form->saved(function () {
             return redirect(admin_url('categories'));
         });
