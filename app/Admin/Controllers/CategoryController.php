@@ -25,7 +25,10 @@ class CategoryController extends AdminController
 
     public function index(Content $content)
     {
-        Admin::style('.dd-handle{margin: 8px 0;}');
+        Admin::style('
+        .dd-handle{margin: 8px 0;}
+        .pull-right .fa{font-size: 16px; margin-left: 20px; padding-top: 3px;}
+        ');
         return $content
             ->header($this->title)
             ->description('列表')->row(function (Row $row) {
