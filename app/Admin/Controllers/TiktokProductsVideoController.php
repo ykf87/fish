@@ -157,7 +157,7 @@ class TiktokProductsVideoController extends AdminController
                 file_put_contents($local_file, $content, $i ? FILE_APPEND:FILE_TEXT);//追加:覆盖
             }
             $s3_file = 'file/' . $save_name;
-            //Storage::disk('s3')->put($s3_file, file_get_contents($local_file));
+            Storage::disk('s3')->put($s3_file, file_get_contents($local_file));
             Storage::deleteDirectory($temp_save_dir); //删除临时文件
             unlink($local_file);
             return ['success' => true, 'url' => $s3_file];  //标记上传完成
