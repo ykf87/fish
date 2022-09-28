@@ -22,6 +22,7 @@ Route::group([
     $router->resource('tiktok-sample', TikTokSampleController::class);
     $router->resource('tiktok-products-videos', TiktokProductsVideoController::class);
     $router->resource('dicts', DictController::class);
+    $router->resource('categories', CategoryController::class);
     $router->post('tiktok/fileUpload', 'TiktokProductsVideoController@fileUpload')->name('tiktok.fileUpload');
 
 });
