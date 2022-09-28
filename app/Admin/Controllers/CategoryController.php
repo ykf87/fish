@@ -11,6 +11,7 @@ use Encore\Admin\Layout\Content;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Support\Facades\Route;
 
 class CategoryController extends AdminController
 {
@@ -31,7 +32,12 @@ class CategoryController extends AdminController
                 $tree->disableCreate();// 禁用新增按钮
                 // 修改返回结构
                 $tree->branch(function ($branch) {
-                    return "{$branch['id']} - {$branch['title']}";
+                    if ($branch['parent_id'] == 0) {
+                        $str = "<b style='font-size:16px;'>{$branch['id']} - {$branch['title']}</b>";
+                    } else {
+                        $str = "{$branch['id']} - {$branch['title']}";
+                    }
+                    return $str;
                 });
                 $row->column(6, $tree);
                 //  右侧显示新增框
@@ -68,7 +74,10 @@ class CategoryController extends AdminController
             $footer->disableCreatingCheck();
         });
 
-        $form->setAction(admin_url('categories'));
+        if (strstr(Route::currentRouteName(), '.index')) {
+            $form->setAction(admin_url('categories'));
+        }
+        
         $form->saved(function () {
             return redirect(admin_url('categories'));
         });
