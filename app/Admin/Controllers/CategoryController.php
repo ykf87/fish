@@ -4,6 +4,8 @@ namespace App\Admin\Controllers;
 
 use App\Models\Category;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Layout\Column;
+use Encore\Admin\Layout\Row;
 use Encore\Admin\Tree;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Form;
@@ -21,11 +23,23 @@ class CategoryController extends AdminController
 
     public function index(Content $content)
     {
-        $tree = new Tree(new Category);
-
         return $content
             ->header($this->title)
-            ->body($tree);
+            ->description('列表')->row(function (Row $row) {
+                // 左侧显示树形分类
+                $tree = new Tree(new Category());
+                $tree->disableCreate();// 禁用新增按钮
+                // 修改返回结构
+                $tree->branch(function ($branch) {
+                    return "{$branch['id']} - {$branch['title']}";
+                });
+                $row->column(6, $tree);
+                //  右侧显示新增框
+                $row->column(6, function (Column $column) {
+                    $column->append( $this->form() );
+                });
+            });
+
     }
 
     /**
@@ -37,17 +51,26 @@ class CategoryController extends AdminController
     {
         $form = new Form(new Category());
 
-        $form->select('parent_id', __('请选择上级分类'))->options(Category::selectOptions())->default(1)->required();
+        $form->select('parent_id', __('上级分类'))->options(Category::selectOptions())->default(1)->required();
         $form->text('title', __('类别名称'))->required();
         $form->text('mark', __('特殊标识'))->placeholder('特殊标识：可以自由定义使用');
         $form->textarea('description', '类别简介');
         $form->image('icon', __('封面图标'))->uniqueName();
         $form->number('order', __('排序'))->default(0);
 
+        $form->header(function ($header) {
+            $header->disableList();
+        });
+
         $form->footer(function ($footer) {
             $footer->disableViewCheck();
             $footer->disableEditingCheck();
             $footer->disableCreatingCheck();
+        });
+
+        $form->setAction(admin_url('categories'));
+        $form->saved(function () {
+            return redirect(admin_url('categories'));
         });
 
         return $form;
