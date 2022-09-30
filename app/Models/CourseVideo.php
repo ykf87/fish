@@ -37,4 +37,14 @@ class CourseVideo extends Model
     {
         return $this->belongsTo(Course::class);
     }
+
+//    public function getPicAttribute($value)
+//    {
+//        return env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $value;
+//    }
+//
+//    public function getVideoUrlAttribute($value)
+//    {
+//        return env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $value;
+//    }
 }

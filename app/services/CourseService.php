@@ -24,7 +24,7 @@ class CourseService
             $charge_type = 3;
         } elseif ($video_on_num > 0 && $video_on_num == $video_charge_type_1_num) {
             $charge_type = 1;
-        } elseif ($video_on_num > 0 && $video_charge_type_1_num != $video_charge_type_1_num) {
+        } elseif ($video_on_num > 0 && $video_charge_type_1_num > 0 &&  $video_charge_type_2_num > 0) {
             $charge_type = 2;
         } else {
             $charge_type = 1;

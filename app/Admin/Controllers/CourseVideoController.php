@@ -46,7 +46,12 @@ class CourseVideoController extends AdminController
         $grid->column('order', __('排序'));
         $grid->column('title', __('视频标题'));
         $grid->column('charge_type', __('收费类型'))->filter(CourseVideo::$chargeType)->using(CourseVideo::$chargeType)->label(CourseVideo::$chargeTypeLabel);
-        $grid->column('pic', __('封面图'));
+        $status = [
+            'on'  => ['value' => 1, 'text' => '已上架', 'color' => 'primary'],
+            'off' => ['value' => -1, 'text' => '已下架', 'color' => 'default'],
+        ];
+        $grid->column('status', __('上架状态'))->filter(CourseVideo::$status)->switch($status);
+        $grid->column('pic', __('封面图'))->image('', 60, 60);
         $grid->column('video_url', __('视频url'));
         $grid->column('views', __('观看次数'));
         $grid->column('created_at', __('创建时间'));
@@ -71,8 +76,15 @@ class CourseVideoController extends AdminController
                 ];
                 $tools->append(new CreateButton($data));
             }
-        });
 
+            $data = [
+                'button_name' => '返回 - 课程列表',
+                'url' => admin_url('courses'),
+                'btn_class' => 'btn btn-sm btn-default',
+                'fa_icon' => 'none'
+            ];
+            $tools->append(new CreateButton($data));
+        });
 
         return $grid;
     }
@@ -131,10 +143,11 @@ class CourseVideoController extends AdminController
         $form->text('title', __('视频标题'))->required();
         $form->textarea('description', __('视频简介'));
         $form->radio('charge_type', __('收费类型'))->options(CourseVideo::$chargeType)->required();
-        $form->image('pic', __('封面图'));
+        $form->image('pic', __('封面图'))->uniqueName();
         $form->number('order', __('排序'))->default(0);
         $form->text('video_url', __('视频url'))->required();
         $form->file_upload('video_upload', __('上传视频'));
+        $form->radio('status', __('上架状态'))->options(CourseVideo::$status)->default(1);
 
         $form->saved(function (Form $form) {
             $courseService = new CourseService();

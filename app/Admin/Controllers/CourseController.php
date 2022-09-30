@@ -46,7 +46,7 @@ class CourseController extends AdminController
         $grid->column('status', __('上架状态'))->filter(Course::$status)->switch($status);
         $grid->column('original_price', __('原价'));
         $grid->column('price', __('现价'));
-        $grid->column('pic', __('封面图'));
+        $grid->column('pic', __('封面图'))->image('', 60,60);
         $grid->column('video_num', '视频数量')->display(function () {
             $url = admin_url('course-videos?course_id=' . $this->id);
             return sprintf("<a href='%s'>%s</a>", $url, $this->video_num);
@@ -111,7 +111,7 @@ class CourseController extends AdminController
         $form->textarea('description', __('课程简介'));
         $form->decimal('original_price', __('原价'))->default(0.00);
         $form->decimal('price', __('现价'))->default(0.00);
-        $form->image('pic', __('封面图'));
+        $form->image('pic', __('封面图'))->uniqueName();
         $form->number('order', __('排序'))->default(0);
         $form->radio('status', __('上架状态'))->options(Course::$status)->default(1);
 

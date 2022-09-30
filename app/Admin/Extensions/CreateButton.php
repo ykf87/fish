@@ -14,6 +14,9 @@ class CreateButton extends AbstractTool{
         if (empty($param['fa_icon'])) {
             $param['fa_icon'] = 'fa-plus';
         }
+        if (empty($param['btn_class'])) {
+            $param['btn_class'] = 'btn btn-sm btn-success';
+        }
         $this->param = $param;
     }
     public function render()

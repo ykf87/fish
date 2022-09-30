@@ -35,6 +35,11 @@ class Course extends Model
         '3' => 'success',
     ];
 
+//    public function getPicAttribute($value)
+//    {
+//        return env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $value;
+//    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);
