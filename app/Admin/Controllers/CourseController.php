@@ -34,6 +34,10 @@ class CourseController extends AdminController
     {
         $grid = new Grid(new Course());
 
+        if (!Admin::user()->isRole('administrator')) {
+            $grid->model()->where('aid', Admin::user()->id);
+        }
+
         $grid->column('id', __('Id'));
         $grid->column('category.title', __('所属分类'));
         $grid->column('order', __('排序'));
@@ -46,7 +50,7 @@ class CourseController extends AdminController
         $grid->column('status', __('上架状态'))->filter(Course::$status)->switch($status);
         $grid->column('original_price', __('原价'));
         $grid->column('price', __('现价'));
-        $grid->column('pic', __('封面图'))->image('', 60,60);
+        $grid->column('pic', __('封面图'))->image('', 60, 60);
         $grid->column('video_num', '视频数量')->display(function () {
             $url = admin_url('course-videos?course_id=' . $this->id);
             return sprintf("<a href='%s'>%s</a>", $url, $this->video_num);

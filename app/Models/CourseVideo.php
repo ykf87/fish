@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\services\CourseService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,6 +37,19 @@ class CourseVideo extends Model
     public function course()
     {
         return $this->belongsTo(Course::class);
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+        static::saved(function ($model) {
+            $courseService = new CourseService();
+            $courseService->countVideo($model->course_id);
+        });
+        static::deleted(function ($model) {
+            $courseService = new CourseService();
+            $courseService->countVideo($model->course_id);
+        });
     }
 
 //    public function getPicAttribute($value)

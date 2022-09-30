@@ -45,10 +45,14 @@ class CourseVideoController extends AdminController
         $grid->column('course.title', __('所属课程'));
         $grid->column('order', __('排序'));
         $grid->column('title', __('视频标题'));
-        $grid->column('charge_type', __('收费类型'))->filter(CourseVideo::$chargeType)->using(CourseVideo::$chargeType)->label(CourseVideo::$chargeTypeLabel);
+        $chargeType = [
+            'off' => ['value' => 1, 'text' => '免费', 'color' => 'default'],
+            'on'  => ['value' => 2, 'text' => '收费', 'color' => 'primary'],
+        ];
+        $grid->column('charge_type', __('是否收费'))->filter(CourseVideo::$chargeType)->switch($chargeType);
         $status = [
-            'on'  => ['value' => 1, 'text' => '已上架', 'color' => 'primary'],
             'off' => ['value' => -1, 'text' => '已下架', 'color' => 'default'],
+            'on'  => ['value' => 1, 'text' => '已上架', 'color' => 'primary'],
         ];
         $grid->column('status', __('上架状态'))->filter(CourseVideo::$status)->switch($status);
         $grid->column('pic', __('封面图'))->image('', 60, 60);
@@ -60,11 +64,10 @@ class CourseVideoController extends AdminController
         $grid->disableCreateButton();
 
         $grid->batchActions(function ($batch) {
-            $batch->disableDelete();
+            $batch->disableDelete(); //不知道为什么列表的批量删除会报错：Call to undefined method Illuminate\Http\RedirectResponse::destroy()
         });
 
         $grid->actions(function ($actions) {
-            $actions->disableDelete();
             $actions->disableView();
         });
 
@@ -148,11 +151,6 @@ class CourseVideoController extends AdminController
         $form->text('video_url', __('视频url'))->required();
         $form->file_upload('video_upload', __('上传视频'));
         $form->radio('status', __('上架状态'))->options(CourseVideo::$status)->default(1);
-
-        $form->saved(function (Form $form) {
-            $courseService = new CourseService();
-            $courseService->countVideo($form->model()->course_id);
-        });
 
         return $form;
     }
