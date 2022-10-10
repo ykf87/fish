@@ -10,11 +10,11 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
-use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as FRequest;
 use Illuminate\Support\Facades\Storage;
+
 
 class TiktokProductsVideoController extends AdminController
 {
@@ -72,7 +72,11 @@ class TiktokProductsVideoController extends AdminController
         });
 
         $grid->tools(function ($tools) {
-            $tools->append(new CreateButton());
+            $data = [
+                'button_name' => '新增视频',
+                'url' => admin_url(sprintf('tiktok-products-videos/create?pid=%s&type=%s', FRequest::input('pid'), FRequest::input('type'))),
+            ];
+            $tools->append(new CreateButton($data));
         });
 
         return $grid;
@@ -108,24 +112,17 @@ class TiktokProductsVideoController extends AdminController
     {
         $form = new Form(new TikTokProductsVideo());
 
-        $form->text('aid', __('管理员id'))->default(Admin::user()->id)->disable();
         $form->text('pid', __('商品id'))->default(FRequest::input('pid'))->required();
         $form->radio('type', __('视频类型'))->options(TiktokProductsVideo::$type)->default(FRequest::input('type'))->required();
         $form->text('title', __('视频标题'));
         $form->text('video_url', __('视频url'))->required();
-        $form->file_upload('video_upload_test', __('上传视频'));
+        $form->file_upload('video_upload', __('上传视频'));
 
         $form->saving(function (Form $form) {
-            if (!$form->model()->pid) {
+            if ($form->isCreating()) {
                 TiktokProduct::where('id', FRequest::input('pid'))->increment(FRequest::input('type') . '_video_num');
-                $form->aid = Admin::user()->id;
+                $form->model()->aid = Admin::user()->id;
             }
-        });
-
-        $form->footer(function ($footer) {
-            $footer->disableViewCheck();
-            $footer->disableEditingCheck();
-            $footer->disableCreatingCheck();
         });
 
         return $form;

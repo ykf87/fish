@@ -2,21 +2,25 @@
 
 namespace App\Admin\Extensions;
 
-use Encore\Admin\Admin;
 use Encore\Admin\Grid\Tools\AbstractTool;
-use Illuminate\Support\Facades\Request;
-use Encore\Admin\Facades\Admin as uadmin;
 
-use App\Tiktok\Shop;
 
 class CreateButton extends AbstractTool{
 
+    protected $param;
+
+    public function __construct($param)
+    {
+        if (empty($param['fa_icon'])) {
+            $param['fa_icon'] = 'fa-plus';
+        }
+        if (empty($param['btn_class'])) {
+            $param['btn_class'] = 'btn btn-sm btn-success';
+        }
+        $this->param = $param;
+    }
     public function render()
     {
-        $data = [
-            'button_name' => '新增视频',
-            'url' => admin_url(sprintf('tiktok-products-videos/create?pid=%s&type=%s', Request::input('pid'), Request::input('type'))),
-        ];
-        return view('admin.create_button', $data);
+        return view('admin.create_button', $this->param);
     }
 }
