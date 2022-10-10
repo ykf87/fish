@@ -11,7 +11,7 @@ class CourseOrder extends Model
 
     protected $fillable = [
         'order_no', 'uid', 'course_id', 'product', 'description', 'payment_type',
-        'currency', 'price', 'shipping', 'total', 'status', 'addtime'];
+        'currency', 'price', 'shipping', 'total', 'pay_id', 'status', 'addtime'];
 
     protected $casts = [
         'payer_info' => 'json',
