@@ -48,6 +48,15 @@ class TiktokProduct extends Model
         1	=> 'success',
     ];
 
+    public static $isSamples = [
+        0	=> '否',
+        1	=> '是',
+    ];
+    public static $isSamplesLabel = [
+        0	=> 'default',
+        1	=> 'success',
+    ];
+
 	protected $appends = ['left_icon'];
 
 	//更新TK产品

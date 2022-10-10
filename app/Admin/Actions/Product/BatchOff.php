@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class BatchOff extends BatchAction
 {
-    public $name = '批量下架';
+    public $name = '批量 - 下架';
 
     public function handle(Collection $collection)
     {

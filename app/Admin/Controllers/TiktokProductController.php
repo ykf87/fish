@@ -4,6 +4,8 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Product\BatchOff;
 use App\Admin\Actions\Product\BatchOn;
+use App\Admin\Actions\Product\BatchSampleOff;
+use App\Admin\Actions\Product\BatchSampleOn;
 use App\Models\TiktokAccount;
 use App\Models\TiktokShop;
 use App\Models\TiktokProduct;
@@ -80,6 +82,7 @@ class TiktokProductController extends AdminController
         })->filter('range', 'datetime');
         $grid->column('status', __('状态'))->using(TiktokProduct::$status)->filter(TiktokProduct::$status)->label(TiktokProduct::$statusLabel);
         $grid->column('ud', __('是否显示'))->using(TiktokProduct::$ud)->filter(TiktokProduct::$ud)->label(TiktokProduct::$udLabel);
+        $grid->column('is_samples', __('领样商品'))->using(TiktokProduct::$isSamples)->filter(TiktokProduct::$isSamples)->label(TiktokProduct::$isSamplesLabel);
         $grid->column('currency', __('货币'));
         $grid->column('maxprice', __('最高价'))->filter('range')->sortable()->hide();
         $grid->column('minprice', __('最低价'))->filter('range')->sortable();
@@ -111,6 +114,8 @@ class TiktokProductController extends AdminController
             if (Admin::user()->can('product.manage-all')) {
                 $batch->add(new BatchOff());
                 $batch->add(new BatchOn());
+                $batch->add(new BatchSampleOn());
+                $batch->add(new BatchSampleOff());
             }
             $batch->disableDelete();
         });
