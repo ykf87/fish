@@ -11,7 +11,7 @@ return [
     | login page.
     |
     */
-    'name' => 'Domi Fish',
+    'name' => 'Dome Fish',
 
     /*
     |--------------------------------------------------------------------------
@@ -22,7 +22,7 @@ return [
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => '<b>Domi</b> Fish',
+    'logo' => '<b>Dome</b> Fish',
 
     /*
     |--------------------------------------------------------------------------
@@ -85,7 +85,7 @@ return [
     | Html title for all pages.
     |
     */
-    'title' => 'Domi Fish',
+    'title' => 'Dome Fish',
 
     /*
     |--------------------------------------------------------------------------

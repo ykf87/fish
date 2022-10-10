@@ -100,6 +100,17 @@ Route::group([
 			Route::get('lists', 'SampleController@index')->name('address');
 		});
 	});
+
+    Route::group([
+        'namespace'     => 'Pay',
+        'prefix'        => 'pay/',
+        'as'			=> 'pay.'
+    ], function () {
+        Route::post('pay/course', 'PayController@payCourse')->middleware(['auths']);
+        Route::get('callback/course', 'PayController@callbackCourse')->name('courseCallback');
+        Route::post('notify', 'PayController@notify')->name('notify');
+    });
+
 	// 用户
 	Route::group([
 		// 'middleware'	=> ['auths'],
@@ -122,4 +133,5 @@ Route::group([
 		Route::get('user', 'UserAuthController@GetUserInfo');
 		Route::post('user/editerbatch', 'UserAuthController@updateUser');
 	});
+
 });
