@@ -7,9 +7,10 @@ use App\Models\CourseVideo;
 
 class CourseService
 {
-    public function info($id, $field)
+    public function info($id, $field = ['*'])
     {
-        $data = Course::select($field)->find($id)->toArray();
+        $data = Course::select($field)->find($id);
+        if ($data) $data = $data->toArray();
         return $data;
     }
 

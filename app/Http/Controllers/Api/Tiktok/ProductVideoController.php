@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Api\Tiktok;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductVideoRequest;
 use App\services\ProductVideoService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ProductVideoController extends Controller
 {
