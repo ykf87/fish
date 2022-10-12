@@ -2,7 +2,7 @@
 
 namespace App\Admin\Controllers;
 
-use App\MOdels\CourseOrder;
+use App\Models\CourseOrder;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
