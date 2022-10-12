@@ -10,6 +10,8 @@ class CourseVideo extends Model
 {
     use HasFactory;
 
+    protected $appends = ['full_pic_url'];
+
     protected $casts = [
         'created_at' => 'datetime:Y-m-d H:i:s',
     ];
@@ -52,11 +54,15 @@ class CourseVideo extends Model
         });
     }
 
-//    public function getPicAttribute($value)
-//    {
-//        return env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $value;
-//    }
-//
+    public function getFullPicUrlAttribute()
+    {
+        $url = '';
+        if (!empty($this->pic)) {
+            $url = env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $this->pic;
+        }
+        return $url;
+    }
+
 //    public function getVideoUrlAttribute($value)
 //    {
 //        return env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $value;

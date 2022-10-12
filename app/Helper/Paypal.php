@@ -81,6 +81,7 @@ class Paypal
                 'success' => false,
                 'msg' => $e->getData()
             ];
+            return $rtn;
         }
 
         $rtn = [

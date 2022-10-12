@@ -13,6 +13,8 @@ class Course extends Model
       'created_at' => 'datetime:Y-m-d H:i:s',
     ];
 
+    protected $appends = ['full_pic_url'];
+
     public static $status = [
         '-1' => '已下架',
         '1' => '已上架',
@@ -35,10 +37,14 @@ class Course extends Model
         '3' => 'success',
     ];
 
-//    public function getPicAttribute($value)
-//    {
-//        return env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $value;
-//    }
+    public function getFullPicUrlAttribute()
+    {
+        $url = '';
+        if (!empty($this->pic)) {
+            $url = env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $this->pic;
+        }
+        return $url;
+    }
 
     public function category()
     {

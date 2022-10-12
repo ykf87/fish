@@ -107,8 +107,20 @@ Route::group([
         'as'			=> 'pay.'
     ], function () {
         Route::post('pay/course', 'PayController@payCourse')->middleware(['auths']);
-        Route::get('callback/course', 'PayController@callbackCourse')->name('courseCallback');
+        Route::get('callback/course', 'PayController@callbackCourse')->name('courseCallback')->middleware(['auths']);
         Route::post('notify', 'PayController@notify')->name('notify');
+    });
+
+    Route::group([
+        'namespace'     => 'Course',
+        'prefix'        => 'course/',
+        'as'			=> 'course.',
+        'middleware' => ['auths']
+    ], function () {
+        Route::get('', 'CourseController@courseList')->name('courseList');
+        Route::get('category', 'CourseController@category')->name('category');
+        Route::get('video', 'CourseController@videoList')->name('videoList');
+        Route::get('video/{id}/info', 'CourseController@videoInfo')->name('videoInfo');
     });
 
 	// 用户
