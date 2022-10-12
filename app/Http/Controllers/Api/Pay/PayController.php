@@ -19,7 +19,11 @@ class PayController extends Controller
         $course = $courseService->info($course_id);
 
         if (!$course) {
-            return $this->error('', 'the course is not exist');
+            return $this->error('', 'The course is not exist');
+        }
+
+        if ($course['price'] <= 0) {
+            return $this->error('', 'Course price cannot be zero');
         }
 
         $user = $request->get('_user');
@@ -39,7 +43,7 @@ class PayController extends Controller
         if ($result['success']) {
             return $this->success($result);
         } else {
-            return $this->error($result);
+            return $this->error('', $result['msg']);
         }
 
     }
