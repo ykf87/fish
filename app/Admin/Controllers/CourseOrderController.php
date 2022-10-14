@@ -38,7 +38,7 @@ class CourseOrderController extends AdminController
         $grid->column('total', __('买家付款金额'));
         $grid->column('pay_id', __('paypal订单号'));
         $grid->column('payer_info', __('支付人'))->hide();
-        $grid->column('status', __('Status'))->filter(CourseOrder::$status)->using(CourseOrder::$status)->label(CourseOrder::$statusLabel);
+        $grid->column('status', __('支付状态'))->filter(CourseOrder::$status)->using(CourseOrder::$status)->label(CourseOrder::$statusLabel);
         $grid->column('addtime', __('创建时间'));
         $grid->column('paytime', __('付款时间'));
 
@@ -52,6 +52,7 @@ class CourseOrderController extends AdminController
         $grid->actions(function ($actions) {
             $actions->disableDelete();
             $actions->disableView();
+            $actions->disableEdit();
         });
 
         return $grid;
