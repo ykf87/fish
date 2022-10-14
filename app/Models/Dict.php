@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Dict extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'dict_val_json' => 'json',
+    ];
+
 }
