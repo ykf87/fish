@@ -123,6 +123,14 @@ Route::group([
         Route::get('video/{id}/info', 'CourseController@videoInfo')->name('videoInfo');
     });
 
+    Route::group([
+        'namespace' => 'General',
+        'prefix' => 'general/',
+        'as' => 'general.'
+    ], function () {
+        Route::get('dict/info', 'DictController@info')->name('dictInfo');
+    });
+
 	// 用户
 	Route::group([
 		// 'middleware'	=> ['auths'],

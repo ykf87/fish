@@ -90,6 +90,7 @@ class CourseService
 
         if (!$info) {
             $rtn['msg'] = 'The video is not exist';
+            return $rtn;
         }
 
         if ($info->status !== 1 || $info->course->status !== 1) {
