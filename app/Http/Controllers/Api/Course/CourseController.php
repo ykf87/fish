@@ -51,7 +51,7 @@ class CourseController extends Controller
         if ($info['success']) {
             return $this->success($info['msg']);
         } else {
-            return $this->error('', $info['msg']);
+            return $this->error($info['msg']);
         }
     }
 }

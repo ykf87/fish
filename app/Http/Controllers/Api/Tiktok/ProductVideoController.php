@@ -46,7 +46,7 @@ class ProductVideoController extends Controller
         $user = $request->get('_user');
         $product = $this->videoService->getProduct($request->input('pid'));
         if (!$product) {
-            return $this->error('', 'The product is not exist');
+            return $this->error('The product is not exist');
         }
         $data = $this->videoService->originalVideo($product, $user->id);
 
@@ -62,16 +62,16 @@ class ProductVideoController extends Controller
 
         $product = $this->videoService->getProduct($pid);
         if (!$product) {
-            return $this->error('', 'The product is not exist');
+            return $this->error('The product is not exist');
         }
 
         $video = $this->videoService->getVideo($vid, $pid);
         if (!$video) {
-            return $this->error('', 'The video is not exist');
+            return $this->error('The video is not exist');
         }
 
         if (!$this->videoService->todayReceivedStatus($user->id,$pid, 'original')) {
-            return $this->error('', 'The quantity received today has reached the upper limit');
+            return $this->error('The quantity received today has reached the upper limit');
         }
 
         $this->videoService->receiveVideo($user->id, $product, $video);
@@ -95,25 +95,25 @@ class ProductVideoController extends Controller
 
         $product = $this->videoService->getProduct($pid);
         if (!$product) {
-            return $this->error('', 'The product is not exist');
+            return $this->error('The product is not exist');
         }
 
         if (!$this->videoService->todayReceivedStatus($user->id,$pid, 'clip')) {
-            return $this->error('', 'The quantity received today has reached the upper limit');
+            return $this->error('The quantity received today has reached the upper limit');
         }
 
         if (!empty($vid)) { //如果vid不为空，那么认为是再次下载
             $video = $this->videoService->getVideo($vid, $pid);
             if (!$video) {
-                return $this->error('', 'The video is not exist');
+                return $this->error('The video is not exist');
             }
             if (!$this->videoService->checkReceiveById($user->id, $video->id)) { //判断视频是否可以被本人领取
-                return $this->error('', 'The video is received by others');
+                return $this->error('The video is received by others');
             }
         } else {
             $video = $this->videoService->getOneVideo($pid); //随机获取一个剪辑视频
             if (!$video) {
-                return $this->error('', 'Video library is empty');
+                return $this->error('Video library is empty');
             }
         }
 
