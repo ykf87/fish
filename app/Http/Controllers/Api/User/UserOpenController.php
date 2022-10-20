@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\User;
 
+use App\Events\UserLoginEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -208,6 +209,8 @@ class UserOpenController extends Controller
         ];
 
         $verify = Redis::del($email);
+
+        UserLoginEvent::dispatch($user, $request);
 
 
         return $this->success($resultData, '');
