@@ -134,7 +134,7 @@ class VerifyApiSign
         $sign_str = $sign . $this->secretKey;
         $md5_sign_str = strtoupper(md5($sign_str));
 
-        if ($md5_sign_str === $request->query($this->signField, null)) {
+        if ($md5_sign_str === $request->header($this->signField, null)) {
             return true;
         }
         $this->error = sprintf("sign_str=%s,md5_value=%s", $sign_str, $md5_sign_str);
