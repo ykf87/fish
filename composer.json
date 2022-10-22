@@ -19,6 +19,7 @@
         "laravel/tinker": "^2.5",
         "league/flysystem-aws-s3-v3": "~1.0",
         "paypal/rest-api-sdk-php": "^1.7.4",
+        "geoip2/geoip2": "~2.0",
         "predis/predis": "^2.0"
     },
     "require-dev": {
