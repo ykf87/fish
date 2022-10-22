@@ -322,7 +322,7 @@ class UserOpenController extends Controller
     {
         $langs = Language::where('status', 1)->with(['regions' => function ($query) {
             $query->select(['language_id', 'region', 'name'])->where('status', 1)->orderByDesc('sort')->get();
-        }])->get();
+        }])->orderByDesc('sort')->get();
 
         return $this->success($langs, '');
     }
