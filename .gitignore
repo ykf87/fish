@@ -18,3 +18,6 @@ yarn-error.log
 /.well-know*
 404.html
 index.html
+.env.api
+public/.user.ini
+composer.lock
