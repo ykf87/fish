@@ -21,3 +21,4 @@ index.html
 .env.api
 public/.user.ini
 composer.lock
+public/upload_big*

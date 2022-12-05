@@ -18,7 +18,7 @@ class CourseService
     public function courseList($param)
     {
         if (empty($param['page'])) $param['page'] = 1;
-        if (empty($param['limit'])) $param['limit'] = 1;
+        if (empty($param['limit'])) $param['limit'] = 10;
 
         $query = Course::query()
             ->select('id', 'title', 'description', 'pic', 'charge_type', 'original_price', 'price', 'video_num', 'views', 'created_at')
@@ -53,7 +53,7 @@ class CourseService
     public function videoList($param)
     {
         if (empty($param['page'])) $param['page'] = 1;
-        if (empty($param['limit'])) $param['limit'] = 1;
+        if (empty($param['limit'])) $param['limit'] = 10;
 
         $query = CourseVideo::query()
             ->select('id', 'title', 'description', 'pic', 'charge_type', 'views', 'created_at')

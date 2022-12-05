@@ -83,10 +83,13 @@ class UserOpenController extends Controller
                 return $this->error('Please fill in your password or verification code');
             } else {
                 // 校验验证码
-                $verify = Redis::get($email);
-                if (!$verify || $code != $verify) {
+                if(!$this->verifyCode($email, $code)){
                     return $this->error('Verification code error');
                 }
+                // $verify = Redis::get($email);
+                // if (!$verify || $code != $verify) {
+                //     return $this->error('Verification code error');
+                // }
             }
         }
         if (!$nickname) {
@@ -182,11 +185,14 @@ class UserOpenController extends Controller
                 return $this->error('passwordWrong');
             }
         } else {
-            $verify = Redis::get($email);
-
-            if (!$verify || $code != $verify) {
+            if(!$this->verifyCode($email, $code)){
                 return $this->error('Verification code error');
             }
+            // $verify = Redis::get($email);
+
+            // if (!$verify || $code != $verify) {
+            //     return $this->error('Verification code error');
+            // }
         }
         // 登录次数+1
         User::where('email', $email)->update([
@@ -239,11 +245,15 @@ class UserOpenController extends Controller
         if (!$password) {
             return $this->error('Please fill in your new password');
         }
-        // 验证码校验
-        $verify = Redis::get($email);
-        if ($code != $verify) {
+
+        if(!$this->verifyCode($email, $code)){
             return $this->error('Verification code error');
-        } else { }
+        }
+        // 验证码校验
+        // $verify = Redis::get($email);
+        // if ($code != $verify) {
+        //     return $this->error('Verification code error');
+        // } else { }
 
         // 更新数据
         $user->password = Hash::make($password);
@@ -325,5 +335,15 @@ class UserOpenController extends Controller
         }])->orderByDesc('sort')->get();
 
         return $this->success($langs, '');
+    }
+
+    private function verifyCode($mail, $code){
+        if(!trim($code)){
+            return false;
+        }
+        if(env('APP_DEBUG') && env('CODE') && $code == env('CODE')){
+            return true;
+        }
+        return $code == Redis::get($mail);
     }
 }

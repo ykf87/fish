@@ -20,7 +20,7 @@ class PayService
                 break;
         }
 
-        if ($result['success']) {
+        if ($result['success'] != 'false') {
             if ($param['product_type'] == 'course') {
                 $param['pay_id'] = $result['pay_id'];
                 $param['total'] = $param['price'];
