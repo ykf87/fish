@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
+use App\Helper\Resion;
 
 /**
  * 接口签名
@@ -57,6 +58,8 @@ class VerifyApiSign
      */
     public function handle(Request $request, Closure $next)
     {
+        $ipResion       = Resion::GetResionByIp($request->ip());
+        $request->merge(['_resion' => $ipResion]);
         return $next($request);
         if (!$this->switch || $this->inExceptArray($request) || ($this->signMatch($request) && $this->allowTimestamp($request))) {
             return $next($request);
