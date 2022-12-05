@@ -18,6 +18,7 @@ class IndexController extends Controller{
 				$yaoqing->ip 	= $request->ip();
 				$yaoqing->country 	= $request->get('_resion')['iso'] ?? null;
 				$yaoqing->addtime 	= time();
+				$yaoqing->save();
 			}
 		}
 		header("Location:https://www.domefish.com",TRUE,301);
