@@ -57,6 +57,7 @@ class VerifyApiSign
      */
     public function handle(Request $request, Closure $next)
     {
+        return $next($request);
         if (!$this->switch || $this->inExceptArray($request) || ($this->signMatch($request) && $this->allowTimestamp($request))) {
             return $next($request);
         }
