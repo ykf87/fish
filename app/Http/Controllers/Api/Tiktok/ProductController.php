@@ -14,24 +14,11 @@ use App\Models\TiktokDarren;
 use App\Models\TiktokProductsResion;
 use Illuminate\Support\Facades\Storage;
 use App\Models\TiktokShop;
-use App\Models\Yaoqing;
-use App\Models\User;
 
 class ProductController extends Controller
 {
 	//选品首页
 	public function index(Request $request){
-		$invi 			= $request->input('invo');
-		if($invi){
-			$inviUser 	= User::where('invitation_code', $invi)->first();
-			if($inviUser){
-				$yaoqing 	= new Yaoqing;
-				$yaoqing->key 	= $inviUser->id;
-				$yaoqing->ip 	= $request->ip();
-				$yaoqing->country 	= $request->get('_resion')['iso'] ?? null;
-				$yaoqing->addtime 	= time();
-			}
-		}
 		$cateLists 		= TiktokCategory::where('parent', 0)->pluck('name', 'id');
 		$list = Banner::all()->toArray();
 		$banners = [];

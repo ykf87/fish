@@ -25,6 +25,7 @@ Route::group([
 	// 'middleware'    => ['language'],
 	'as'            => 'api.'
 ], function () {
+	Route::get('invi', 'IndexController@index');
 	Route::group([
 		'prefix'        => 'tiktok/',
 		'namespace'     => 'Tiktok',
