@@ -18,3 +18,4 @@ yarn-error.log
 /.well-know*
 404.html
 index.html
+public/upload_big*

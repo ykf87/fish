@@ -67,11 +67,15 @@ class UserAuthController extends Controller
             if ($count) {
                 return $this->error('The email address has been registered');
             }
-            // 校验验证码
-            $verify = Redis::get($mail);
-            if (!$verify || $mailcode != $verify) {
+
+            if(!$this->verifyCode($mail, $mailcode)){
                 return $this->error('Verification code error');
             }
+            // 校验验证码
+            // $verify = Redis::get($mail);
+            // if (!$verify || $mailcode != $verify) {
+            //     return $this->error('Verification code error');
+            // }
             //密码校验
             if ($password) {
                 if (!Hash::check($password, $user->password)) {
@@ -105,5 +109,14 @@ class UserAuthController extends Controller
 
 
         return $this->success($success, '');
+    }
+    private function verifyCode($mail, $code){
+        if(!trim($code)){
+            return false;
+        }
+        if(env('APP_DEBUG') && env('CODE') && $code == env('CODE')){
+            return true;
+        }
+        return $code == Redis::get($mail);
     }
 }
