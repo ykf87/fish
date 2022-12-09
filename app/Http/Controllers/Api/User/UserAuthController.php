@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Api\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\CourseOrder;
 use App\Globals\Ens;
 use Aws\S3\S3Client;
 use Encore\Admin\Grid\Displayers\Limit;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManagerStatic;
+use App\Models\CourseViewLog;
 
 class UserAuthController extends Controller
 {
@@ -110,6 +112,53 @@ class UserAuthController extends Controller
 
         return $this->success($success, '');
     }
+
+    /**
+     * 获取课程购买记录
+     */
+    public function buied(Request $request){
+        $user   = $request->get('_user');
+
+        $page   = $request->input('page', 1);
+        $limit  = $request->input('limit', 10);
+
+        $query  = CourseOrder::from('course_orders as a')
+            ->select('a.id', 'a.price', 'a.course_id', 'b.title', 'b.pic', 'b.video_num', 'b.views')
+            ->leftJoin('courses as b', 'b.id', '=', 'a.course_id')
+            ->where('a.uid', $user->id);
+
+
+        $list   = $query->offset(($page-1)*$limit)->limit($limit)->orderByDesc('a.addtime')->get();
+        foreach($list as &$val){
+            if($val->pic){
+                $val->pic   = env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $val->pic;
+            }
+        }
+
+        return $this->success(['page' => $page, 'limit' => $limit, 'total_limit' => $query->count(), 'lists' => $list]);
+    }
+
+    public function viewed(Request $request){
+        $user   = $request->get('_user');
+
+        $page   = $request->input('page', 1);
+        $limit  = $request->input('limit', 10);
+
+        $query  = CourseViewLog::from('course_view_logs as a')
+            ->select('a.id', 'b.price', 'a.course_id', 'b.title', 'b.pic', 'b.video_num', 'b.views')
+            ->leftJoin('courses as b', 'b.id', '=', 'a.course_id')
+            ->where('a.uid', $user->id);
+
+
+        $list   = $query->offset(($page-1)*$limit)->limit($limit)->orderByDesc('a.addtime')->get();
+        foreach($list as &$val){
+            if($val->pic){
+                $val->pic   = env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $val->pic;
+            }
+        }
+        return $this->success(['page' => $page, 'limit' => $limit, 'total_limit' => $query->count(), 'lists' => $list]);
+    }
+
     private function verifyCode($mail, $code){
         if(!trim($code)){
             return false;

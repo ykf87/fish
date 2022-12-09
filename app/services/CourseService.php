@@ -2,9 +2,11 @@
 
 namespace App\services;
 
+use App\Models\User;
 use App\Models\Course;
 use App\Models\CourseOrder;
 use App\Models\CourseVideo;
+use App\Models\CourseViewLog;
 
 class CourseService
 {
@@ -67,6 +69,11 @@ class CourseService
             });
         }
 
+        $user   = User::getTokenUser();
+        if($user){
+            CourseViewLog::addlog($user->id, (int)$param['course_id']);
+        }
+
         $total = $query->count();
 
         $res = $query->orderByDesc('order')
@@ -109,6 +116,12 @@ class CourseService
 
         if (!empty($rtn['msg'])) {
             return $rtn;
+        }
+
+
+        $user   = User::getTokenUser();
+        if($user){
+            CourseViewLog::addlog($user->id, $info->course_id, $info->id);
         }
 
         $info->increment('views');

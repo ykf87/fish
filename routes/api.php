@@ -153,6 +153,8 @@ Route::group([
 	], function () {
 		Route::get('user', 'UserAuthController@GetUserInfo');
 		Route::post('user/editerbatch', 'UserAuthController@updateUser');
+		Route::get('user/buied', 'UserAuthController@buied')->name('buied');
+		Route::get('user/viewed', 'UserAuthController@viewed')->name('viewed');
 	});
 
 });

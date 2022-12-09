@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Traits\SerializeDate;
+use App\Globals\Ens;
 
 class User extends Authenticatable
 {
@@ -43,4 +44,17 @@ class User extends Authenticatable
      *
      * @var array<string, string>
      */
+
+    public static function getTokenUser(){
+        $request    = request();
+        $token      = $request->header('token') or $request->cookie('token') or $request->input('token');
+        if ($token) {
+            $info   = base64_decode(Ens::decrypt($token));
+            $info   = $info ? json_decode($info, true) : null;
+            if(isset($info['id'])){
+                return self::find($info['id']);
+            }
+        }
+        return null;
+    }
 }
