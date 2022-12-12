@@ -26,6 +26,7 @@ Route::group([
 	'as'            => 'api.'
 ], function () {
 	Route::get('invi', 'IndexController@index')->name('invi');
+	Route::get('banner', 'IndexController@banner')->name('banner');
 	Route::group([
 		'prefix'        => 'tiktok/',
 		'namespace'     => 'Tiktok',

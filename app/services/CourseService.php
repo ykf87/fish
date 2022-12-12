@@ -57,6 +57,18 @@ class CourseService
         if (empty($param['page'])) $param['page'] = 1;
         if (empty($param['limit'])) $param['limit'] = 10;
 
+        $course = Course::query()
+            ->select('title', 'description', 'content', 'charge_type', 'original_price', 'price', 'video_num', 'views')
+            ->where('id', $param['course_id'])->first();
+        if($course){
+            $course     = $course->toArray();
+            if(isset($course['full_pic_url'])){
+                unset($course['full_pic_url']);
+            }
+        }else{
+            $course     = [];
+        }
+
         $query = CourseVideo::query()
             ->select('id', 'title', 'description', 'pic', 'charge_type', 'views', 'created_at')
             ->where('course_id', $param['course_id'])
@@ -69,11 +81,6 @@ class CourseService
             });
         }
 
-        $user   = User::getTokenUser();
-        if($user){
-            CourseViewLog::addlog($user->id, (int)$param['course_id']);
-        }
-
         $total = $query->count();
 
         $res = $query->orderByDesc('order')
@@ -82,12 +89,27 @@ class CourseService
             ->limit($param['limit'])
             ->get();
 
-        return [
+
+        $user           = User::getTokenUser();
+        $videoid        = 0;
+        $buied          = 0;
+        if($user){
+            $videoid    = CourseViewLog::addlog($user->id, (int)$param['course_id']);
+            $order      = CourseOrder::where('uid', $user->id)->where('course_id', $param['course_id'])->first();
+            if($order && $order->status == 20){
+                $buied  = 1;
+            }
+        }
+
+        $arr    =  [
             'page'			=> $param['page'],
             'limit'			=> $param['limit'],
             'total_limit'	=> $total,
+            'videoid'       => $videoid,
+            'buied'         => $buied,
             'lists'	=> $res,
         ];
+        return array_merge($course, $arr);
     }
 
     public function videoInfo($id, $uid)

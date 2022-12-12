@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Yaoqing;
 use App\Models\User;
+use App\Models\Banner;
 
 class IndexController extends Controller{
 	public function index(Request $request){
@@ -22,5 +23,9 @@ class IndexController extends Controller{
 			}
 		}
 		header("Location:https://www.domefish.com",TRUE,301);
+	}
+
+	public function banner(Request $request){
+		return $this->success(Banner::orderByDesc('orderby')->limit(6)->get());
 	}
 }

@@ -33,5 +33,6 @@ class CourseViewLog extends Model{
 			$row->addtime 			= time();
 		}
 		$row->save();
+		return $row->course_video_id;
 	}
 }

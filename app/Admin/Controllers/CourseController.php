@@ -9,6 +9,8 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CourseController extends AdminController
 {
@@ -113,6 +115,7 @@ class CourseController extends AdminController
         $form->select('category_id', __('所属分类'))->options($cate_options)->required();
         $form->text('title', __('课程名称'))->required();
         $form->textarea('description', __('课程简介'));
+        $form->simditor('content', __('课程介绍'));
         $form->decimal('original_price', __('原价'))->default(0.00);
         $form->decimal('price', __('现价'))->default(0.00);
         $form->image('pic', __('封面图'))->uniqueName();
@@ -126,5 +129,10 @@ class CourseController extends AdminController
         });
 
         return $form;
+    }
+
+    public function upload(Request $request){
+        $path   = Storage::disk('s3')->putFile('course', $request->file('upload_file'));//$request->file('upload_file')->store('course');
+        return response()->json(['success' => true,'msg' => '', 'file_path' => [Storage::disk('s3')->url($path)]]);
     }
 }
