@@ -31,7 +31,7 @@ class BannerController extends AdminController
         $grid->column('id', __('编号'))->sortable();
         $grid->column('name', __('名称'))->filter('like');
         $grid->column('image', __('图片'))->display(function ($val) {
-            return $val ? '<img src=' . Storage::disk('admin')->url($val) . ' style="max-width:50px;max-height:50px;" />' : '';
+            return $val ? '<img src=' . Storage::disk('s3')->url($val) . ' style="max-width:50px;max-height:50px;" />' : '';
         });
         $grid->column('url', __('图片跳转链接'));
 
