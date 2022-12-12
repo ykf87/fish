@@ -22,3 +22,4 @@ index.html
 public/.user.ini
 composer.lock
 public/upload_big*
+.htaccess
