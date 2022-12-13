@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\CourseOrder;
 use App\Models\CourseVideo;
 use App\Models\CourseViewLog;
+use Illuminate\Support\Facades\Storage;
 
 class CourseService
 {
@@ -149,14 +150,14 @@ class CourseService
         $info->increment('views');
         $info->course()->increment('views');
 
-        $mp4_url = env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $info->video_url;
-        $mp4_data = file_get_contents($mp4_url);
+
+        // $mp4_url = env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $info->video_url;
+        // $mp4_data = file_get_contents($mp4_url);
 
         $rtn = [
             'success' => true,
-            'msg' => 'data:video/mp4;base64,' . base64_encode($mp4_data)
+            'msg' => Storage::disk('s3')->temporaryUrl($info->video_url, now()->addMinutes(5)),//'data:video/mp4;base64,' . base64_encode($mp4_data)
         ];
-
         return $rtn;
     }
 
