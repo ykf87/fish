@@ -58,7 +58,7 @@ class CourseVideo extends Model
     {
         $url = '';
         if (!empty($this->pic)) {
-            $url = env('AWS_URL') . '/' . $this->pic;
+            $url = env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $this->pic;
         }
         return $url;
     }

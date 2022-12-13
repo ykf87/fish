@@ -19,8 +19,8 @@ class PayService
             default :
                 break;
         }
-
-        if ($result['success'] != 'false') {
+// print_r($result, $param);
+        if ($result['success'] != false) {
             if ($param['product_type'] == 'course') {
                 $param['pay_id'] = $result['pay_id'];
                 $param['total'] = $param['price'];
@@ -39,6 +39,7 @@ class PayService
             'success' => 'false',
             'msg' => ''
         ];
+        // dd($param);
         if ($param['product_type'] == 'course') {
 
             $order = CourseOrder::where('pay_id', $param['paymentId'])->first();

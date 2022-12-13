@@ -109,7 +109,7 @@ Route::group([
         'as'			=> 'pay.'
     ], function () {
         Route::post('pay/course', 'PayController@payCourse')->middleware(['auths']);
-        Route::get('callback/course', 'PayController@callbackCourse')->name('courseCallback')->middleware(['auths']);
+        Route::get('callback/course', 'PayController@callbackCourse')->name('courseCallback');//->middleware(['auths']);
         Route::post('notify', 'PayController@notify')->name('notify');
     });
 
