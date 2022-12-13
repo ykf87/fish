@@ -55,7 +55,8 @@ class PayService
                 $result['success'] = true;
             }
         }
-
+        header('Location:http://localhost:8080/pages/user/success');
+        return;
         return $result;
     }
 
