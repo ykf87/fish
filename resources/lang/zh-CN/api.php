@@ -48,7 +48,9 @@ return [
         'Sample Request Failed' => '样品申请失败',
         'Sample request does not exist' => '申请样品不存在',
         'Cannot be cancelled' => '无法取消',
-        'Cancellation Failure' => '取消失败'
+        'Cancellation Failure' => '取消失败',
+        'You did not purchase the course'   => '你没有购买该课程',
+        'The video is not exist'    => '视频不存在',
 
 
     ],

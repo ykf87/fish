@@ -49,7 +49,9 @@ return [
         'Sample Request Failed' =>  'Sample Request Failed',
         'Sample request does not exist' =>  'Sample request does not exist',
         'Cannot be cancelled' =>  'Cannot be cancelled',
-        'Cancellation Failure' =>  'Cancellation Failure'
+        'Cancellation Failure' =>  'Cancellation Failure',
+        'You did not purchase the course'   => 'You did not purchase the course',
+        'The video is not exist'    => 'The video is not exist',
 
 
     ],
