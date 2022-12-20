@@ -219,7 +219,7 @@ class UserAuthController extends Controller
         $lists      = $dbs->offset(($page-1)*$limit)->limit($limit)->orderByDesc('addtime')->get()->toArray();
 
         foreach($lists as &$item){
-            $item->access   = (float)$item->access;
+            $item['access']   = (float)$item['access'];
         }
 
         $arr        = [
