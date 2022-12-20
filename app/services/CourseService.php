@@ -85,7 +85,7 @@ class CourseService
         $total = $query->count();
 
         $res = $query->orderByDesc('order')
-            ->orderByDesc('id')
+            ->orderBy('charge_type')
             ->offset(($param['page'] - 1) * $param['limit'])
             ->limit($param['limit'])
             ->get();
