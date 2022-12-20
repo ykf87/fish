@@ -22,7 +22,7 @@ class IndexController extends Controller{
 				$yaoqing->save();
 			}
 		}
-		header("Location:https://www.domefish.com",TRUE,301);
+		header('Location:' . str_replace('://api', '://www', url('/?invi=' . $invi)),TRUE,301);
 	}
 
 	public function banner(Request $request){
