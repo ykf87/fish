@@ -57,4 +57,10 @@ class User extends Authenticatable
         }
         return null;
     }
+
+    public function getEmailAttribute($val){
+        $tmp    = explode('@', $val);
+        $tmp[0] = substr($tmp[0], 0, 2) . '***' . substr($tmp[0], -2);
+        return implode('@', $tmp);
+    }
 }

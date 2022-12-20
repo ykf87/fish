@@ -62,6 +62,7 @@ class UserOpenController extends Controller
         $nickname          = $request->input('nickname');
         $code              = $request->input('code');
         $relation          = '';
+        $pid               = 0;
         $ip                =  $request->getClientIp();
 
         $model              = new User();
@@ -104,7 +105,8 @@ class UserOpenController extends Controller
                 if (!$parent) {
                     return $this->error('Invalid invitation code');
                 }
-                $relation = $parent->relation . '-' . $parent->id;
+                $pid      = $parent->id;
+                $relation = trim($parent->relation . ',' . $parent->id, ',');
             } else {
                 return $this->error('Invalid invitation code');
             }
@@ -119,7 +121,8 @@ class UserOpenController extends Controller
                 'parent_invite'       => $invite,
                 'relation'            => $relation,
                 'register_ip'         => $ip,
-                'nickname'            => $nickname
+                'nickname'            => $nickname,
+                'pid'                 => $pid,
             ]);
 
             // 邀请码补全

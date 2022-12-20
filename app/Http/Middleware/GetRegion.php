@@ -21,7 +21,7 @@ class GetRegion
             return $next($request);
         }
 
-        $region = Region::GetRegionByIp('218.66.44.195');
+        $region = Region::GetRegionByIp($request->ip);
         if ($region) {
             $request->merge(['_region' => $region]);
         }

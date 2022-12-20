@@ -37,7 +37,7 @@ Route::group([
 		Route::post('proinfo', 'CallbackController@proinfo')->name('proinfo');
 		Route::post('orderinfo', 'CallbackController@orderinfo')->name('orderinfo');
 		Route::get('aggregate', 'CallbackController@aggregate')->name('aggregate');
-        Route::post('upload', 'IndexController@upload');
+		Route::post('upload', 'IndexController@upload');
 		Route::group([
 			'prefix'        => 'index/',
 			'as'			=> 'index.'
@@ -58,17 +58,17 @@ Route::group([
 			Route::post('uncollect', 'ProductController@uncollect')->name('uncollect')->middleware(['auths']); //取消收藏
 			Route::post('apply', 'ProductController@apply')->name('apply')->middleware(['auths']); //申领样品
 
-            route::group([
-                'prefix' => 'video',
-                'as' => 'product.',
-                'middleware' => ['auths']
-            ], function () {
-                route::get('check', 'ProductVideoController@check')->name('check');
-                route::get('original', 'ProductVideoController@original')->name('original');
-                route::get('receivedList', 'ProductVideoController@receivedList')->name('receivedList');
-                route::post('receiveOriginal', 'ProductVideoController@receiveOriginal')->name('receiveOriginal');
-                route::post('receiveClip', 'ProductVideoController@receiveClip')->name('receiveClip');
-            });
+			Route::group([
+				'prefix' => 'video',
+				'as' => 'product.',
+				'middleware' => ['auths']
+			], function () {
+				Route::get('check', 'ProductVideoController@check')->name('check');
+				Route::get('original', 'ProductVideoController@original')->name('original');
+				Route::get('receivedList', 'ProductVideoController@receivedList')->name('receivedList');
+				Route::post('receiveOriginal', 'ProductVideoController@receiveOriginal')->name('receiveOriginal');
+				Route::post('receiveClip', 'ProductVideoController@receiveClip')->name('receiveClip');
+			});
 		});
 
 		Route::group([
@@ -103,35 +103,35 @@ Route::group([
 		});
 	});
 
-    Route::group([
-        'namespace'     => 'Pay',
-        'prefix'        => 'pay/',
-        'as'			=> 'pay.'
-    ], function () {
-        Route::post('pay/course', 'PayController@payCourse')->middleware(['auths']);
-        Route::get('callback/course', 'PayController@callbackCourse')->name('courseCallback');//->middleware(['auths']);
-        Route::post('notify', 'PayController@notify')->name('notify');
-    });
+	Route::group([
+		'namespace'     => 'Pay',
+		'prefix'        => 'pay/',
+		'as'			=> 'pay.'
+	], function () {
+		Route::post('pay/course', 'PayController@payCourse')->middleware(['auths']);
+		Route::get('callback/course', 'PayController@callbackCourse')->name('courseCallback');//->middleware(['auths']);
+		Route::post('notify', 'PayController@notify')->name('notify');
+	});
 
-    Route::group([
-        'namespace'     => 'Course',
-        'prefix'        => 'course/',
-        'as'			=> 'course.',
-        'middleware' => ['auths']
-    ], function () {
-        Route::get('', 'CourseController@courseList')->name('courseList');
-        Route::get('category', 'CourseController@category')->name('category');
-        Route::get('video', 'CourseController@videoList')->name('videoList');
-        Route::get('video/{id}/info', 'CourseController@videoInfo')->name('videoInfo');
-    });
+	Route::group([
+		'namespace'     => 'Course',
+		'prefix'        => 'course/',
+		'as'			=> 'course.',
+		'middleware' => ['auths']
+	], function () {
+		Route::get('', 'CourseController@courseList')->name('courseList');
+		Route::get('category', 'CourseController@category')->name('category');
+		Route::get('video', 'CourseController@videoList')->name('videoList');
+		Route::get('video/{id}/info', 'CourseController@videoInfo')->name('videoInfo');
+	});
 
-    Route::group([
-        'namespace' => 'General',
-        'prefix' => 'general/',
-        'as' => 'general.'
-    ], function () {
-        Route::get('dict/info', 'DictController@info')->name('dictInfo');
-    });
+	Route::group([
+		'namespace' => 'General',
+		'prefix' => 'general/',
+		'as' => 'general.'
+	], function () {
+		Route::get('dict/info', 'DictController@info')->name('dictInfo');
+	});
 
 	// 用户
 	Route::group([
@@ -156,6 +156,8 @@ Route::group([
 		Route::post('user/editerbatch', 'UserAuthController@updateUser');
 		Route::get('user/buied', 'UserAuthController@buied')->name('buied');
 		Route::get('user/viewed', 'UserAuthController@viewed')->name('viewed');
+		Route::get('user/invites', 'UserAuthController@invites')->name('invites');
+		Route::get('user/commission', 'UserAuthController@commission')->name('commission');
 	});
 
 });

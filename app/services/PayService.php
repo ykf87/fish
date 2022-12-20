@@ -4,6 +4,7 @@ namespace App\services;
 
 use App\Helper\Paypal;
 use App\Models\CourseOrder;
+use App\Models\Commission;
 
 class PayService
 {
@@ -53,11 +54,11 @@ class PayService
                 $order->payer_info = $param['payer_info'];
                 $order->save();
                 $result['success'] = true;
+                Commission::recharge($order);
             }
         }
-        header('Location:http://localhost:8080/pages/user/success');
+        header('Location:' . url('pages/user/success'));
         return;
-        return $result;
     }
 
 }

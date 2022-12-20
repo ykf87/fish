@@ -12,6 +12,7 @@ use Encore\Admin\Grid\Displayers\Limit;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManagerStatic;
 use App\Models\CourseViewLog;
+use App\Models\Commission;
 
 class UserAuthController extends Controller
 {
@@ -167,5 +168,47 @@ class UserAuthController extends Controller
             return true;
         }
         return $code == Redis::get($mail);
+    }
+
+    /**
+     * 获取我的邀请列表
+     */
+    public function invites(Request $request){
+        // Commission::recharge(CourseOrder::find(1));
+        // dd('111');
+        $user       = $request->get('_user');
+        $page       = (int)$request->input('page');
+        $limit      = (int)$request->input('limit');
+        if($page < 1) $page = 1;
+        if($limit < 1) $limit = 10;
+
+        $type       = (int)$request->input('type');
+        $dbs        = User::select('nickname', 'email', 'avatar', 'id', 'invitation_code as invite');
+        switch($type){
+            case 0:
+                $dbs    = $dbs->where('pid', $user->id);
+                break;
+            case 1:
+                $dbs    = $dbs->where('pid', '!=', $user->id)->whereRaw("find_in_set('$user->id', relation)");
+                break;
+            default:
+                $dbs    = $dbs->whereRaw("find_in_set('$user->id', relation)");
+        }
+        $dbs        = $dbs->orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get();
+        return $this->success($dbs);
+    }
+
+    /**
+     * 我的佣金明细
+     */
+    public function commission(Request $request){
+        $user       = $request->get('_user');
+        $page       = (int)$request->input('page');
+        $limit      = (int)$request->input('limit');
+        if($page < 1) $page = 1;
+        if($limit < 1) $limit = 10;
+
+        $dbs        = Commission::select('commissions.geted as access', 'commissions.addtime', 'commissions.status', 'commissions.id', 'u.nickname', 'u.avatar')->leftJoin('users as u', 'u.id', '=', 'commissions.uid')->offset(($page-1)*$limit)->limit($limit)->orderByDesc('addtime')->get();
+        return $this->success($dbs);
     }
 }
