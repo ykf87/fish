@@ -60,10 +60,11 @@ class VerifyApiSign
     {
         $ipResion       = Resion::GetResionByIp($request->ip());
         $request->merge(['_resion' => $ipResion]);
-        return $next($request);
         if (!$this->switch || ($this->signMatch($request) && $this->allowTimestamp($request))) {// || $this->inExceptArray($request)
             return $next($request);
         }
+        abort(404);
+        return;
 
         $msg = 'Api sign error';
         if (in_array(env('APP_ENV'), ['local', 'dev'])) {
@@ -126,6 +127,9 @@ class VerifyApiSign
         if (isset($data['sign'])) {
             unset($data['sign']);
         }
+        if (isset($data['_resion'])) {
+            unset($data['_resion']);
+        }
 
         ksort($data);
         $sign = '';
@@ -141,7 +145,7 @@ class VerifyApiSign
         if ($md5_sign_str === $request->header($this->signField, null)) {
             return true;
         }
-        $this->error = sprintf("sign_str=%s,md5_value=%s", $sign_str, $md5_sign_str);
+        // $this->error = sprintf("sign_str=%s,md5_value=%s", $sign_str, $md5_sign_str);
         return false;
     }
 }
