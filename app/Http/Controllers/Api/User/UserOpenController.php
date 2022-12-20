@@ -105,12 +105,13 @@ class UserOpenController extends Controller
                 if (!$parent) {
                     return $this->error('Invalid invitation code');
                 }
-                $pid      = $parent->id;
+                $pid      = $parentID;
                 $relation = trim($parent->relation . ',' . $parent->id, ',');
             } else {
                 return $this->error('Invalid invitation code');
             }
         }
+            
         // 开始事务
         DB::beginTransaction();
         try {

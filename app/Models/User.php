@@ -25,6 +25,7 @@ class User extends Authenticatable
         'register_ip',
         'relation',
         'parent_invite',
+        'pid',
     ];
 
     /**
