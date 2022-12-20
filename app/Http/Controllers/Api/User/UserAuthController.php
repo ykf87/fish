@@ -26,10 +26,13 @@ class UserAuthController extends Controller
     {
         $user         = $request->get('_user');
 
-        $info = User::find($user->id)->toArray();
+        $info = User::find($user->id);
 
         // $info['avatar'] = $info['avatar'] ? env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $info['avatar'] : '';
-        $info['invite'] = route('api.invi', ['invo' => $user->invitation_code]);
+        // if(!$info->inviteurl){
+        //     $info->inviteurl = route('api.invi', ['invo' => $user->invitation_code]);
+        // }
+        $info->inviteurl = route('api.invi', ['invo' => $user->invitation_code]);
 
         return $this->success($info, '');
     }

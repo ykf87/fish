@@ -27,6 +27,7 @@ class User extends Authenticatable
         'relation',
         'parent_invite',
         'pid',
+        'inviteurl',
     ];
 
     /**

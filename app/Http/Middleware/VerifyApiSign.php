@@ -61,7 +61,7 @@ class VerifyApiSign
         $ipResion       = Resion::GetResionByIp($request->ip());
         $request->merge(['_resion' => $ipResion]);
         return $next($request);
-        if (!$this->switch || $this->inExceptArray($request) || ($this->signMatch($request) && $this->allowTimestamp($request))) {
+        if (!$this->switch || ($this->signMatch($request) && $this->allowTimestamp($request))) {// || $this->inExceptArray($request)
             return $next($request);
         }
 
