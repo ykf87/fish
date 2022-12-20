@@ -28,7 +28,7 @@ class UserAuthController extends Controller
 
         $info = User::find($user->id)->toArray();
 
-        $info['avatar'] = $info['avatar'] ? env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $info['avatar'] : '';
+        // $info['avatar'] = $info['avatar'] ? env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $info['avatar'] : '';
         $info['invite'] = route('api.invi', ['invo' => $user->invitation_code]);
 
         return $this->success($info, '');
@@ -106,7 +106,7 @@ class UserAuthController extends Controller
                 return $this->error('Wrong image');
             }
             $user->avatar =   $filepath;
-            $success['avatar'] = env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $user->avatar;
+            $success['avatar'] = $user->avatar;
         };
 
         $user->save();
