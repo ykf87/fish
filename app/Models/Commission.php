@@ -12,7 +12,7 @@ class Commission extends Model{
 	use HasFactory;
 	public $timestamps	= false;
 	private static $rechargeRatio 	= [//分佣比例,基数为下级实际金额
-		0.1,
+		0.5,
 		0.1,
 		0.2
 	];
