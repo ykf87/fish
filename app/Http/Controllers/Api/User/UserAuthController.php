@@ -194,8 +194,13 @@ class UserAuthController extends Controller
             default:
                 $dbs    = $dbs->whereRaw("find_in_set('$user->id', relation)");
         }
-        $dbs        = $dbs->orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get();
-        return $this->success($dbs);
+        $arr        = [
+            'page'          => $page,
+            'limit'         => $limit,
+            'total_limit'   => $dbs->count(),
+            'lists'         => $dbs->orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get(),
+        ];
+        return $this->success($arr);
     }
 
     /**
@@ -208,7 +213,13 @@ class UserAuthController extends Controller
         if($page < 1) $page = 1;
         if($limit < 1) $limit = 10;
 
-        $dbs        = Commission::select('commissions.geted as access', 'commissions.addtime', 'commissions.status', 'commissions.id', 'u.nickname', 'u.avatar')->leftJoin('users as u', 'u.id', '=', 'commissions.uid')->offset(($page-1)*$limit)->limit($limit)->orderByDesc('addtime')->get();
-        return $this->success($dbs);
+        $dbs        = Commission::select('commissions.geted as access', 'commissions.addtime', 'commissions.status', 'commissions.id', 'u.nickname', 'u.avatar')->leftJoin('users as u', 'u.id', '=', 'commissions.uid');
+        $arr        = [
+            'page'          => $page,
+            'limit'         => $limit,
+            'total_limit'   => $dbs->count(),
+            'lists'         => $dbs->offset(($page-1)*$limit)->limit($limit)->orderByDesc('addtime')->get(),
+        ];
+        return $this->success($arr);
     }
 }
