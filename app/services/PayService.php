@@ -57,7 +57,8 @@ class PayService
                 Commission::recharge($order);
             }
         }
-        header('Location:' . url('pages/user/success'));
+        $url        = str_replace('://api', '://www', url('pages/user/success'));
+        header('Location:' . $url);
         return;
     }
 
