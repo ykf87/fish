@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Traits\SerializeDate;
 use App\Globals\Ens;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -63,5 +64,9 @@ class User extends Authenticatable
         $tmp    = explode('@', $val);
         $tmp[0] = substr($tmp[0], 0, 2) . '***' . substr($tmp[0], -2);
         return implode('@', $tmp);
+    }
+
+    public function getAvatarAttribute($val){
+        return ($val && strpos($val, 'http') === false) ? Storage::disk('s3')->url($val) : $val;
     }
 }

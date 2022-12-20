@@ -215,11 +215,18 @@ class UserAuthController extends Controller
         if($limit < 1) $limit = 10;
 
         $dbs        = Commission::select('commissions.geted as access', 'commissions.addtime', 'commissions.status', 'commissions.id', 'u.nickname', 'u.avatar')->leftJoin('users as u', 'u.id', '=', 'commissions.uid');
+        $total      = $dbs->count();
+        $lists      = $dbs->offset(($page-1)*$limit)->limit($limit)->orderByDesc('addtime')->get()->toArray();
+
+        foreach($lists as &$item){
+            $item->access   = (float)$item->access;
+        }
+
         $arr        = [
             'page'          => $page,
             'limit'         => $limit,
-            'total_limit'   => $dbs->count(),
-            'lists'         => $dbs->offset(($page-1)*$limit)->limit($limit)->orderByDesc('addtime')->get(),
+            'total_limit'   => $total,
+            'lists'         => $lists,
         ];
         return $this->success($arr);
     }
