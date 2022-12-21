@@ -45,12 +45,15 @@ class CourseController extends Controller
     //视频详情
     public function videoInfo($id, Request $request)
     {
-        $user = $request->get('_user');
-        $info = $this->courseService->videoInfo($id, $user->id);
+        // $user = $request->get('_user');
+        $info = $this->courseService->videoInfo($id);
 
         if ($info['success']) {
             return $this->success($info['msg']);
         } else {
+            if($info['msg'] == 401){
+                return response()->json(['code' => 401, 'msg' => __('Please Login'), 'data' => null]);
+            }
             return $this->error($info['msg']);
         }
     }

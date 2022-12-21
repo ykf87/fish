@@ -117,7 +117,7 @@ Route::group([
 		'namespace'     => 'Course',
 		'prefix'        => 'course/',
 		'as'			=> 'course.',
-		'middleware' => ['auths']
+// 		'middleware' => ['auths']
 	], function () {
 		Route::get('', 'CourseController@courseList')->name('courseList');
 		Route::get('category', 'CourseController@category')->name('category');

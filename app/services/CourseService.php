@@ -113,8 +113,13 @@ class CourseService
         return array_merge($course, $arr);
     }
 
-    public function videoInfo($id, $uid)
+    public function videoInfo($id)
     {
+        $user   = User::getTokenUser();
+        if($user){
+            CourseViewLog::addlog($user->id, $info->course_id, $info->id);
+        }
+
         $info = CourseVideo::with('course:id,charge_type,status')->find($id);
         $rtn = ['success' => false, 'msg' => ''];
 
@@ -128,8 +133,11 @@ class CourseService
         }
 
         if ($info->charge_type == 2) {
+            if(!$user){
+                return ['success' => true,'msg' => 401];
+            }
             $order = CourseOrder::where('course_id', $info->course_id)
-                ->where('uid', $uid)
+                ->where('uid', $user->id)
                 ->where('status', 20)
                 ->first();
             if (!$order) {
@@ -139,12 +147,6 @@ class CourseService
 
         if (!empty($rtn['msg'])) {
             return $rtn;
-        }
-
-
-        $user   = User::getTokenUser();
-        if($user){
-            CourseViewLog::addlog($user->id, $info->course_id, $info->id);
         }
 
         $info->increment('views');
