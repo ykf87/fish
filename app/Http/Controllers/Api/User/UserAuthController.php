@@ -32,7 +32,7 @@ class UserAuthController extends Controller
         // if(!$info->inviteurl){
         //     $info->inviteurl = route('api.invi', ['invo' => $user->invitation_code]);
         // }
-        $info->inviteurl = route('api.invi', ['invo' => $user->invitation_code]);
+        $info->invite = route('api.invi', ['invo' => $user->invitation_code]);
 
         return $this->success($info, '');
     }
@@ -217,7 +217,7 @@ class UserAuthController extends Controller
         if($page < 1) $page = 1;
         if($limit < 1) $limit = 10;
 
-        $dbs        = Commission::select('commissions.geted as access', 'commissions.addtime', 'commissions.status', 'commissions.id', 'u.nickname', 'u.avatar')->leftJoin('users as u', 'u.id', '=', 'commissions.uid');
+        $dbs        = Commission::select('commissions.geted as access', 'commissions.addtime', 'commissions.status', 'commissions.id', 'u.nickname', 'u.avatar')->leftJoin('users as u', 'u.id', '=', 'commissions.uid')->where('commissions.uid', '=', $user->id);
         $total      = $dbs->count();
         $lists      = $dbs->offset(($page-1)*$limit)->limit($limit)->orderByDesc('addtime')->get()->toArray();
 

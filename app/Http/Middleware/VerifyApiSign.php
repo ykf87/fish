@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
 use App\Helper\Resion;
+use Illuminate\Support\Facades\Route;
 
 /**
  * 接口签名
@@ -60,7 +61,7 @@ class VerifyApiSign
     {
         $ipResion       = Resion::GetResionByIp($request->ip());
         $request->merge(['_resion' => $ipResion]);
-        if (!$this->switch || ($this->signMatch($request) && $this->allowTimestamp($request))) {// || $this->inExceptArray($request)
+        if ('api.invi' == Route::currentRouteName() || !$this->switch || ($this->signMatch($request) && $this->allowTimestamp($request))) {// || $this->inExceptArray($request)
             return $next($request);
         }
         abort(404);

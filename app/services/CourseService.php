@@ -116,9 +116,7 @@ class CourseService
     public function videoInfo($id)
     {
         $user   = User::getTokenUser();
-        if($user){
-            CourseViewLog::addlog($user->id, $info->course_id, $info->id);
-        }
+        
 
         $info = CourseVideo::with('course:id,charge_type,status')->find($id);
         $rtn = ['success' => false, 'msg' => ''];
@@ -152,7 +150,9 @@ class CourseService
         $info->increment('views');
         $info->course()->increment('views');
 
-
+        if($user){
+            CourseViewLog::addlog($user->id, $info->course_id, $info->id);
+        }
         // $mp4_url = env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $info->video_url;
         // $mp4_data = file_get_contents($mp4_url);
 
