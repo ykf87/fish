@@ -18,3 +18,4 @@ Route::get('/', function () {
 });
 
 Route::get('redirect', 'App\Http\Controllers\Api\Tiktok\CallbackController@userLogin')->name('login');
+Route::get('invi', 'App\Http\Controllers\Api\IndexController@index')->name('invi');

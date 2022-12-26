@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManagerStatic;
 use App\Models\CourseViewLog;
 use App\Models\Commission;
+use App\Globals\ShortLink;
 
 class UserAuthController extends Controller
 {
@@ -24,15 +25,21 @@ class UserAuthController extends Controller
      */
     public function GetUserInfo(Request $request)
     {
-        $user         = $request->get('_user');
+        $user           = $request->get('_user');
+        $info           = User::select('id', 'nickname', 'email', 'avatar', 'phone', 'invitation_code', 'status', 'inviteurl as invite')->find($user->id);
 
-        $info = User::find($user->id);
-
-        // $info['avatar'] = $info['avatar'] ? env('AWS_URL') . '/' . env('AWS_BUCKET') . '/' . $info['avatar'] : '';
-        // if(!$info->inviteurl){
-        //     $info->inviteurl = route('api.invi', ['invo' => $user->invitation_code]);
-        // }
-        $info->invite = route('api.invi', ['invo' => $user->invitation_code]);
+        $ourl           = route('invi', ['invo' => $user->invitation_code]);
+        if(!$info->invite){
+            $url            = ShortLink::get($ourl);
+            if($url){
+                $info->inviteurl    = $url;
+                $info->save();
+                unset($info->inviteurl);
+                $info->invite       = $url;
+            }else{
+                $info->invite       = $ourl;
+            }
+        }
 
         return $this->success($info, '');
     }
