@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 class VerifyApiSign
 {
     // 忽略列表
+    // 'api.invi' == Route::currentRouteName()
     protected $except = [
         'api/pay/callback/course',
         'api/pay/pay/course',
@@ -61,7 +62,7 @@ class VerifyApiSign
     {
         $ipResion       = Resion::GetResionByIp($request->ip());
         $request->merge(['_resion' => $ipResion]);
-        if ('api.invi' == Route::currentRouteName() || !$this->switch || ($this->signMatch($request) && $this->allowTimestamp($request))) {// || $this->inExceptArray($request)
+        if (!$this->switch || ($this->signMatch($request) && $this->allowTimestamp($request))) {// || $this->inExceptArray($request)
             return $next($request);
         }
         abort(404);
