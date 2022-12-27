@@ -137,7 +137,7 @@ class UserAuthController extends Controller
         $query  = CourseOrder::from('course_orders as a')
             ->select('a.id', 'a.price', 'a.course_id', 'b.title', 'b.pic', 'b.video_num', 'b.views')
             ->leftJoin('courses as b', 'b.id', '=', 'a.course_id')
-            ->where('a.uid', $user->id);
+            ->where('a.uid', $user->id)->where('a.status', 20);
 
 
         $list   = $query->offset(($page-1)*$limit)->limit($limit)->orderByDesc('a.addtime')->get();
