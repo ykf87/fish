@@ -43,7 +43,7 @@ class CourseVideoController extends AdminController
 
         $grid->column('id', __('Id'));
         $grid->column('course.title', __('所属课程'));
-        $grid->column('order', __('排序'));
+        $grid->column('order', __('排序'))->editable();
         $grid->column('title', __('视频标题'));
         $chargeType = [
             'off' => ['value' => 1, 'text' => '免费', 'color' => 'default'],
