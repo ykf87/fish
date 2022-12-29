@@ -158,6 +158,8 @@ Route::group([
 		Route::get('user/viewed', 'UserAuthController@viewed')->name('viewed');
 		Route::get('user/invites', 'UserAuthController@invites')->name('invites');
 		Route::get('user/commission', 'UserAuthController@commission')->name('commission');
+
+		Route::get('user/staff', 'UserAuthController@staff')->name('staff');
 	});
 
 });

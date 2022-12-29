@@ -216,6 +216,7 @@ class UserAuthController extends Controller
 
     /**
      * 我的佣金明细
+     * 42
      */
     public function commission(Request $request){
         $user       = $request->get('_user');
@@ -237,6 +238,73 @@ class UserAuthController extends Controller
             'limit'         => $limit,
             'total_limit'   => $total,
             'lists'         => $lists,
+        ];
+        return $this->success($arr);
+    }
+
+    /**
+     * 代理商数据
+     */
+    public function staff(Request $request){
+        $user       = $request->get('_user');
+        if($user->agent != 1){
+            return $this->error('Error');
+        }
+        $shTime     = $request->input('times');//查询时间,1, 7, 30(天内)
+        $start      = $request->input('start');//开始时间
+        $end        = $request->input('end');//截止时间
+        $sort       = $request->input('sort');//是否排序,默认高到低排序
+        $username   = $request->input('username');//查询用户名
+        $page       = (int)$request->input('page');
+        $limit      = (int)$request->input('limit');
+        $page       = $page < 1 ? 1 : $page;
+        $limit      = $limit < 1 ? 10 : $limit;
+
+        switch($shTime){
+            case 1://week
+                $start  = strtotime("-1 week");
+            break;
+            case 2://月
+                $start  = strtotime("-1 month");
+            break;
+            case 3://季
+                $start  = strtotime("-3 months");
+            break;
+            case 4://年
+                $start  = strtotime("-1 year");
+            break;
+        }
+
+        $users      = User::select('id', 'invitation_code', 'nickname', 'avatar')->where('pid', $user->id);
+        $totals     = $users->count();
+        $users      = $users->orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get();
+        $usersId    = [];
+        $number     = [];
+        foreach($users as &$item){
+            $usersId[]  = $item->id;
+
+            $rrs        = User::where('pid', $item->id);
+            $childs     = $rrs->pluck('id')->toArray();
+            $gmv        = CourseOrder::selectRaw('sum(total) as gmv')->whereIn('uid', $childs);
+            if($start > 0){
+                $rrs    = $rrs->where('created_at', '>=', date('Y-m-d H:i:s', $start));
+                $gmv    = $gmv->where('addtime', '>=', $start);
+            }
+            if($end > 0){
+                $rrs    = $rrs->where('created_at', '<=', date('Y-m-d H:i:s', $end));
+                $gmv    = $gmv->where('addtime', '<=', $end);
+            }
+            $gmv        = $gmv->first();
+            $item->number   = $rrs->count();
+            $item->gmv      = $gmv ? $gmv->gmv : 0;
+            unset($item->id);
+        }
+
+        $arr    = [
+            'total_limit'   => $totals,
+            'page'          => $page,
+            'limit'         => $limit,
+            'lists'         => $users,
         ];
         return $this->success($arr);
     }

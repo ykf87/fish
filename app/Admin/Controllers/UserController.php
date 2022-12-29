@@ -26,6 +26,10 @@ class UserController extends AdminController
     {
         $grid = new Grid(new User());
         $grid->model()->orderByDesc('id');
+        $state  = [
+            0   => '否',
+            1   => '是',
+        ];
 
         $grid->column('id', __('ID'));
         $grid->column('nickname', __('昵称'));
@@ -47,6 +51,7 @@ class UserController extends AdminController
         // $grid->column('created_at', __('Created at'));
         // $grid->column('updated_at', __('Updated at'));
         $grid->column('inviteurl', __('邀请链接'));
+        $grid->column('agent', __('是否代理商'))->switch($state);
 
         $grid->disableCreateButton();
         $grid->disableFilter();
@@ -117,6 +122,7 @@ class UserController extends AdminController
         $form->text('register_ip', __('Register ip'));
         $form->text('last_ip', __('Last ip'));
         $form->text('inviteurl', __('Inviteurl'));
+        $form->switch('agent', __('是否代理'));
 
         return $form;
     }
