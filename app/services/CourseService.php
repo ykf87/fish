@@ -97,7 +97,7 @@ class CourseService
         if($user){
             $videoid    = CourseViewLog::addlog($user->id, (int)$param['course_id']);
             $order      = CourseOrder::where('uid', $user->id)->where('course_id', $param['course_id'])->first();
-            if($order && $order->status == 20){
+            if($order && ($order->status == 20 || $order->status == 21)){
                 $buied  = 1;
             }
         }
