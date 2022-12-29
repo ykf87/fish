@@ -26,7 +26,7 @@ class UserAuthController extends Controller
     public function GetUserInfo(Request $request)
     {
         $user           = $request->get('_user');
-        $info           = User::select('id', 'nickname', 'email', 'avatar', 'phone', 'invitation_code', 'status', 'inviteurl as invite')->find($user->id);
+        $info           = User::select('id', 'nickname', 'email', 'avatar', 'phone', 'invitation_code', 'status', 'inviteurl as invite', 'agent as staff')->find($user->id);
 
         $ourl           = route('invi', ['invo' => $user->invitation_code]);
         if(!$info->invite){
@@ -294,9 +294,9 @@ class UserAuthController extends Controller
                 $rrs    = $rrs->where('created_at', '<=', date('Y-m-d H:i:s', $end));
                 $gmv    = $gmv->where('addtime', '<=', $end);
             }
-            $gmv        = $gmv->first();
+            $gmv            = $gmv->first();
             $item->number   = $rrs->count();
-            $item->gmv      = $gmv ? $gmv->gmv : 0;
+            $item->gmv      = $gmv && $gmv->gmv > 0 ? $gmv->gmv : 0;
             unset($item->id);
         }
 
