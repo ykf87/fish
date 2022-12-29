@@ -276,6 +276,9 @@ class UserAuthController extends Controller
         }
 
         $users      = User::select('id', 'invitation_code', 'nickname', 'avatar')->where('pid', $user->id);
+        if($username){
+            $users  = $users->where('nickname', 'like', "%$username%");
+        }
         $totals     = $users->count();
         $users      = $users->orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get();
         $usersId    = [];
