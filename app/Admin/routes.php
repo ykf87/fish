@@ -18,6 +18,7 @@ Route::group([
     $router->resource('tiktok-products', TiktokProductController::class);
     $router->resource('tiktok-orders', TiktokOrdersController::class);
     $router->resource('u-c-users', ClientUserController::class);
+    $router->resource('users', UserController::class);
     $router->resource('banners', BannerController::class);
     $router->resource('tiktok-sample', TiktokSampleController::class);
     $router->resource('tiktok-products-videos', TiktokProductsVideoController::class);

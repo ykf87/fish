@@ -40,6 +40,10 @@ class Commission extends Model{
 		if(self::where('orderid', $order->id)->count() > 0){
 			return false;
 		}
+		if($order->status != 20 || !$order->paytime){
+			return false;
+		}
+
 		$user 		= User::find($order->uid);
 		if(!$user){
 			return false;

@@ -136,7 +136,7 @@ class CourseService
             }
             $order = CourseOrder::where('course_id', $info->course_id)
                 ->where('uid', $user->id)
-                ->where('status', 20)
+                ->whereIn('status', [20,21])
                 ->first();
             if (!$order) {
                 $rtn['msg'] = 'You did not purchase the course';
